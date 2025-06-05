@@ -3,7 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Data from './Data';
 
 const breadcrumbs = [
@@ -13,27 +13,46 @@ const breadcrumbs = [
     },
 ];
 
-export default function Camps({ camps }) {
+export default function Camps({ camps: initialCamps }) {
     const [search, setSearch] = useState('');
-    const [filteredCamps, setFilteredCamps] = useState(camps);
+    const [filteredCamps, setFilteredCamps] = useState(initialCamps);
 
     const handleSearch = (e) => {
         const value = e.target.value.toLowerCase();
         setSearch(value);
 
-        const filtered = camps.filter(
-            (camp) =>
-                camp.formation?.name.toLowerCase().includes(value) ||
-                camp.cour?.name.toLowerCase().includes(value) ||
-                camp.cour?.label.toLowerCase().includes(value) ||
-                camp.collaborator?.name.toLowerCase().includes(value),
-        );
-        setFilteredCamps(filtered);
+        if (value === '') {
+            setFilteredCamps(initialCamps);
+        } else {
+            const filtered = initialCamps.filter(
+                (camp) =>
+                    camp.formation?.name.toLowerCase().includes(value) ||
+                    camp.cour?.name.toLowerCase().includes(value) ||
+                    camp.cour?.label.toLowerCase().includes(value) ||
+                    camp.collaborator?.name.toLowerCase().includes(value),
+            );
+            setFilteredCamps(filtered);
+        }
     };
 
-    const handleDelete = (id) => {
-        setFilteredCamps((prev) => prev.filter((c) => c.id !== id));
+    const handleDelete = (deletedCampId) => {
+        setFilteredCamps((prev) => prev.filter((c) => c.id !== deletedCampId));
     };
+
+    useEffect(() => {
+        if (search === '') {
+            setFilteredCamps(initialCamps);
+        } else {
+            const reFiltered = initialCamps.filter(
+                (camp) =>
+                    camp.formation?.name.toLowerCase().includes(search) ||
+                    camp.cour?.name.toLowerCase().includes(search) ||
+                    camp.cour?.label.toLowerCase().includes(search) ||
+                    camp.collaborator?.name.toLowerCase().includes(search),
+            );
+            setFilteredCamps(reFiltered);
+        }
+    }, [initialCamps, search]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -53,7 +72,7 @@ export default function Camps({ camps }) {
                     </Link>
                 </div>
 
-                <Data camps={camps} onDeleted={handleDelete} />
+                <Data camps={filteredCamps} onDeleted={handleDelete} />
             </div>
         </AppLayout>
     );
