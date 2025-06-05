@@ -52,21 +52,21 @@ export default function Create({ collaborators, cours }) {
                         <Label htmlFor="collaborator_id">
                             Collaborator
                         </Label>
-                        <Select
-                            value={data.collaborator_id}
-                            onValueChange={(value) => setData('collaborator_id', value)}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select collaborator" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {collaborators.map((c) => (
-                                    <SelectItem key={c.id} value={c.id}>
-                                        {c.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+<Select
+    value={String(data.collaborator_id)}
+    onValueChange={(value) => setData('collaborator_id', value)}
+>
+    <SelectTrigger className="w-full">
+        <SelectValue placeholder="Select collaborator" />
+    </SelectTrigger>
+    <SelectContent>
+        {collaborators.map((c) => (
+            <SelectItem key={c.id} value={String(c.id)}>
+                {c.name}
+            </SelectItem>
+        ))}
+    </SelectContent>
+</Select>
                         <InputError message={errors.collaborator_id} />
                     </div>
 
@@ -75,21 +75,21 @@ export default function Create({ collaborators, cours }) {
                         <Label htmlFor="cour_id">
                             Course
                         </Label>
-                        <Select
-                            value={data.cour_id}
-                            onValueChange={(value) => setData('cour_id', value)}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select course" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {cours.map((c) => (
-                                    <SelectItem key={c.id} value={c.id}>
-                                        {c.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+<Select
+    value={String(data.cour_id)}
+    onValueChange={(value) => setData('cour_id', value)}
+>
+    <SelectTrigger className="w-full">
+        <SelectValue placeholder="Select course" />
+    </SelectTrigger>
+    <SelectContent>
+        {cours.map((c) => (
+            <SelectItem key={c.id} value={String(c.id)}>
+                {c.name}
+            </SelectItem>
+        ))}
+    </SelectContent>
+</Select>
                         <InputError message={errors.cour_id} />
                     </div>
 

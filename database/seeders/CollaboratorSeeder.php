@@ -25,7 +25,7 @@ class CollaboratorSeeder extends Seeder
         // Crée les collaborateurs
         $collaborators = [
             "Kacem Bensaadoun",
-            "Mohammed Moussaoui",
+            "Mohammed El Moussaoui",
             "Rihane Chebab",
             "Nadia",
             "Kaouthar Missaoui",
@@ -45,7 +45,7 @@ class CollaboratorSeeder extends Seeder
                 'name' => $name
             ]);
 
-            $excludedNames = ["Mohammed Moussaoui", "Ilyes Rafai", "Imad Rafai"];
+            $excludedNames = ["Mohammed El Moussaoui", "Ilyes Rafai", "Imad Rafai"];
 
             if (!in_array($name, $excludedNames)) {
                 $collaborator->specialities()->attach($frontendSpeciality->id);
@@ -53,7 +53,7 @@ class CollaboratorSeeder extends Seeder
         }
 
         // Récupère les collaborateurs de manière plus sûre
-        $med = Collaborator::where('name', 'Mohammed Moussaoui')->first();
+        $med = Collaborator::where('name', 'Mohammed El Moussaoui')->first();
         $nadia = Collaborator::where('name', 'Nadia')->first();
         $hajji = Collaborator::where('name', 'Ilyass Hajji')->first();
         $imad_rafai = Collaborator::where('name', 'Imad Rafai')->first();

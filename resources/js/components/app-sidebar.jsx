@@ -2,7 +2,7 @@ import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { Link } from '@inertiajs/react';
-import { BriefcaseBusiness, Layers, LayoutGrid, Shapes, Tent, UsersRound } from 'lucide-react';
+import { BriefcaseBusiness, Layers, LayoutGrid, Shapes, Tent, UsersRound, Trophy } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems = [
@@ -35,6 +35,11 @@ const mainNavItems = [
         title: 'Camps',
         url: '/camps',
         icon: Tent,
+    },
+    {
+        title: 'Leaderboard',
+        url: '/leaderboard',
+        icon: Trophy,
     },
 ];
 

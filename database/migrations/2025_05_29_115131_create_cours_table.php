@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string("name")->unique();
             $table->string("label")->unique();
             $table->string("color")->unique();
+            $table->integer('level')->default(0);
             $table->timestamps();
         });
     }

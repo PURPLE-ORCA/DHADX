@@ -9,6 +9,7 @@ class Cour extends Model
 {
     /** @use HasFactory<\Database\Factories\CourFactory> */
     use HasFactory;
+    protected $fillable = ['name', 'label', 'color', 'level'];
 
     protected $guarded = [];
 

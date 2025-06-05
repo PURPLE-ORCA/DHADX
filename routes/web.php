@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FormationController;
 use App\Http\Controllers\SpecialityController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LeaderboardController;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -25,6 +26,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('cours', CourController::class);
 
     Route::resource('camps', CampController::class);
+    Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
 });
 
 require __DIR__ . '/settings.php';
