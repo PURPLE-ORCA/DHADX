@@ -1,12 +1,14 @@
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
-import { Transition } from '@headlessui/react';
 import { Head, router, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
+import { toast } from "sonner";
 
 export default function Create({ collaborators, cours }) {
-    const { data, setData, post, processing, reset, errors, recentlySuccessful } = useForm({
+    const { data, setData, post, processing, reset, errors } = useForm({
         collaborator_id: '',
         cour_id: '',
     });
@@ -17,8 +19,12 @@ export default function Create({ collaborators, cours }) {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
-                router.reload({ only: ['camps'] });
+                toast.success("Camp created successfully!");
             },
+            onError: (errors) => {
+                toast.error("Failed to create camp. Please check selections.");
+                console.error("Save errors:", errors);
+            }
         });
     };
 
@@ -38,64 +44,52 @@ export default function Create({ collaborators, cours }) {
             <Head title="Camps" />
 
             <div className="p-4">
-                <Transition
-                    show={recentlySuccessful}
-                    enter="transition-opacity duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="transition-opacity duration-300"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                >
-                    <div className="mb-4 rounded bg-green-500 p-2 text-center">
-                        <p className="text-sm font-semibold text-white">Saved successfully!</p>
-                    </div>
-                </Transition>
-
                 <h1 className="mb-6 text-2xl font-bold">Add New Camp</h1>
 
                 <form className="space-y-6" onSubmit={submitForm}>
                     {/* Collaborator Select */}
                     <div className="grid gap-2">
-                        <label htmlFor="collaborator_id" className="font-medium">
+                        <Label htmlFor="collaborator_id">
                             Collaborator
-                        </label>
-                        <select
-                            id="collaborator_id"
-                            name="collaborator_id"
+                        </Label>
+                        <Select
                             value={data.collaborator_id}
-                            onChange={(e) => setData('collaborator_id', e.target.value)}
-                            className="w-full rounded border p-2"
+                            onValueChange={(value) => setData('collaborator_id', value)}
                         >
-                            <option value="">Select collaborator</option>
-                            {collaborators.map((c) => (
-                                <option key={c.id} value={c.id}>
-                                    {c.name}
-                                </option>
-                            ))}
-                        </select>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select collaborator" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {collaborators.map((c) => (
+                                    <SelectItem key={c.id} value={c.id}>
+                                        {c.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                         <InputError message={errors.collaborator_id} />
                     </div>
 
                     {/* Cour Select */}
                     <div className="grid gap-2">
-                        <label htmlFor="cour_id" className="font-medium">
+                        <Label htmlFor="cour_id">
                             Course
-                        </label>
-                        <select
-                            id="cour_id"
-                            name="cour_id"
+                        </Label>
+                        <Select
                             value={data.cour_id}
-                            onChange={(e) => setData('cour_id', e.target.value)}
-                            className="w-full rounded border p-2"
+                            onValueChange={(value) => setData('cour_id', value)}
                         >
-                            <option value="">Select course</option>
-                            {cours.map((c) => (
-                                <option key={c.id} value={c.id}>
-                                    {c.name}
-                                </option>
-                            ))}
-                        </select>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select course" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {cours.map((c) => (
+                                    <SelectItem key={c.id} value={c.id}>
+                                        {c.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                         <InputError message={errors.cour_id} />
                     </div>
 

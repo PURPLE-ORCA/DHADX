@@ -2,13 +2,14 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import AppLayout from '@/layouts/app-layout';
-import { Transition } from '@headlessui/react';
 import { Head, router, useForm } from '@inertiajs/react';
 import { useEffect } from 'react';
+import { toast } from "sonner";
 
 export default function Edit({ collaborator, specialities }) {
-    const { data, setData, put, processing, reset, errors, clearErrors, recentlySuccessful } = useForm({
+    const { data, setData, put, processing, reset, errors, clearErrors } = useForm({
         name: collaborator.name,
         speciality_ids: collaborator.specialities.map((s) => s.id),
     });
@@ -26,8 +27,12 @@ export default function Edit({ collaborator, specialities }) {
         put(route('collaborators.update', collaborator.id), {
             preserveScroll: true,
             onSuccess: () => {
-                router.reload({ only: ['collaborators'] });
+                toast.success("Collaborator updated successfully!");
             },
+            onError: (errors) => {
+                toast.error("Failed to update collaborator. Please check the form.");
+                console.error("Update errors:", errors);
+            }
         });
     };
 
@@ -42,25 +47,18 @@ export default function Edit({ collaborator, specialities }) {
         },
     ];
 
+    const handleSpecialityChange = (id, checked) => {
+        setData('speciality_ids', checked
+            ? [...data.speciality_ids, id]
+            : data.speciality_ids.filter((specId) => specId !== id)
+        );
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Collaborators" />
 
             <div className="p-4">
-                <Transition
-                    show={recentlySuccessful}
-                    enter="transition-opacity duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="transition-opacity duration-300"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                >
-                    <div className="mb-4 rounded bg-green-500 p-2 text-center">
-                        <p className="text-sm font-semibold text-white">Updated successfully!</p>
-                    </div>
-                </Transition>
-
                 <h1 className="mb-6 text-2xl font-bold">Edit Collaborator</h1>
 
                 <form className="space-y-6" onSubmit={submitForm}>
@@ -82,23 +80,18 @@ export default function Edit({ collaborator, specialities }) {
 
                     <div className="grid gap-2">
                         <Label htmlFor="speciality_ids">Specialities</Label>
-                        <select
-                            multiple
-                            id="speciality_ids"
-                            name="speciality_ids"
-                            value={data.speciality_ids}
-                            onChange={(e) => {
-                                const selected = Array.from(e.target.selectedOptions, (option) => Number(option.value));
-                                setData('speciality_ids', selected);
-                            }}
-                            className="w-full rounded border px-2 py-1"
-                        >
+                        <div className="flex flex-wrap gap-4">
                             {specialities.map((spec) => (
-                                <option key={spec.id} value={spec.id}>
-                                    {spec.name}
-                                </option>
+                                <div key={spec.id} className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id={`spec-${spec.id}`}
+                                        checked={data.speciality_ids.includes(spec.id)}
+                                        onCheckedChange={(checked) => handleSpecialityChange(spec.id, checked)}
+                                    />
+                                    <Label htmlFor={`spec-${spec.id}`}>{spec.name}</Label>
+                                </div>
                             ))}
-                        </select>
+                        </div>
                         <InputError message={errors.speciality_ids} />
                     </div>
 
@@ -115,7 +108,7 @@ export default function Edit({ collaborator, specialities }) {
                             Cancel
                         </Button>
                         <Button disabled={processing} type="submit">
-                            {processing && <span className="mr-2 animate-spin">⏳</span>}
+                            {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
                             Update
                         </Button>
                     </div>

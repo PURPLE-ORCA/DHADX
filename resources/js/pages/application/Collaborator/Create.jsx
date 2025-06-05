@@ -2,13 +2,14 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import AppLayout from '@/layouts/app-layout';
-import { Transition } from '@headlessui/react';
 import { Head, router, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
+import { toast } from "sonner";
 
 export default function Create({ specialities }) {
-    const { data, setData, post, processing, reset, errors, clearErrors, recentlySuccessful } = useForm({
+    const { data, setData, post, processing, reset, errors, clearErrors } = useForm({
         name: '',
         speciality_ids: [],
     });
@@ -20,8 +21,12 @@ export default function Create({ specialities }) {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
-                router.reload({ only: ['collaborators'] });
+                toast.success("Collaborator saved successfully!");
             },
+            onError: (errors) => {
+                toast.error("Failed to save collaborator. Please check the form.");
+                console.error("Save errors:", errors);
+            }
         });
     };
 
@@ -36,25 +41,18 @@ export default function Create({ specialities }) {
         },
     ];
 
+    const handleSpecialityChange = (id, checked) => {
+        setData('speciality_ids', checked
+            ? [...data.speciality_ids, id]
+            : data.speciality_ids.filter((specId) => specId !== id)
+        );
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Collaborators" />
 
             <div className="p-4">
-                <Transition
-                    show={recentlySuccessful}
-                    enter="transition-opacity duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="transition-opacity duration-300"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                >
-                    <div className="mb-4 rounded bg-green-500 p-2 text-center">
-                        <p className="text-sm font-semibold text-white">Saved successfully!</p>
-                    </div>
-                </Transition>
-
                 <h1 className="mb-6 text-2xl font-bold">Add New Collaborator</h1>
 
                 <form className="space-y-6" onSubmit={submitForm}>
@@ -75,23 +73,18 @@ export default function Create({ specialities }) {
 
                     <div className="grid gap-2">
                         <Label htmlFor="specialities">Specialities</Label>
-                        <select
-                            multiple
-                            id="specialities"
-                            name="speciality_ids"
-                            value={data.speciality_ids}
-                            onChange={(e) => {
-                                const selected = Array.from(e.target.selectedOptions, (option) => Number(option.value));
-                                setData('speciality_ids', selected);
-                            }}
-                            className="w-full rounded border px-2 py-1"
-                        >
+                        <div className="flex flex-wrap gap-4">
                             {specialities.map((spec) => (
-                                <option key={spec.id} value={spec.id}>
-                                    {spec.name}
-                                </option>
+                                <div key={spec.id} className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id={`spec-${spec.id}`}
+                                        checked={data.speciality_ids.includes(spec.id)}
+                                        onCheckedChange={(checked) => handleSpecialityChange(spec.id, checked)}
+                                    />
+                                    <Label htmlFor={`spec-${spec.id}`}>{spec.name}</Label>
+                                </div>
                             ))}
-                        </select>
+                        </div>
                         <InputError message={errors.speciality_ids} />
                     </div>
 

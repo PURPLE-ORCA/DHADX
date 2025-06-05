@@ -1,13 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Transition } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
 import { Trash } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from "sonner";
 
 export default function Delete({ collaborator, onDeleted }) {
     const [open, setOpen] = useState(false);
-    const { delete: destroy, processing, reset, clearErrors, recentlySuccessful } = useForm({});
+    const { delete: destroy, processing, reset, clearErrors } = useForm({});
 
     const deleteCollaborator = (e) => {
         e.preventDefault();
@@ -17,10 +17,14 @@ export default function Delete({ collaborator, onDeleted }) {
             onSuccess: () => {
                 setOpen(false);
                 reset();
+                toast.success(`${collaborator.name} has been deleted.`);
                 if (onDeleted) {
-                    onDeleted(collaborator.id); // Notify parent
+                    onDeleted(collaborator.id);
                 }
             },
+            onError: () => {
+                toast.error(`Failed to delete ${collaborator.name}.`);
+            }
         });
     };
 
@@ -32,20 +36,6 @@ export default function Delete({ collaborator, onDeleted }) {
 
     return (
         <div>
-            <Transition
-                show={recentlySuccessful}
-                enter="transition-opacity duration-300"
-                enterFrom="opacity-0"
-                enterTo="opacity-100"
-                leave="transition-opacity duration-300"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
-            >
-                <div className="fixed top-12 right-3 rounded bg-green-500 p-2 whitespace-nowrap">
-                    <p className="text-sm font-semibold text-white">Deleted successfully!</p>
-                </div>
-            </Transition>
-
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                     <Button variant="link" className="!p-0">

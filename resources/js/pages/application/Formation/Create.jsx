@@ -2,13 +2,14 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import AppLayout from '@/layouts/app-layout';
-import { Transition } from '@headlessui/react';
 import { Head, router, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
+import { toast } from "sonner";
 
 export default function Create({ cours }) {
-    const { data, setData, post, processing, reset, errors, clearErrors, recentlySuccessful } = useForm({
+    const { data, setData, post, processing, reset, errors, clearErrors } = useForm({
         name: '',
         cour_ids: [],
     });
@@ -20,8 +21,12 @@ export default function Create({ cours }) {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
-                router.reload({ only: ['formations'] });
+                toast.success("Formation saved successfully!");
             },
+            onError: (errors) => {
+                toast.error("Failed to save formation. Please check the form.");
+                console.error("Save errors:", errors);
+            }
         });
     };
 
@@ -36,25 +41,18 @@ export default function Create({ cours }) {
         },
     ];
 
+    const handleCourChange = (id, checked) => {
+        setData('cour_ids', checked
+            ? [...data.cour_ids, id]
+            : data.cour_ids.filter((courId) => courId !== id)
+        );
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Formations" />
 
             <div className="p-4">
-                <Transition
-                    show={recentlySuccessful}
-                    enter="transition-opacity duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="transition-opacity duration-300"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                >
-                    <div className="mb-4 rounded bg-green-500 p-2 text-center">
-                        <p className="text-sm font-semibold text-white">Saved successfully!</p>
-                    </div>
-                </Transition>
-
                 <h1 className="mb-6 text-2xl font-bold">Add New Formation</h1>
 
                 <form className="space-y-6" onSubmit={submitForm}>
@@ -75,23 +73,18 @@ export default function Create({ cours }) {
 
                     <div className="grid gap-2">
                         <Label htmlFor="cours">Cours</Label>
-                        <select
-                            multiple
-                            id="cours"
-                            name="cour_ids"
-                            value={data.cour_ids}
-                            onChange={(e) => {
-                                const selected = Array.from(e.target.selectedOptions, (option) => Number(option.value));
-                                setData('cour_ids', selected);
-                            }}
-                            className="w-full rounded border px-2 py-1"
-                        >
-                            {cours.map((spec) => (
-                                <option key={spec.id} value={spec.id}>
-                                    {spec.name}
-                                </option>
+                        <div className="flex flex-wrap gap-4">
+                            {cours.map((cour) => (
+                                <div key={cour.id} className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id={`cour-${cour.id}`}
+                                        checked={data.cour_ids.includes(cour.id)}
+                                        onCheckedChange={(checked) => handleCourChange(cour.id, checked)}
+                                    />
+                                    <Label htmlFor={`cour-${cour.id}`}>{cour.name}</Label>
+                                </div>
                             ))}
-                        </select>
+                        </div>
                         <InputError message={errors.cour_ids} />
                     </div>
 
