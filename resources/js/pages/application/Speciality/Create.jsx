@@ -6,9 +6,10 @@ import AppLayout from '@/layouts/app-layout';
 import { Transition } from '@headlessui/react';
 import { Head, router, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
+import { toast } from "sonner";
 
 export default function Create() {
-    const { data, setData, post, processing, reset, errors, recentlySuccessful } = useForm({
+    const { data, setData, post, processing, reset, errors } = useForm({
         name: '',
     });
 
@@ -20,7 +21,12 @@ export default function Create() {
             onSuccess: () => {
                 reset();
                 router.reload({ only: ['specialities'] });
+                toast.success("Speciality created successfully!");
             },
+            onError: (errors) => {
+                toast.error("Failed to create speciality. Please check the form.");
+                console.error("Save errors:", errors);
+            }
         });
     };
 
@@ -40,20 +46,6 @@ export default function Create() {
             <Head title="Specialities" />
 
             <div className="p-4">
-                <Transition
-                    show={recentlySuccessful}
-                    enter="transition-opacity duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="transition-opacity duration-300"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                >
-                    <div className="mb-4 rounded bg-green-500 p-2 text-center">
-                        <p className="text-sm font-semibold text-white">Saved successfully!</p>
-                    </div>
-                </Transition>
-
                 <h1 className="mb-6 text-2xl font-bold">Add New Speciality</h1>
 
                 <form className="space-y-6" onSubmit={submitForm}>

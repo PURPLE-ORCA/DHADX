@@ -6,9 +6,11 @@ import AppLayout from '@/layouts/app-layout';
 import { Transition } from '@headlessui/react';
 import { Head, router, useForm } from '@inertiajs/react';
 import { useEffect } from 'react';
+import { LoaderCircle } from 'lucide-react';
+import { toast } from "sonner";
 
 export default function Edit({ speciality }) {
-    const { data, setData, put, processing, reset, errors, clearErrors, recentlySuccessful } = useForm({
+    const { data, setData, put, processing, reset, errors, clearErrors } = useForm({
         name: speciality.name,
     });
 
@@ -25,7 +27,12 @@ export default function Edit({ speciality }) {
             preserveScroll: true,
             onSuccess: () => {
                 router.reload({ only: ['specialities'] });
+                toast.success("Speciality updated successfully!");
             },
+            onError: (errors) => {
+                toast.error("Failed to update speciality. Please check the form.");
+                console.error("Update errors:", errors);
+            }
         });
     };
 
@@ -44,20 +51,6 @@ export default function Edit({ speciality }) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Specialities" />
             <div className="p-4">
-                <Transition
-                    show={recentlySuccessful}
-                    enter="transition-opacity duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="transition-opacity duration-300"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                >
-                    <div className="mb-4 rounded bg-green-500 p-2 text-center">
-                        <p className="text-sm font-semibold text-white">Updated successfully!</p>
-                    </div>
-                </Transition>
-
                 <h1 className="mb-6 text-2xl font-bold">Edit Speciality</h1>
 
                 <form className="space-y-6" onSubmit={submitForm}>
@@ -79,7 +72,7 @@ export default function Edit({ speciality }) {
 
                     <div className="flex justify-end gap-2">
                         <Button disabled={processing} type="submit">
-                            {processing && <span className="mr-2 animate-spin">⏳</span>}
+                            {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
                             Update
                         </Button>
                     </div>
