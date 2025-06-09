@@ -9,6 +9,7 @@ function Data({ collaborators, onDeleted }) {
             <TableHeader>
                 <TableRow>
                     <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
                     <TableHead>Specialities</TableHead>
                     <TableHead></TableHead>
                 </TableRow>
@@ -17,6 +18,7 @@ function Data({ collaborators, onDeleted }) {
                 {collaborators.map((collaborator) => (
                     <TableRow key={collaborator.id}>
                         <TableCell className="font-medium">{collaborator.name}</TableCell>
+                        <TableCell className="font-medium">{collaborator.email}</TableCell>
                         <TableCell className="font-medium">
                             <div className="flex flex-wrap gap-2">
                                 {collaborator.specialities.map((e, i) => (

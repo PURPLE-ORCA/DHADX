@@ -20,37 +20,41 @@ class DatabaseSeeder extends Seeder
         $adminRole = Role::where('name', 'admin')->first();
         $collaboratorRole = Role::where('name', 'collaborator')->first();
 
-        // Create Ilyes and assign role(s)
-        $ilyes = User::create([
-            'name' => 'Ilyes rafai',
-            'email' => 'ilyes@dhadx.com',
-            'password' => bcrypt('password'), 
-        ]);
+        $collaboratorData = [
+            ['name' => "Kacem Bensaadoun", 'email_prefix' => 'kacem.bensaadoun'],
+            ['name' => "Mohammed El Moussaoui", 'email_prefix' => 'mohammed.elmoussaoui'],
+            ['name' => "Rihane Chebab", 'email_prefix' => 'rihane.chebab'],
+            ['name' => "Nadia", 'email_prefix' => 'nadia'],
+            ['name' => "Kaouthar Missaoui", 'email_prefix' => 'kaouthar.missaoui'],
+            ['name' => "Yassmine Boukhana", 'email_prefix' => 'yassmine.boukhana'],
+            ['name' => "Ilyass Hajji", 'email_prefix' => 'ilyass.hajji'],
+            ['name' => "Oussama Grioui", 'email_prefix' => 'oussama.grioui'],
+            ['name' => "Khaoula Rezzouq", 'email_prefix' => 'khaoula.rezzouq'],
+            ['name' => "Oumaima Rahouti", 'email_prefix' => 'oumaima.rahouti'],
+            ['name' => "Amine Jhilel", 'email_prefix' => 'amine.jhilel'],
+            ['name' => "Saad Iherdrane", 'email_prefix' => 'saad.iherdrane'],
+            ['name' => "Imad Rafai", 'email_prefix' => 'imad.rafai'],
+            ['name' => "Ilyes Rafai", 'email_prefix' => 'ilyes.rafai'],
+        ];
 
-        if ($ilyes && $adminRole) { // Assign Ilyes as admin
-            $ilyes->roles()->attach($adminRole->id);
+        foreach ($collaboratorData as $data) {
+            $email = $data['email_prefix'] . '@dhadx.com';
+            $user = User::firstOrCreate(
+                ['email' => $email],
+                [
+                    'name' => $data['name'],
+                    'password' => bcrypt('password'), // Default password for all
+                ]
+            );
+
+            // Assign roles
+            if ($data['name'] === 'Ilyes Rafai' && $adminRole) {
+                $user->roles()->syncWithoutDetaching($adminRole->id);
+            }
+            if ($collaboratorRole) {
+                $user->roles()->syncWithoutDetaching($collaboratorRole->id);
+            }
         }
-        // If Ilyes is also a collaborator (or just one or the other)
-        // if ($ilyes && $collaboratorRole) {
-        //     $ilyes->roles()->attach($collaboratorRole->id);
-        // }
-
-
-        // Create Mohammed and assign role(s)
-        $mohammed = User::create([
-            'name' => 'El Moussaoui Mohammed',
-            'email' => 'mohammed@dhadx.com',
-            'password' => bcrypt('password'), 
-        ]);
-
-        // Example: Assign Mohammed as collaborator
-        if ($mohammed && $collaboratorRole) {
-            $mohammed->roles()->attach($collaboratorRole->id);
-        }
-        // Or if Mohammed is also an admin (unlikely if Ilyes is the main admin)
-        // if ($mohammed && $adminRole) {
-        //    $mohammed->roles()->attach($adminRole->id);
-        // }
 
         // Call other seeders
         $this->call(SpecialitySeeder::class);

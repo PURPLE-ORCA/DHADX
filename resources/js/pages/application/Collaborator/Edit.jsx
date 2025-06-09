@@ -79,6 +79,20 @@ export default function Edit({ collaborator, specialities }) {
                     </div>
 
                     <div className="grid gap-2">
+                        <Label htmlFor="email">
+                            Email
+                        </Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            name="email"
+                            value={collaborator.email || ''} // Display collaborator's email, read-only
+                            readOnly
+                            className="bg-gray-100 dark:bg-gray-800" // Optional: style to indicate read-only
+                        />
+                    </div>
+
+                    <div className="grid gap-2">
                         <Label htmlFor="speciality_ids">Specialities</Label>
                         <div className="flex flex-wrap gap-4">
                             {specialities.map((spec) => (

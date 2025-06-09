@@ -10,7 +10,12 @@ class Collaborator extends Model
     /** @use HasFactory<\Database\Factories\CollaboratorFactory> */
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'email', 'user_id']; // Add email, user_id
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function specialities()
     {

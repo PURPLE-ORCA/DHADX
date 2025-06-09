@@ -28,6 +28,11 @@ class User extends Authenticatable
         return $this->roles()->whereIn('name', $roleNames)->exists();
     }
 
+    public function collaboratorProfile()
+    {
+        return $this->hasOne(Collaborator::class);
+    }
+
     /**
      * The attributes that are mass assignable.
      *

@@ -11,6 +11,7 @@ import { toast } from "sonner";
 export default function Create({ specialities }) {
     const { data, setData, post, processing, reset, errors, clearErrors } = useForm({
         name: '',
+        email: '', // Add email
         speciality_ids: [],
     });
 
@@ -69,6 +70,22 @@ export default function Create({ specialities }) {
                             autoComplete="off"
                         />
                         <InputError message={errors.name} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label required htmlFor="email">
+                            Email
+                        </Label>
+                        <Input
+                            id="email"
+                            type="email" // Use type="email"
+                            name="email"
+                            value={data.email} // Add email to useForm data
+                            onChange={(e) => setData('email', e.target.value)}
+                            placeholder="collaborator@example.com"
+                            autoComplete="off"
+                        />
+                        <InputError message={errors.email} /> {/* Add InputError for email */}
                     </div>
 
                     <div className="grid gap-2">

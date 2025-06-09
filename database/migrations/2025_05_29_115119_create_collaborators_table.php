@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('collaborators', function (Blueprint $table) {
             $table->id();
             $table->string("name");
+            $table->string('email')->unique()->nullable(); // Unique, can be null if not yet linked
+            $table->foreignId('user_id')->nullable()->unique()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }
