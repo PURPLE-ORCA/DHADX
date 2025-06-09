@@ -34,11 +34,9 @@ function Data({ collaborators, onDeleted, auth }) { // Added auth prop
                         </TableCell>
                         <TableCell className="font-medium">
                             <div className="flex items-center justify-end gap-6">
-                                {/* {auth.abilities.canCreateTask && ( // Conditional rendering based on ability */}
                                     <Link className="flex items-center gap-1" href={route('tasks.create', { assignee_id: collaborator.id })}>
                                         <Plus className="w-4" /> Assign Task
                                     </Link>
-                                {/* )} */}
                                 <Link className="flex items-center gap-1" href={route('collaborators.edit', collaborator.id)}>
                                     <Pencil className="w-4" /> Edit
                                 </Link>

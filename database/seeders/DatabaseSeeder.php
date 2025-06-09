@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
                 ['email' => $email],
                 [
                     'name' => $data['name'],
-                    'password' => bcrypt('password'), // Default password for all
+                    'password' => bcrypt('password'), 
                 ]
             );
 

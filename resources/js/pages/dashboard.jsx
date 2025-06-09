@@ -17,6 +17,9 @@ function Dashboard({ collabCount, formationsCount, specialitysCount, coursCount,
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3 lg:grid-cols-4">
+
+                    {isAdmin ? (
+                        <>
                     <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
                         <div className="flex h-full flex-col items-center justify-center text-center">
                             <div className="text-4xl">{collabCount}</div>
@@ -41,10 +44,6 @@ function Dashboard({ collabCount, formationsCount, specialitysCount, coursCount,
                             <div className="mt-2 text-neutral-400">Formations</div>
                         </div>
                     </div>
-
-                    {/* Task Summaries */}
-                    {isAdmin ? (
-                        <>
                             <Link href={route('tasks.index')} className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
                                 <div className="flex h-full flex-col items-center justify-center text-center">
                                     <div className="text-4xl">{taskSummaries.submittedForReviewCount}</div>

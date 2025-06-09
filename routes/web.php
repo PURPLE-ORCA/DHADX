@@ -6,6 +6,7 @@ use App\Http\Controllers\CollaboratorController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FormationController;
 use App\Http\Controllers\SpecialityController;
+use App\Http\Controllers\CollaboratorPortalController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\TaskController;
@@ -38,6 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/tasks/{task}/comments', [TaskController::class, 'storeComment'])->name('tasks.storeComment');
 
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
+    Route::get('/my-tasks', [CollaboratorPortalController::class, 'myTasks'])->name('collaborator.tasks');
 
 });
 

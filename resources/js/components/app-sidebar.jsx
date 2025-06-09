@@ -1,84 +1,93 @@
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { Link, usePage } from '@inertiajs/react'; // Import usePage
-import { BriefcaseBusiness, Layers, LayoutGrid, Shapes, Tent, UsersRound, Trophy } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import { BriefcaseBusiness, Layers, LayoutGrid, ListChecks, Shapes, Tent, Trophy, UsersRound, ClipboardList } from 'lucide-react'; // Added ListChecks for My Tasks
 import AppLogo from './app-logo';
 
-// Define icons separately for clarity if needed, or keep inline as before
+// Define icons
 const iconDashboard = LayoutGrid;
 const iconCollaborators = UsersRound;
 const iconSpecialities = BriefcaseBusiness;
 const iconCours = Shapes;
 const iconFormations = Layers;
-const iconCamps = Tent;
+const iconAdminTasks = ClipboardList; // Changed from iconCamps for clarity if "Tasks" is different from "Camps"
+const iconCampsManagement = Tent; // Keep Tent if 'Camps' is a separate admin menu item
 const iconLeaderboard = Trophy;
+const iconMyTasks = ListChecks;
 
 export function AppSidebar() {
-    const { auth } = usePage().props; // Access auth and abilities
+    const { auth } = usePage().props;
+    const navItems = [];
 
-    // Start with items everyone sees
-    const mainNavItems = [
-        {
-            title: 'Dashboard',
-            url: '/dashboard', 
-            routeName: 'dashboard', 
-            icon: iconDashboard,
-        },
-        {
+    // --- Items everyone sees ---
+    navItems.push({
+        title: 'Dashboard',
+        url: route('dashboard'),
+        routeName: 'dashboard',
+        icon: iconDashboard,
+    });
+
+    // --- Items for Admins AND Collaborators ---
+    if (auth.user && (auth.abilities?.isAdmin || auth.abilities?.isCollaborator)) {
+        navItems.push({
             title: 'Leaderboard',
-            url: '/leaderboard',
+            url: route('leaderboard.index'),
             routeName: 'leaderboard.index',
             icon: iconLeaderboard,
-        },
-    ];
+        });
+    }
 
-    // Add admin-specific items
+    if (auth.user && auth.abilities?.isCollaborator) {
+        navItems.push({
+            title: 'My Tasks',
+            url: route('collaborator.tasks'), // You'll create this route & page
+            routeName: 'collaborator.tasks',
+            icon: iconMyTasks,
+        });
+    }
+
+    // --- Items SPECIFICALLY for Admins ---
     if (auth.user && auth.abilities?.isAdmin) {
-        mainNavItems.push(
+        navItems.push(
+            {
+                title: 'Tasks', // Admin view of all tasks/camps
+                url: route('tasks.index'), // Assuming this is the "all tasks" view
+                routeName: 'tasks.index', // This was previously just "Tasks"
+                icon: iconAdminTasks, // Using a more generic "tasks" icon
+            },
             {
                 title: 'Collaborators',
-                url: '/collaborators',
-                routeName: 'collaborators.index', 
+                url: route('collaborators.index'),
+                routeName: 'collaborators.index',
                 icon: iconCollaborators,
             },
             {
                 title: 'Specialities',
-                url: '/specialities',
+                url: route('specialities.index'),
                 routeName: 'specialities.index',
                 icon: iconSpecialities,
             },
             {
                 title: 'Cours',
-                url: '/cours',
+                url: route('cours.index'),
                 routeName: 'cours.index',
                 icon: iconCours,
             },
             {
                 title: 'Formations',
-                url: '/formations',
+                url: route('formations.index'),
                 routeName: 'formations.index',
                 icon: iconFormations,
             },
             {
                 title: 'Camps',
-                url: '/camps',
+                url: route('camps.index'),
                 routeName: 'camps.index',
-                icon: iconCamps,
+                icon: iconCampsManagement,
             }
         );
     }
-
-    // collaborator-specific items (if any, separate from admin)
-    // if (auth.user && auth.abilities?.isCollaborator && !auth.abilities?.isAdmin) {
-    //     mainNavItems.push({
-    //         title: 'My Progress', // Example
-    //         url: '/my-progress',
-    //         routeName: 'my.progress',
-    //         icon: SomeOtherIcon,
-    //     });
-    // }
-
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -86,8 +95,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            {/* Make sure AppLogo is wrapped in Link or is a Link itself */}
-                            <Link href={route('dashboard')}> {/* Use route() helper */}
+                            <Link href={route('dashboard')}>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
@@ -96,8 +104,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                {/* NavMain will receive the dynamically built list */}
-                <NavMain items={mainNavItems} />
+                <NavMain items={navItems} /> {/* Pass the directly built list */}
             </SidebarContent>
 
             <SidebarFooter>
