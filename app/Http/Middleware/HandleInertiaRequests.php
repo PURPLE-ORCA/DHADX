@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Illuminate\Support\Facades\Gate; // Ensure Gate is imported
 use Tighten\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
@@ -37,19 +37,32 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
-
         return [
             ...parent::share($request),
-            'name' => config('app.name'),
-            'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user() ? $request->user()->loadMissing('roles') : null,
+                'abilities' => $request->user() ? $this->getGateAbilities($request->user()) : [],
+            ],
+            'flash' => [ 
+                'success' => fn() => $request->session()->get('success'),
+                'error' => fn() => $request->session()->get('error'),
             ],
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
         ];
+    }
+
+    private function getGateAbilities($user): array // $user is already an instance of User model
+    {
+        // Define the abilities you want to check and share
+        $abilities = [
+            'isAdmin' => Gate::forUser($user)->allows('is_admin'),
+            'isCollaborator' => Gate::forUser($user)->allows('is_collaborator'),
+            // 'canCreateCollaborators' => Gate::forUser($user)->allows('create_collaborator_entity'),
+        ];
+
+        return $abilities;
     }
 }

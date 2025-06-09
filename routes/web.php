@@ -16,17 +16,16 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
-
-    Route::resource('collaborators', CollaboratorController::class);
-
-    Route::resource('specialities', SpecialityController::class);
-
-    Route::resource('formations', FormationController::class);
-
-    Route::resource('cours', CourController::class);
-
-    Route::resource('camps', CampController::class);
+    
+    Route::middleware('can:is_admin')->group(function () {
+        Route::resource('camps', CampController::class);
+        Route::resource('collaborators', CollaboratorController::class);
+        Route::resource('specialities', SpecialityController::class);
+        Route::resource('formations', FormationController::class);
+        Route::resource('cours', CourController::class);
+    });
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
+
 });
 
 require __DIR__ . '/settings.php';
