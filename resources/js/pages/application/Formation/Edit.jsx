@@ -11,12 +11,14 @@ import { toast } from "sonner";
 export default function Edit({ formation, cours }) {
     const { data, setData, put, processing, reset, errors, clearErrors } = useForm({
         name: formation.name,
+        icon_name: formation.icon_name || '', // Add icon_name to the form data
         cour_ids: formation.cours.map((s) => s.id),
     });
 
     useEffect(() => {
         setData({
             name: formation.name,
+            icon_name: formation.icon_name || '', // Pre-populate icon_name
             cour_ids: formation.cours.map((s) => s.id),
         });
     }, [formation, setData]);
@@ -75,6 +77,21 @@ export default function Edit({ formation, cours }) {
                             autoComplete="off"
                         />
                         <InputError message={errors.name} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="icon_name">
+                            Icon Name (from Iconify)
+                        </Label>
+                        <Input
+                            id="icon_name"
+                            name="icon_name"
+                            value={data.icon_name}
+                            onChange={(e) => setData('icon_name', e.target.value)}
+                            placeholder="e.g., mdi:home, ph:book-fill"
+                            autoComplete="off"
+                        />
+                        <InputError message={errors.icon_name} />
                     </div>
 
                     <div className="grid gap-2">

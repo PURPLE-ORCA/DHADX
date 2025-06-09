@@ -15,31 +15,31 @@ class FormationSeeder extends Seeder
     public function run(): void
     {
         // Classe 1
-        $html = Formation::create(["name" => "HTML5"]);
-        $css = Formation::create(["name" => "CSS3"]);
-        $sass = Formation::create(["name" => "SASS"]);
-        $tailwind = Formation::create(["name" => "Tailwindcss"]);
+        $html = Formation::create(["name" => "HTML5", "icon_name" => "mdi:language-html5"]);
+        $css = Formation::create(["name" => "CSS3", "icon_name" => "mdi:language-css3"]);
+        $sass = Formation::create(["name" => "SASS", "icon_name" => "mdi:sass"]);
+        $tailwind = Formation::create(["name" => "Tailwindcss", "icon_name" => "mdi:tailwind"]);
 
         // Classe 2
-        $js = Formation::create(["name" => "JavaScript"]);
-        $ts = Formation::create(["name" => "TypeScript"]);
-        $react = Formation::create(["name" => "React.js"]);
+        $js = Formation::create(["name" => "JavaScript", "icon_name" => "mdi:language-javascript"]);
+        $ts = Formation::create(["name" => "TypeScript", "icon_name" => "mdi:language-typescript"]);
+        $react = Formation::create(["name" => "React.js", "icon_name" => "mdi:react"]);
 
         // Classe 3
-        $php = Formation::create(["name" => "PHP"]);
-        $laravel = Formation::create(["name" => "Laravel"]);
-        $inertia = Formation::create(["name" => "Inertia.js"]);
+        $php = Formation::create(["name" => "PHP", "icon_name" => "mdi:language-php"]);
+        $laravel = Formation::create(["name" => "Laravel", "icon_name" => "mdi:laravel"]);
+        $inertia = Formation::create(["name" => "Inertia.js", "icon_name" => "mdi:puzzle-outline"]); // Using a generic icon for Inertia.js
 
         // Classe 4
-        $python = Formation::create(["name" => "Python"]);
-        $scripts = Formation::create(["name" => "Scripts d’automatisation"]);
+        $python = Formation::create(["name" => "Python", "icon_name" => "mdi:language-python"]);
+        $scripts = Formation::create(["name" => "Scripts d’automatisation", "icon_name" => "mdi:robot"]);
 
         // Classe 5
-        $sql = Formation::create(["name" => "SQL"]);
-        $git = Formation::create(["name" => "Git"]);
+        $sql = Formation::create(["name" => "SQL", "icon_name" => "mdi:database"]);
+        $git = Formation::create(["name" => "Git", "icon_name" => "mdi:git"]);
 
         // Classe 6
-        $deploy = Formation::create(["name" => "Déploiement Web"]);
+        $deploy = Formation::create(["name" => "Déploiement Web", "icon_name" => "mdi:cloud-upload"]);
 
         // Get cours
         $cours1 = Cour::where('name', 'Classe 1')->first();

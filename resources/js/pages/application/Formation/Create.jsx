@@ -11,6 +11,7 @@ import { toast } from "sonner";
 export default function Create({ cours }) {
     const { data, setData, post, processing, reset, errors, clearErrors } = useForm({
         name: '',
+        icon_name: '', // Add icon_name to the form data
         cour_ids: [],
     });
 
@@ -69,6 +70,21 @@ export default function Create({ cours }) {
                             autoComplete="off"
                         />
                         <InputError message={errors.name} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="icon_name">
+                            Icon Name (from Iconify)
+                        </Label>
+                        <Input
+                            id="icon_name"
+                            name="icon_name"
+                            value={data.icon_name}
+                            onChange={(e) => setData('icon_name', e.target.value)}
+                            placeholder="e.g., mdi:home, ph:book-fill"
+                            autoComplete="off"
+                        />
+                        <InputError message={errors.icon_name} />
                     </div>
 
                     <div className="grid gap-2">

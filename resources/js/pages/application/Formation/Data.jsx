@@ -2,6 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Link } from '@inertiajs/react';
 import { Pencil } from 'lucide-react';
 import Delete from './Delete';
+import { Icon } from '@iconify/react'; // Import Iconify component
 
 function Data({ formations, onDeleted }) {
     return (
@@ -16,7 +17,10 @@ function Data({ formations, onDeleted }) {
             <TableBody>
                 {formations.map((formation) => (
                     <TableRow key={formation.id}>
-                        <TableCell className="font-medium">{formation.name}</TableCell>
+                        <TableCell className="font-medium flex items-center gap-2">
+                            {formation.icon_name && <Icon icon={formation.icon_name} className="w-5 h-5" />}
+                            {formation.name}
+                        </TableCell>
                         <TableCell className="font-medium">
                             <div className="flex flex-wrap gap-2">
                                 {formation.cours.map((e, i) => (

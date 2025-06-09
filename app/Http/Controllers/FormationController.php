@@ -7,6 +7,7 @@ use App\Http\Requests\StoreFormationRequest;
 use App\Http\Requests\UpdateFormationRequest;
 use App\Models\Cour;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Validator;
 
 class FormationController extends Controller
 {
@@ -39,6 +40,7 @@ class FormationController extends Controller
 
         $formation = Formation::create([
             'name' => $validated['name'],
+            'icon_name' => $validated['icon_name'] ?? null,
         ]);
 
         $formation->cours()->sync($validated['cour_ids'] ?? []);
@@ -74,8 +76,17 @@ class FormationController extends Controller
     {
         $validated = $request->validated();
 
+        // Manually apply unique validation for name, ignoring the current formation
+        Validator::make($validated, [
+            'name' => [
+                'required',
+                \Illuminate\Validation\Rule::unique('formations')->ignore($formation->id),
+            ],
+        ])->validate();
+
         $formation->update([
             'name' => $validated['name'],
+            'icon_name' => $validated['icon_name'] ?? null,
         ]);
 
         $formation->cours()->sync($validated['cour_ids'] ?? []);

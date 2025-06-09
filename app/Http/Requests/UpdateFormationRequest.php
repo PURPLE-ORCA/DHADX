@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateFormationRequest extends FormRequest
 {
@@ -22,10 +23,8 @@ class UpdateFormationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => [
-                'required',
-                Rule::unique('formations')->ignore($this->formation),
-            ],
+            'name' => 'required',
+            'icon_name' => 'nullable|string',
             'cour_ids' => 'array',
             'cour_ids.*' => 'exists:cours,id',
 

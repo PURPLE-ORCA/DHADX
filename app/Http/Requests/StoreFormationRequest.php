@@ -23,6 +23,7 @@ class StoreFormationRequest extends FormRequest
     {
         return [
             "name" => "required|unique:formations",
+            "icon_name" => "nullable|string",
             'cour_ids' => 'array',
             'cour_ids.*' => 'exists:cours,id',
         ];
