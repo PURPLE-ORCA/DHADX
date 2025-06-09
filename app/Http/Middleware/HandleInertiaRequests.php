@@ -60,6 +60,13 @@ class HandleInertiaRequests extends Middleware
         $abilities = [
             'isAdmin' => Gate::forUser($user)->allows('is_admin'),
             'isCollaborator' => Gate::forUser($user)->allows('is_collaborator'),
+            'canViewTask' => Gate::forUser($user)->allows('view_task'),
+            'canCreateTask' => Gate::forUser($user)->allows('create_task'),
+            'canEditTask' => Gate::forUser($user)->allows('edit_task'),
+            'canDeleteTask' => Gate::forUser($user)->allows('delete_task'),
+            'canUpdateTaskStatusCollaborator' => Gate::forUser($user)->allows('update_task_status_collaborator'),
+            'canReviewTaskSubmission' => Gate::forUser($user)->allows('review_task_submission'),
+            'canAddCommentToTask' => Gate::forUser($user)->allows('add_task_comment'),
             // 'canCreateCollaborators' => Gate::forUser($user)->allows('create_collaborator_entity'),
         ];
 

@@ -8,6 +8,7 @@ use App\Http\Controllers\FormationController;
 use App\Http\Controllers\SpecialityController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeaderboardController;
+use App\Http\Controllers\TaskController;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -23,7 +24,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('specialities', SpecialityController::class);
         Route::resource('formations', FormationController::class);
         Route::resource('cours', CourController::class);
+        Route::resource('tasks', TaskController::class)->except(['index', 'show']);
     });
+
+    Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+    Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
+
+    Route::post('/tasks/{task}/start-progress', [TaskController::class, 'startProgress'])->name('tasks.startProgress');
+    Route::post('/tasks/{task}/submit-for-review', [TaskController::class, 'submitForReview'])->name('tasks.submitForReview');
+    Route::post('/tasks/{task}/approve-completion', [TaskController::class, 'approveCompletion'])->name('tasks.approveCompletion');
+    Route::post('/tasks/{task}/request-revision', [TaskController::class, 'requestRevision'])->name('tasks.requestRevision');
+    Route::post('/tasks/{task}/cancel', [TaskController::class, 'cancelTask'])->name('tasks.cancel');
+    Route::post('/tasks/{task}/comments', [TaskController::class, 'storeComment'])->name('tasks.storeComment');
+
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
 
 });

@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Task;
+use App\Models\TaskComment;
 
 class User extends Authenticatable
 {
@@ -31,6 +33,21 @@ class User extends Authenticatable
     public function collaboratorProfile()
     {
         return $this->hasOne(Collaborator::class);
+    }
+
+    public function assignedTasks()
+    {
+        return $this->hasMany(Task::class, 'assignee_id')->orderBy('due_date', 'asc');
+    }
+
+    public function createdTasks()
+    {
+        return $this->hasMany(Task::class, 'assigner_id')->orderBy('created_at', 'desc');
+    }
+
+    public function taskComments()
+    {
+        return $this->hasMany(TaskComment::class);
     }
 
     /**

@@ -1,9 +1,10 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Link } from '@inertiajs/react';
-import { Pencil } from 'lucide-react';
+import { Button } from '@/components/ui/button'; // Import Button component
+import { Pencil, Plus } from 'lucide-react'; // Import Pencil and Plus icon
 import Delete from './Delete';
 
-function Data({ collaborators, onDeleted }) {
+function Data({ collaborators, onDeleted, auth }) { // Added auth prop
     return (
         <Table>
             <TableHeader>
@@ -33,6 +34,11 @@ function Data({ collaborators, onDeleted }) {
                         </TableCell>
                         <TableCell className="font-medium">
                             <div className="flex items-center justify-end gap-6">
+                                {/* {auth.abilities.canCreateTask && ( // Conditional rendering based on ability */}
+                                    <Link className="flex items-center gap-1" href={route('tasks.create', { assignee_id: collaborator.id })}>
+                                        <Plus className="w-4" /> Assign Task
+                                    </Link>
+                                {/* )} */}
                                 <Link className="flex items-center gap-1" href={route('collaborators.edit', collaborator.id)}>
                                     <Pencil className="w-4" /> Edit
                                 </Link>

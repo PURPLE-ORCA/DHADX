@@ -12,7 +12,7 @@ const breadcrumbs = [
     },
 ];
 
-export default function Collaborators({ collaborators, specialities }) {
+export default function Collaborators({ collaborators, specialities, auth }) { // Added auth prop
     const [search, setSearch] = useState('');
     const [filteredCollaborators, setFilteredCollaborators] = useState(collaborators);
 
@@ -47,7 +47,7 @@ export default function Collaborators({ collaborators, specialities }) {
                     </Link>
                 </div>
 
-                <Data collaborators={filteredCollaborators} onDeleted={handleDelete} />
+                <Data collaborators={filteredCollaborators} onDeleted={handleDelete} auth={auth} /> {/* Passed auth prop */}
             </div>
         </AppLayout>
     );
