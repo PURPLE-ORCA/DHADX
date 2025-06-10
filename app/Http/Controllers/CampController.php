@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Camp;
 use App\Models\Collaborator;
 use App\Models\Cour;
+use App\Models\User; // Import User model
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Notifications\CollaboratorEnrolledInCampNotification; // Import Notification class
 
 class CampController extends Controller
 {
@@ -46,13 +48,19 @@ class CampController extends Controller
         $cour = Cour::with('formations')->findOrFail($request->cour_id);
 
         foreach ($cour->formations as $formation) {
-            Camp::updateOrCreate([
+            $camp = Camp::updateOrCreate([ // Assign the created/updated camp to $camp
                 'collaborator_id' => $request->collaborator_id,
                 'cour_id' => $cour->id,
                 'formation_id' => $formation->id,
             ], [
                 'progress' => 0,
             ]);
+
+            // Send notification to the enrolled collaborator
+            $collaborator = Collaborator::find($request->collaborator_id);
+            if ($collaborator && $collaborator->user) {
+                $collaborator->user->notify(new CollaboratorEnrolledInCampNotification($camp));
+            }
         }
 
         return redirect()->route('camps.index');

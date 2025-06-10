@@ -9,6 +9,7 @@ use App\Http\Controllers\SpecialityController;
 use App\Http\Controllers\CollaboratorPortalController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeaderboardController;
+use App\Http\Controllers\NotificationController; // Import NotificationController
 use App\Http\Controllers\TaskController;
 use Inertia\Inertia;
 
@@ -17,6 +18,11 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    // Notification Routes
+    Route::get('/notifications/pending-count', [NotificationController::class, 'pendingCount'])->name('notifications.pendingCount');
+    Route::get('/notifications/latest', [NotificationController::class, 'latest'])->name('notifications.latest');
+    Route::post('/notifications/mark-read/{notification?}', [NotificationController::class, 'markRead'])->name('notifications.markRead');
+
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
     
     Route::middleware('can:is_admin')->group(function () {
