@@ -32,12 +32,12 @@ export default function Welcome() {
                                     >
                                         Log in
                                     </Link>
-                                    <Link
+                                    {/* <Link
                                         href={route('register')}
                                         className="bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring inline-block rounded-md px-5 py-2 text-sm font-medium shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none"
                                     >
                                         Register
-                                    </Link>
+                                    </Link> */}
                                 </>
                             )}
                         </div>

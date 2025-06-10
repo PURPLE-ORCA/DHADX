@@ -9,7 +9,7 @@ use App\Http\Controllers\SpecialityController;
 use App\Http\Controllers\CollaboratorPortalController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeaderboardController;
-use App\Http\Controllers\NotificationController; // Import NotificationController
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TaskController;
 use Inertia\Inertia;
 

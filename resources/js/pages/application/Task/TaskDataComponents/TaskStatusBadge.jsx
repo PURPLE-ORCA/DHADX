@@ -62,7 +62,7 @@ export default function TaskStatusBadge({ status }) {
 
     return (
         <Badge className={config.badgeClass}>
-            <StatusIcon className="mr-1 h-3 w-3" />
+            <StatusIcon className=" h-2 w-2" />
             {status.replace('_', ' ').toUpperCase()}
         </Badge>
     );

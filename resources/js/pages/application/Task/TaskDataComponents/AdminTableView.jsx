@@ -9,8 +9,9 @@ import TaskStatusBadge from './TaskStatusBadge';
 
 export default function AdminTableView({ tasks, onDeleted }) {
     return (
-        <Table>
-            <TableHeader>
+        <div className="overflow-x-hidden ">
+            <Table>
+                <TableHeader>
                 <TableRow>
                     <TableHead>Title</TableHead>
                     <TableHead>Assignee</TableHead>
@@ -18,7 +19,7 @@ export default function AdminTableView({ tasks, onDeleted }) {
                     <TableHead>Due Date</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Priority</TableHead>
-                    <TableHead></TableHead>
+                    <TableHead>Actions</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -51,5 +52,6 @@ export default function AdminTableView({ tasks, onDeleted }) {
                 ))}
             </TableBody>
         </Table>
+        </div>
     );
 }

@@ -9,7 +9,7 @@ export default function AppLogoIcon(props) {
             preserveAspectRatio="xMidYMid meet"
             {...props}
         >
-            <g transform="translate(0.000000,215.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
+            <g transform="translate(0.000000,215.000000) scale(0.100000,-0.100000)" stroke="none">
                 <path
                     d="M988 2026 l-77 -83 77 -76 c43 -42 82 -77 87 -77 6 0 46 36 90 80
 l80 80 -80 80 c-44 44 -84 80 -90 79 -5 0 -45 -37 -87 -83z"

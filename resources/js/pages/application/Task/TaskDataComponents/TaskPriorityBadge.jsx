@@ -25,7 +25,7 @@ export default function TaskPriorityBadge({ priority }) {
     const config = getPriorityConfig(priority);
 
     return (
-        <Badge className={`ml-2 shrink-0 font-semibold ${config.badgeClass}`}>
+        <Badge className={` shrink-0 font-semibold ${config.badgeClass}`}>
             {priority.toUpperCase()}
         </Badge>
     );
