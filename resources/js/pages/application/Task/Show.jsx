@@ -18,7 +18,6 @@ import {
   Play,
   Send,
   XCircle,
-  ArrowLeft,
   FileText,
   Target,
 } from "lucide-react";
@@ -26,7 +25,6 @@ import {
 export default function Show({ task, auth }) {
   const isAdmin = auth.user.roles.some((role) => role.name === "admin");
   const isAssignee = auth.user.id === task.assignee_id;
-  const isAssigner = auth.user.id === task.assigner_id;
 
   const {
     data: commentData,
@@ -128,16 +126,11 @@ export default function Show({ task, auth }) {
   return (
     <AppLayout>
       <Head title={task.title} />
-      <div className="min-h-screen bg-white dark:bg-gray-950">
+      <div className="min-h-screen bg-white dark:bg-black">
         {/* Header Section */}
-        <div className="border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950">
+        <div className="border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-black">
           <div className="px-6 py-8">
-            <div className="flex items-center gap-4 mb-6">
-              <Button variant="ghost" onClick={() => window.history.back()} className="hover:bg-gray-100 dark:hover:bg-gray-800">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Tasks
-              </Button>
-            </div>
+  
 
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
               <div className="flex-1">
@@ -159,7 +152,7 @@ export default function Show({ task, auth }) {
               </div>
 
               {/* Quick Stats */}
-              <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-6 min-w-[280px]">
+              <div className="bg-gray-50 dark:bg-black rounded-xl p-6 min-w-[280px]">
                 <h3 className="font-semibold text-black dark:text-white mb-4">Task Details</h3>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
@@ -305,7 +298,7 @@ export default function Show({ task, auth }) {
                     <div className="space-y-4">
                       {task.comments.length > 0 ? (
                         task.comments.map((comment) => (
-                          <div key={comment.id} className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-100 dark:border-gray-800">
+                          <div key={comment.id} className="bg-gray-50 dark:bg-blackrounded-lg p-4 border border-gray-100 dark:border-gray-800">
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center gap-2">
                                 <div className="w-8 h-8 bg-[var(--brand-color)] rounded-full flex items-center justify-center">
@@ -330,7 +323,7 @@ export default function Show({ task, auth }) {
                       )}
                     </div>
 
-                    <Separator className="bg-gray-200 dark:bg-gray-700" />
+                    <Separator className="bg-gray-200 dark:bg-black" />
 
                     {/* Add Comment Form */}
                     <form onSubmit={handleAddComment} className="space-y-4">
@@ -371,7 +364,7 @@ export default function Show({ task, auth }) {
                   <CardContent>
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+                        <div className="w-2 h-2 bg-gray-300 dark:bg-blackrounded-full"></div>
                         <div>
                           <div className="text-sm font-medium text-black dark:text-white">Task Created</div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
