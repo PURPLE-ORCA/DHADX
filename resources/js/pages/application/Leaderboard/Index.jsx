@@ -3,11 +3,14 @@ import { Head } from '@inertiajs/react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 export default function Index({ leaderboardEntries }) {
-    const breadcrumbs = [/* ... */];
+    const breadcrumbs = [
+        // { label: 'Dashboard', href: route('dashboard') },
+        // { label: 'Leaderboard', href: route('leaderboard.index') },
+    ];
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Leaderboard" />
+        <AppLayout>
+            <Head title="Collaborators" />
             <div className="p-4 md:p-6 lg:p-8">
                 <h1 className="mb-6 text-2xl font-bold">Collaborator Leaderboard</h1>
                 <div className="rounded-lg border">
@@ -24,9 +27,7 @@ export default function Index({ leaderboardEntries }) {
                             {leaderboardEntries.map((entry, index) => (
                                 <TableRow key={entry.id}>
                                     <TableCell className="font-medium">{index + 1}</TableCell>
-                                    <TableCell>
-                                        {entry.name}
-                                    </TableCell>
+                                    <TableCell>{entry.name}</TableCell>
                                     <TableCell>
                                         {/* This part for 'Highest Class Level' remains the same logic,
                                             but if max_cour_level is NULL from the DB, it shows 'No camp yet'
