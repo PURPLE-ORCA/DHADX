@@ -58,7 +58,7 @@ class TaskController extends Controller
     {
         $validated = $request->validated();
 
-        Task::create([
+        $task = Task::create([
             'title' => $validated['title'],
             'description' => $validated['description'],
             'assignee_id' => $validated['assignee_id'],
@@ -68,7 +68,11 @@ class TaskController extends Controller
             'priority' => $validated['priority'],
         ]);
 
-        // TODO: Send notification to assignee.
+        // Send notification to assignee
+        $assignee = User::find($validated['assignee_id']);
+        if ($assignee) {
+            $assignee->notify(new \App\Notifications\TaskAssignedNotification($task));
+        }
 
         return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
     }
@@ -143,6 +147,16 @@ class TaskController extends Controller
                 'comment' => $request->input('comment'),
             ]);
         }
+
+        // Send notification to admin(s)
+        $admins = User::whereHas('roles', function ($query) {
+            $query->where('name', 'admin');
+        })->get();
+
+        foreach ($admins as $admin) {
+            $admin->notify(new \App\Notifications\TaskSubmittedForReviewNotification($task));
+        }
+
         return redirect()->back()->with('success', 'Task submitted for review.');
     }
 
