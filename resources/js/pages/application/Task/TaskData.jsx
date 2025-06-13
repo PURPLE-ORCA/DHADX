@@ -1,6 +1,6 @@
 import { Clock } from 'lucide-react';
 import AdminTableView from './TaskDataComponents/AdminTableView';
-import KanbanBoard from './TaskDataComponents/KanbanBoard';
+import TasksByStatusView from './TaskDataComponents/TasksByStatusView';
 
 export default function TaskData({ tasks, auth, onDeleted }) {
     const isAdmin = auth.user.roles.some((role) => role.name === 'admin');
@@ -13,14 +13,12 @@ export default function TaskData({ tasks, auth, onDeleted }) {
                         <Clock className="h-16 w-16 text-black dark:text-white" />
                     </div>
                     <h3 className="mb-4 text-2xl font-bold text-black dark:text-white">No tasks found</h3>
-                    <p className="mx-auto max-w-md font-medium text-black dark:text-white">
-                        {isAdmin ? 'Create your first task to get started.' : 'No tasks match your current search criteria.'}
+                    <p className="mx-auto max-w-md font-medium text-neutral-600 dark:text-neutral-300">
+                        There are currently no tasks to display for the selected criteria.
                     </p>
                 </div>
-            ) : isAdmin ? (
-                <AdminTableView tasks={tasks} onDeleted={onDeleted} />
             ) : (
-                <KanbanBoard tasks={tasks} />
+                <TasksByStatusView tasks={tasks} />
             )}
         </>
     );

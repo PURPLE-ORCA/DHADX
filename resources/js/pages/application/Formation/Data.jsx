@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Link } from '@inertiajs/react';
 import { Pencil } from 'lucide-react';
 import Delete from './Delete';
-import { Icon } from '@iconify/react'; // Import Iconify component
+import { Icon } from '@iconify/react';
 
 function Data({ formations, onDeleted }) {
     return (

@@ -2,6 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Link } from '@inertiajs/react';
 import { Pencil } from 'lucide-react';
 import Delete from './Delete';
+import { Icon } from '@iconify/react';
 
 function Data({ cours, onDeleted }) {
     return (
@@ -30,7 +31,7 @@ function Data({ cours, onDeleted }) {
                                         key={i}
                                         className="rounded-full bg-neutral-200 px-2 text-xs font-semibold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
                                     >
-                                        # {formation.name}
+                                         {formation.icon_name && <Icon icon={formation.icon_name} className="w-5 h-5" />}
                                     </span>
                                 ))}
                             </div>

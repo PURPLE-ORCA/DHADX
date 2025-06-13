@@ -104,7 +104,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={navItems} /> {/* Pass the directly built list */}
+                <NavMain items={navItems} />
             </SidebarContent>
 
             <SidebarFooter>

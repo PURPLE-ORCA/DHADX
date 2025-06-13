@@ -5,17 +5,17 @@ export const getPriorityConfig = (priority) => {
         low: {
             variant: 'outline',
             color: 'text-black dark:text-white',
-            badgeClass: 'border-black dark:border-white text-black dark:text-white',
+            badgeClass: '',
         },
         medium: {
             variant: 'default',
             color: 'text-white',
-            badgeClass: 'bg-[var(--brand-color)] text-white hover:bg-[var(--brand-color)]/90',
+            badgeClass: '',
         },
         high: {
             variant: 'default',
             color: 'text-white',
-            badgeClass: 'bg-black dark:bg-white text-white dark:text-black',
+            badgeClass: '',
         },
     };
     return configs[priority] || configs.low;
@@ -25,7 +25,9 @@ export default function TaskPriorityBadge({ priority }) {
     const config = getPriorityConfig(priority);
 
     return (
-        <Badge className={` shrink-0 font-semibold ${config.badgeClass}`}>
+        <Badge
+            className={`dark:text-neutral-200 shrink-0 rounded-full bg-neutral-200 px-2 text-xs font-semibold text-neutral-700 dark:bg-neutral-800 ${config.badgeClass}`}
+        >
             {priority.toUpperCase()}
         </Badge>
     );

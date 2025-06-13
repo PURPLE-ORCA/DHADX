@@ -37,7 +37,7 @@ export default function Index({ tasks, auth }) {
           <Head title="Tasks Hub" />
           <div className="min-h-screen bg-white dark:bg-black">
               {/* Header Section */}
-              <div className="border-b border-gray-100 bg-white dark:border-gray-800 dark:bg-black">
+              <div className="">
                   <div className="px-6 py-8">
                       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                           <div></div>
@@ -46,12 +46,28 @@ export default function Index({ tasks, auth }) {
                               <div className="relative max-w-md flex-1">
                                   <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
                                   <Input
-                                      className="border-gray-200 pl-10 focus:border-[var(--brand-color)] focus:ring-[var(--brand-color)] dark:border-gray-700"
+                                      className="border-[var(--backgorund)] pl-10 focus:border-[var(--brand-color)] focus:ring-[var(--brand-color)] dark:border-[var(background)]"
                                       type="text"
                                       placeholder="Search tasks..."
                                       value={search}
                                       onChange={handleSearch}
                                   />
+                              </div>
+                          </div>
+                          {/* Controls Section */}
+                          <div className="bg-gray-50 dark:border-gray-800 dark:bg-black">
+                              <div className="">
+                                  <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+                                      {isAdmin && (
+                                          <Link
+                                              href={route('tasks.create')}
+                                              className="flex items-center gap-2 rounded-lg bg-[var(--brand-color)] px-4 text-sm font-medium text-white transition-colors hover:bg-[var(--brand-color)]/90"
+                                          >
+                                              <Plus className="h-4 w-4" />
+                                              Add New Task
+                                          </Link>
+                                      )}
+                                  </div>
                               </div>
                           </div>
                           {/* Stats */}
@@ -77,25 +93,8 @@ export default function Index({ tasks, auth }) {
                   </div>
               </div>
 
-              {/* Controls Section */}
-              <div className="bg-gray-50 dark:border-gray-800 dark:bg-black">
-                  <div className="px-6 py-4">
-                      <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-                          {isAdmin && (
-                              <Link
-                                  href={route('tasks.create')}
-                                  className="flex items-center gap-2 rounded-lg bg-[var(--brand-color)] px-4 py-2 font-medium text-white transition-colors hover:bg-[var(--brand-color)]/90"
-                              >
-                                  <Plus className="h-4 w-4" />
-                                  Add New Task
-                              </Link>
-                          )}
-                      </div>
-                  </div>
-              </div>
-
               {/* Content Section */}
-              <div className="px-6 py-8">
+              <div className="px-6 py-2">
                   <TaskData tasks={filteredTasks} onDeleted={handleDelete} auth={auth} />
               </div>
           </div>
