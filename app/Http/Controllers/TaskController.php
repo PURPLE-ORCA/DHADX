@@ -82,7 +82,8 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        $task->load(['assignee', 'assigner', 'comments.user']);
+        // Ensure it's always the freshest data, especially after an update
+        $task->refresh()->load(['assignee', 'assigner', 'comments.user']);
 
         return Inertia::render('application/Task/Show', [
             'task' => $task,

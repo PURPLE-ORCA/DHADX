@@ -1,68 +1,110 @@
 "use client";
 import AppLayout from '@/layouts/app-layout';
-import { Head, useForm } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react"; // Removed useForm from here if not used for general actions
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
+import { Textarea } from '@/components/ui/textarea'; // Shadcn Textarea
 import { Separator } from '@/components/ui/separator';
-import InputError from '@/components/input-error';
+import InputError from '@/components/input-error'; // Assuming you might need this for dialog
 import { format } from "date-fns";
+import { useState, useEffect } from 'react'; // Added useEffect
 import {
-  Calendar,
-  User,
-  Clock,
-  MessageSquare,
-  CheckCircle2,
-  AlertCircle,
-  Play,
-  Send,
-  XCircle,
-  FileText,
-  Target,
+    Dialog,
+    DialogTrigger,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogClose,
+    // DialogFooter // Check if this component exists/is needed
+} from '@/components/motion-primitives/dialog'; // Adjust path for motion-primitives dialog
+import {
+  Calendar, User, Clock, MessageSquare, CheckCircle2, AlertCircle, Play, Send, XCircle, FileText, Target,
 } from "lucide-react";
+
+// Assuming useForm for comments is still needed
+import { useForm as useCommentForm } from "@inertiajs/react";
+
 
 export default function Show({ task, auth }) {
   const isAdmin = auth.user.roles.some((role) => role.name === "admin");
   const isAssignee = auth.user.id === task.assignee_id;
 
   const {
-    data: commentData,
-    setData: setCommentData,
+    data: commentDataForForm, // Renamed to avoid confusion with revisionComment
+    setData: setCommentDataForForm,
     post: postComment,
     processing: commentProcessing,
     errors: commentErrors,
-    reset: resetComment,
-  } = useForm({
+    reset: resetCommentForm,
+  } = useCommentForm({ // Explicitly useCommentForm
     comment: "",
   });
 
-  const { post: postAction, processing: actionProcessing } = useForm({});
+  // State for the revision dialog
+  const [isRevisionDialogOpen, setIsRevisionDialogOpen] = useState(false);
+  const [revisionComment, setRevisionComment] = useState('');
+  const [revisionCommentError, setRevisionCommentError] = useState(''); // For local validation
+  const [actionProcessing, setActionProcessing] = useState(false); // For general status actions
 
   const handleAddComment = (e) => {
     e.preventDefault();
     postComment(route("tasks.storeComment", task.id), {
-      onSuccess: () => resetComment(),
+      onSuccess: () => resetCommentForm(),
     });
   };
 
-  const handleStatusAction = (actionRoute, comment = null) => {
-    postAction(route(actionRoute, task.id), {
-        data: actionRoute === 'tasks.requestRevision' && comment ? { comment } : {},
+  // General status action handler (for actions NOT needing a dialog comment)
+  const handleSimpleStatusAction = (actionRoute) => {
+    setActionProcessing(true);
+    router.post(route(actionRoute, task.id), {}, { // Empty data object
         preserveScroll: true,
-        preserveState: true,
+        preserveState: false,
+        onSuccess: () => router.reload({ only: ['task'] }),
+        onError: (errors) => console.error("Action failed", errors),
+        onFinish: () => setActionProcessing(false),
+    });
+  };
+
+  // Handler for submitting the revision from the dialog
+  const handleSubmitRevision = () => {
+    if (!revisionComment.trim()) {
+        setRevisionCommentError('Revision reason cannot be empty.');
+        return;
+    }
+    setRevisionCommentError(''); // Clear error
+    setActionProcessing(true);
+
+    router.post(route('tasks.requestRevision', task.id), { comment: revisionComment }, {
+        preserveScroll: true,
+        preserveState: false,
         onSuccess: () => {
             router.reload({ only: ['task'] });
-            // Optionally, show a success toast here if you're using Sonner/react-hot-toast
-            // toast.success("Task status updated!");
+            setIsRevisionDialogOpen(false); // Close dialog
+            setRevisionComment(''); // Reset comment
         },
         onError: (errors) => {
-            console.error("Action failed", errors);
-            // Optionally show an error toast
-            // toast.error("Failed to update task status.");
+            console.error("Request Revision Action failed", errors);
+            if(errors.comment) {
+                setRevisionCommentError(errors.comment); // Show backend validation error
+            } else {
+                // Show a generic error toast/message
+            }
+        },
+        onFinish: () => {
+            setActionProcessing(false);
         }
     });
   };
+  
+  // Reset revision comment when dialog closes
+  useEffect(() => {
+    if (!isRevisionDialogOpen) {
+        setRevisionComment('');
+        setRevisionCommentError('');
+    }
+  }, [isRevisionDialogOpen]);
 
   const getStatusConfig = (status) => {
     const configs = {
@@ -131,6 +173,16 @@ export default function Show({ task, auth }) {
   const statusConfig = getStatusConfig(task.status);
   const priorityConfig = getPriorityConfig(task.priority);
   const StatusIcon = statusConfig.icon;
+
+
+  // Define variants for motion-primitives dialog (example)
+  const dialogVariants = {
+    initial: { opacity: 0, scale: 0.9 },
+    animate: { opacity: 1, scale: 1 },
+    exit: { opacity: 0, scale: 0.95, y: 20 }, // Example custom exit
+  };
+  const dialogTransition = { duration: 0.3, ease: "anticipate" };
+
 
   return (
       <AppLayout>
@@ -231,7 +283,7 @@ export default function Show({ task, auth }) {
                                       <div className="flex flex-wrap gap-3">
                                           {isAssignee && task.status === 'pending' && (
                                               <Button
-                                                  onClick={() => handleStatusAction('tasks.startProgress')}
+                                                  onClick={() => handleSimpleStatusAction('tasks.startProgress')}
                                                   disabled={actionProcessing}
                                                   className="bg-[var(--brand-color)] text-white hover:bg-[var(--brand-color)]/90"
                                               >
@@ -241,7 +293,7 @@ export default function Show({ task, auth }) {
                                           )}
                                           {isAssignee && task.status === 'in_progress' && (
                                               <Button
-                                                  onClick={() => handleStatusAction('tasks.submitForReview')}
+                                                  onClick={() => handleSimpleStatusAction('tasks.submitForReview')}
                                                   disabled={actionProcessing}
                                                   className="bg-[var(--brand-color)] text-white hover:bg-[var(--brand-color)]/90"
                                               >
@@ -252,30 +304,72 @@ export default function Show({ task, auth }) {
                                           {isAdmin && task.status === 'submitted' && (
                                               <>
                                                   <Button
-                                                      onClick={() => handleStatusAction('tasks.approveCompletion')}
+                                                      onClick={() => handleSimpleStatusAction('tasks.approveCompletion')}
                                                       disabled={actionProcessing}
                                                       className="bg-green-600 text-white hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800"
                                                   >
                                                       <CheckCircle2 className="mr-2 h-4 w-4" />
                                                       Approve Completion
                                                   </Button>
-                                                  <Button
-                                                      variant="destructive"
-                                                      onClick={() => {
-                                                          const comment = prompt('Enter reason for revision:');
-                                                          if (comment) handleStatusAction('tasks.requestRevision', comment);
-                                                      }}
-                                                      disabled={actionProcessing}
-                                                  >
-                                                      <AlertCircle className="mr-2 h-4 w-4" />
-                                                      Request Revision
-                                                  </Button>
+                                                  
+                                                  {/* MODIFIED "REQUEST REVISION" BUTTON */}
+                                                  <Dialog open={isRevisionDialogOpen} onOpenChange={setIsRevisionDialogOpen}>
+                                                      <DialogTrigger asChild>
+                                                          <Button variant="destructive" disabled={actionProcessing}>
+                                                              <AlertCircle className="mr-2 h-4 w-4" />
+                                                              Request Revision
+                                                          </Button>
+                                                      </DialogTrigger>
+                                                      <DialogContent
+                                                          className="sm:max-w-[425px] bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 p-6" // Added p-6
+                                                          variants={dialogVariants}
+                                                          transition={dialogTransition}
+                                                      >
+                                                          <DialogHeader className="mb-4"> {/* Added margin bottom to header */}
+                                                              <DialogTitle className="text-lg font-semibold text-neutral-900 dark:text-neutral-100"> {/* Styled Title */}
+                                                                  Request Revision
+                                                              </DialogTitle>
+                                                              <DialogDescription className="text-sm text-neutral-600 dark:text-neutral-400"> {/* Styled Description */}
+                                                                  Please provide a reason for requesting revision. This will be added as a comment.
+                                                              </DialogDescription>
+                                                          </DialogHeader>
+                                                          <div className="grid gap-4"> {/* Removed py-4, padding is on DialogContent now */}
+                                                              <Textarea
+                                                                  placeholder="Enter reason for revision..."
+                                                                  value={revisionComment}
+                                                                  onChange={(e) => {
+                                                                      setRevisionComment(e.target.value);
+                                                                      if (e.target.value.trim()) setRevisionCommentError('');
+                                                                  }}
+                                                                  rows={4}
+                                                                  className="w-full rounded-md border-neutral-300 bg-white p-2 text-sm text-neutral-900 focus:border-primary focus:ring-primary dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder-neutral-500" // More specific styling
+                                                              />
+                                                              {revisionCommentError && <InputError message={revisionCommentError} className="mt-1 text-xs" />} {/* Styled error */}
+                                                          </div>
+                                                          <div className="mt-6 flex justify-end gap-3"> {/* Added mt-6 for spacing, gap-3 */}
+                                                              <DialogClose asChild>
+                                                                  {/* Standard Shadcn button styling for outline */}
+                                                                  <Button variant="outline" className="border-neutral-300 text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800">
+                                                                      Cancel
+                                                                  </Button>
+                                                              </DialogClose>
+                                                              {/* Standard Shadcn button styling for primary */}
+                                                              <Button 
+                                                                  onClick={handleSubmitRevision} 
+                                                                  disabled={actionProcessing || !revisionComment.trim()}
+                                                                  className="bg-primary text-primary-foreground hover:bg-primary/90"
+                                                              >
+                                                                  {actionProcessing ? 'Submitting...' : 'Submit Revision'}
+                                                              </Button>
+                                                          </div>
+                                                      </DialogContent>
+                                                  </Dialog>
                                               </>
                                           )}
                                           {isAdmin && ['pending', 'in_progress', 'submitted', 'needs_revision'].includes(task.status) && (
                                               <Button
                                                   variant="outline"
-                                                  onClick={() => handleStatusAction('tasks.cancelTask')}
+                                                  onClick={() => handleSimpleStatusAction('tasks.cancelTask')}
                                                   disabled={actionProcessing}
                                                   className="border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
                                               >
@@ -344,8 +438,8 @@ export default function Show({ task, auth }) {
                                                   Add a comment
                                               </label>
                                               <Textarea
-                                                  value={commentData.comment}
-                                                  onChange={(e) => setCommentData('comment', e.target.value)}
+                                                  value={commentDataForForm.comment}
+                                                  onChange={(e) => setCommentDataForForm('comment', e.target.value)}
                                                   placeholder="Share your thoughts, updates, or questions..."
                                                   rows={4}
                                                   className="focus:border-primary focus:ring-primary border-neutral-300 bg-white/70 dark:border-neutral-600 dark:bg-neutral-800/70 dark:text-neutral-100"
@@ -354,7 +448,7 @@ export default function Show({ task, auth }) {
                                           </div>
                                           <Button
                                               type="submit"
-                                              disabled={commentProcessing || !commentData.comment.trim()}
+                                              disabled={commentProcessing || !commentDataForForm.comment.trim()}
                                               className="bg-primary text-primary-foreground hover:bg-primary/90"
                                           >
                                               <MessageSquare className="mr-2 h-4 w-4" />
