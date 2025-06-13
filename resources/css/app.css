@@ -159,3 +159,20 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* In your global CSS file (e.g., resources/css/app.css) */
+.my-masonry-grid {
+  display: flex;
+  margin-left: -16px; /* Adjust to -(your desired column gap / 2) if using px on column, or use negative margin based on columnClassName padding */
+  width: auto;
+}
+
+.my-masonry-grid_column {
+  padding-left: 16px; /* This is your column gap. Adjust as needed. */
+  background-clip: padding-box; /* Important for how borders and padding interact */
+}
+
+/* Style your items (the direct children of a column) */
+.my-masonry-grid_column > div { /* Or target the specific Card components if they are direct children */
+  margin-bottom: 16px; /* Vertical gap between items in the same column */
+}

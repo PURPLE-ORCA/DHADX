@@ -1,0 +1,60 @@
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Progress } from "../ui/progress";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
+import { BookMarked } from "lucide-react"; // Or any relevant icon
+
+export default function MyCampProgressWidget({ camps }) {
+    if (!camps || camps.length === 0) {
+        return (
+            <Card className="md:col-span-2 lg:col-span-1"> {/* Adjust col-span as needed */}
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <BookMarked className="h-5 w-5" />
+                        My Learning Progress
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        No active learning camps assigned yet.
+                    </p>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    return (
+        <Card className="md:col-span-2 lg:col-span-1"> {/* Adjust col-span as needed for your grid */}
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <BookMarked className="h-5 w-5" />
+                    My Learning Progress
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <ScrollArea className="h-[300px] w-full pr-4"> {/* Set a height for the scrollable area */}
+                    <div className="space-y-4">
+                        {camps.map((camp) => (
+                            <div key={camp.id} className="space-y-1.5">
+                                <div className="flex justify-between items-baseline">
+                                    <span className="text-sm font-medium truncate" title={`${camp.cour?.name} - ${camp.formation?.name}`}>
+                                        {camp.formation?.name || 'Unnamed Formation'}
+                                    </span>
+                                    <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                                        {camp.progress}%
+                                    </span>
+                                </div>
+                                {camp.cour?.name && (
+                                    <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate -mt-1">
+                                        {camp.cour.label}
+                                    </p>
+                                )}
+                                <Progress value={camp.progress} className="h-2" />
+                            </div>
+                        ))}
+                    </div>
+                    <ScrollBar orientation="vertical" />
+                </ScrollArea>
+            </CardContent>
+        </Card>
+    );
+}

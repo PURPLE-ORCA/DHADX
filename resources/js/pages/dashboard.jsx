@@ -5,6 +5,8 @@ import AdminTaskSummary from '@/components/dashboard/AdminTaskSummary';
 import CollaboratorMyTasks from '@/components/dashboard/CollaboratorMyTasks';
 import LatestNotifications from '@/components/dashboard/LatestNotifications';
 import UpcomingDeadlines from '@/components/dashboard/UpcomingDeadlines';
+import MyCampProgressWidget from '@/components/dashboard/MyCampProgressWidget'; // Import the new widget
+import Masonry from 'react-masonry-css'; // <<<< IMPORT MASONRY
 
 const breadcrumbs = [
     {
@@ -13,42 +15,74 @@ const breadcrumbs = [
     },
 ];
 
-function Dashboard({ user, collabCount, formationsCount, specialitysCount, coursCount, taskSummaries, latestNotifications, upcomingTasks }) {
+function Dashboard({ user, collabCount, formationsCount, specialitysCount, coursCount, taskSummaries, latestNotifications, upcomingTasks, collaboratorActiveCamps }) {
     const isAdmin = user.roles.some(role => role.name === 'admin');
     const isCollaborator = user.roles.some(role => role.name === 'collaborator');
+
+    // Define breakpoint columns for Masonry
+    // This tells Masonry how many columns to use at different screen widths
+    const breakpointColumnsObj = {
+        default: 4, // Default number of columns (e.g., for very large screens or if others don't match)
+        1280: 3,    // 3 columns at 1280px wide and up (xl)
+        1024: 2,    // 2 columns at 1024px wide and up (lg)
+        768: 1      // 1 column at 768px wide and up (md)
+    };
+
+    // Collect all widgets that should be part of the Masonry layout
+    const widgets = [];
+
+    if (isAdmin) {
+        widgets.push(
+            <AdminTaskSummary
+                key="admin-summary" // Important: add unique keys to children of Masonry
+                collabCount={collabCount}
+                specialitysCount={specialitysCount}
+                coursCount={coursCount}
+                formationsCount={formationsCount}
+                taskSummaries={taskSummaries}
+            />
+        );
+    }
+
+    if (isCollaborator) {
+        widgets.push(
+            <CollaboratorMyTasks
+                key="collab-tasks"
+                taskSummaries={taskSummaries}
+            />,
+            <MyCampProgressWidget
+                key="collab-progress"
+                camps={collaboratorActiveCamps}
+            />,
+            <UpcomingDeadlines
+                key="collab-deadlines"
+                upcomingTasks={upcomingTasks}
+            />
+        );
+    }
+
+    if (isAdmin || isCollaborator) { // Or just always show notifications if available
+        widgets.push(
+            <LatestNotifications
+                key="notifications"
+                notifications={latestNotifications}
+            />
+        );
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3 lg:grid-cols-4">
-                    {isAdmin && (
-                        <AdminTaskSummary
-                            collabCount={collabCount}
-                            specialitysCount={specialitysCount}
-                            coursCount={coursCount}
-                            formationsCount={formationsCount}
-                            taskSummaries={taskSummaries}
-                        />
-                    )}
-
-                    {isCollaborator && (
-                        <>
-                            <CollaboratorMyTasks
-                                taskSummaries={taskSummaries}
-                            />
-                            <UpcomingDeadlines
-                                upcomingTasks={upcomingTasks}
-                            />
-                        </>
-                    )}
-
-                    {(isAdmin || isCollaborator) && (
-                        <LatestNotifications
-                            notifications={latestNotifications}
-                        />
-                    )}
-                </div>
+                {/* Replace your old grid div with Masonry */}
+                <Masonry
+                    breakpointCols={breakpointColumnsObj}
+                    className="my-masonry-grid flex w-auto" // `flex w-auto` is from react-masonry-css docs
+                    columnClassName="my-masonry-grid_column bg-clip-padding px-2" // `px-2` for gap, adjust as needed
+                >
+                    {/* Render all collected widgets */}
+                    {widgets}
+                </Masonry>
             </div>
         </AppLayout>
     );

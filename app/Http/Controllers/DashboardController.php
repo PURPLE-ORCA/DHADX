@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Camp; // Add Camp model
 use App\Models\Collaborator;
 use App\Models\Cour;
 use App\Models\Formation;
@@ -32,29 +33,43 @@ class DashboardController extends Controller
         }
 
         $latestNotifications = $user->notifications()->latest()->take(5)->get();
-        $upcomingTasks = collect(); // Initialize as empty collection
-        $personalProgress = [];
+            $upcomingTasks = collect(); // Initialize as empty collection
+            $personalProgress = [];
 
-        if ($user->hasRole('collaborator')) {
-            $upcomingTasks = $user->assignedTasks()
-                ->where('status', '!=', 'completed') // Exclude completed tasks
-                ->where('due_date', '>=', now())
-                ->where('due_date', '<=', now()->addDays(7))
-                ->orderBy('due_date', 'asc')
-                ->take(5) // Limit to 5 upcoming tasks
-                ->get();
+            $isAdmin = $user->hasRole('admin');
+            $isCollaborator = $user->hasRole('collaborator');
 
-        }
+            if ($isCollaborator) {
+                $upcomingTasks = $user->assignedTasks()
+                    ->where('status', '!=', 'completed') // Exclude completed tasks
+                    ->where('due_date', '>=', now())
+                    ->where('due_date', '<=', now()->addDays(7))
+                    ->orderBy('due_date', 'asc')
+                    ->take(5) // Limit to 5 upcoming tasks
+                    ->get();
+            }
 
-        return Inertia::render('dashboard', [
-            'user' => $user, // Pass the user object with roles
-            'collabCount' => $collabCount,
-            'specialitysCount' => $specialitysCount,
-            'formationsCount' => $formationsCount,
-            'coursCount' => $coursCount,
-            'taskSummaries' => $taskSummaries,
-            'latestNotifications' => $latestNotifications, // Pass latest notifications
-            'upcomingTasks' => $upcomingTasks, // Pass upcoming tasks
-        ]);
+            $collaboratorActiveCamps = collect(); // Initialize as empty collection
+
+            if ($isCollaborator) {
+                // Fetch active camps for the collaborator
+                $collaboratorActiveCamps = Camp::where('collaborator_id', $user->id)
+                    ->with(['cour:id,name,label', 'formation:id,name']) // Select specific columns for efficiency, including 'label'
+                    ->orderBy('cour_id')
+                    ->orderByDesc('progress')
+                    ->get();
+            }
+
+            return Inertia::render('dashboard', [
+                'user' => $user, // Pass the user object with roles
+                'collabCount' => $collabCount,
+                'specialitysCount' => $specialitysCount,
+                'formationsCount' => $formationsCount,
+                'coursCount' => $coursCount,
+                'taskSummaries' => $taskSummaries,
+                'latestNotifications' => $latestNotifications, // Pass latest notifications
+                'upcomingTasks' => $upcomingTasks, // Pass upcoming tasks
+                'collaboratorActiveCamps' => $collaboratorActiveCamps, // NEW PROP
+            ]);
     }
 }
