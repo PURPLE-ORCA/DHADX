@@ -17,11 +17,11 @@ createInertiaApp({
         root.render(
             <TranslationProvider>
                 <App {...props} />
-            </TranslationProvider>
+            </TranslationProvider>,
         );
     },
     progress: {
-        color: '#fff',
+        color: '#FF2D20',
     },
 });
 

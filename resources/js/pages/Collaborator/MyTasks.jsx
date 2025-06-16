@@ -8,9 +8,9 @@ export default function MyTasks({ myCamps }) {
   return (
     <AppLayout>
       <Head title="My Tasks" />
-      <div className="min-h-screen bg-white dark:bg-gray-950">
+      <div className="min-h-screen bg-transparent">
         {/* Header Section */}
-        <div className="border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950">
+        <div className="border-b border-gray-100 dark:border-gray-800 ">
           <div className="container mx-auto px-6 py-8">
             <div className="flex items-center justify-between">
               <div>

@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             ['name' => "Kacem Bensaadoun", 'email_prefix' => 'kacem.bensaadoun'],
             ['name' => "Mohammed El Moussaoui", 'email_prefix' => 'mohammed.elmoussaoui'],
             ['name' => "Rihane Chebab", 'email_prefix' => 'rihane.chebab'],
-            ['name' => "Nadia", 'email_prefix' => 'nadia'],
+            ['name' => "Nadia Erraji", 'email_prefix' => 'nadia'],
             ['name' => "Kaouthar Missaoui", 'email_prefix' => 'kaouthar.missaoui'],
             ['name' => "Yassmine Boukhana", 'email_prefix' => 'yassmine.boukhana'],
             ['name' => "Ilyass Hajji", 'email_prefix' => 'ilyass.hajji'],

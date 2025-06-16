@@ -61,19 +61,18 @@ function Dashboard({ user, collabCount, formationsCount, specialitysCount, cours
         );
     }
 
-    if (isAdmin || isCollaborator) { // Or just always show notifications if available
         widgets.push(
             <LatestNotifications
                 key="notifications"
                 notifications={latestNotifications}
             />
         );
-    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+
                 {/* Replace your old grid div with Masonry */}
                 <Masonry
                     breakpointCols={breakpointColumnsObj}
