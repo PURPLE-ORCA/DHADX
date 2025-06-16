@@ -14,6 +14,7 @@ class Task extends Model
     protected $fillable = [
         'title',
         'description',
+        'parent_id',
         'assignee_id',
         'assigner_id',
         'due_date',
@@ -36,5 +37,15 @@ class Task extends Model
     public function comments()
     {
         return $this->hasMany(TaskComment::class)->orderBy('created_at', 'asc');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Task::class, 'parent_id');
+    }
+
+    public function subTasks()
+    {
+        return $this->hasMany(Task::class, 'parent_id');
     }
 }

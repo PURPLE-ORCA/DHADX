@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
@@ -19,7 +20,9 @@ class TaskController extends Controller
     {
         $tasks = [];
         if (Auth::user()->hasRole('admin')) {
-            $tasks = Task::with(['assignee', 'assigner']);
+            // Only show tasks that are NOT sub-tasks.
+            $tasks = Task::with(['assignee', 'assigner', 'subTasks']) // Eager load subtasks for count
+                         ->whereNull('parent_id');
             // Add filters if needed
             if ($request->has('assignee_id')) {
                 $tasks->where('assignee_id', $request->assignee_id);
@@ -54,32 +57,43 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTaskRequest $request)
+    public function store(StoreTaskRequest $request) // We will update the request rules next
     {
         $validated = $request->validated();
 
-        $assigneeIds = $validated['assignee_id'];
-        unset($validated['assignee_id']); // Remove assignee_id from validated data as it's an array
-
-        foreach ($assigneeIds as $assigneeId) {
-            $task = Task::create([
+        DB::transaction(function () use ($validated) {
+            // 1. Create the Parent Task
+            $parentTask = Task::create([
                 'title' => $validated['title'],
                 'description' => $validated['description'],
-                'assignee_id' => $assigneeId,
                 'assigner_id' => Auth::id(),
                 'due_date' => $validated['due_date'],
-                'status' => 'pending',
                 'priority' => $validated['priority'],
+                'status' => 'pending',
+                // 'assignee_id' is intentionally NULL for the parent
             ]);
 
-            // Send notification to assignee
-            $assignee = User::find($assigneeId);
-            if ($assignee) {
-                $assignee->notify(new \App\Notifications\TaskAssignedNotification($task));
-            }
-        }
+            // 2. Create the Sub-Tasks
+            foreach ($validated['sub_tasks'] as $subTaskData) {
+                $subTask = $parentTask->subTasks()->create([
+                    'title' => $subTaskData['title'],
+                    'description' => $subTaskData['description'] ?? null,
+                    'assignee_id' => $subTaskData['assignee_id'],
+                    'assigner_id' => Auth::id(),
+                    'due_date' => $validated['due_date'], // Sub-tasks inherit parent due date for now
+                    'priority' => $validated['priority'], // And priority
+                    'status' => 'pending',
+                ]);
 
-        return redirect()->route('tasks.index')->with('success', 'Tasks created successfully.');
+                // 3. Send Notifications
+                $assignee = User::find($subTask->assignee_id);
+                if ($assignee) {
+                    $assignee->notify(new \App\Notifications\TaskAssignedNotification($subTask));
+                }
+            }
+        });
+
+        return redirect()->route('tasks.index')->with('success', 'Collaborative task created successfully.');
     }
 
     /**
@@ -87,8 +101,8 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        // Ensure it's always the freshest data, especially after an update
-        $task->refresh()->load(['assignee', 'assigner', 'comments.user']);
+        // Load all relevant relationships
+        $task->refresh()->load(['assignee', 'assigner', 'comments.user', 'parent', 'subTasks.assignee']);
 
         return Inertia::render('application/Task/Show', [
             'task' => $task,

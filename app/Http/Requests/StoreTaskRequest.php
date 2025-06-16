@@ -23,12 +23,20 @@ class StoreTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
+            // Rules for the Parent Task
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'assignee_id' => ['required', 'array', 'min:1'],
-            'assignee_id.*' => ['required', 'exists:users,id'],
             'due_date' => ['nullable', 'date'],
-            'priority' => ['required', 'string', 'in:low,medium,high'],
+            'priority' => ['required', 'in:low,medium,high'],
+
+            // --- NEW RULES FOR SUB-TASKS ---
+            // Ensure 'sub_tasks' is present and is an array
+            'sub_tasks' => ['required', 'array', 'min:1'],
+
+            // Rules for each item *within* the sub_tasks array
+            'sub_tasks.*.title' => ['required', 'string', 'max:255'],
+            'sub_tasks.*.description' => ['nullable', 'string'],
+            'sub_tasks.*.assignee_id' => ['required', 'exists:users,id'],
         ];
     }
 }
