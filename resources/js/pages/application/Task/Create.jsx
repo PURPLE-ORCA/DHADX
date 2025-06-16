@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { MultiSelectCollaborators } from '@/components/ui/multi-select-collaborators'; // Import the new component
 import AppLayout from '@/layouts/app-layout';
 import { Head, useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
@@ -17,7 +18,7 @@ export default function Create({ collaborators }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         title: '',
         description: '',
-        assignee_id: '',
+        assignee_id: [], // Changed to an array for multiple selections
         due_date: undefined,
         priority: 'medium',
     });
@@ -86,22 +87,12 @@ export default function Create({ collaborators }) {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label required htmlFor="assignee_id">Assignee</Label>
-                        <Select
-                            onValueChange={(value) => setData('assignee_id', value)}
-                            value={data.assignee_id}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select an assignee" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {collaborators.map((user) => (
-                                    <SelectItem key={user.id} value={user.id.toString()}>
-                                        {user.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <Label required htmlFor="assignee_id">Assignees</Label>
+                        <MultiSelectCollaborators
+                            collaborators={collaborators}
+                            selected={data.assignee_id}
+                            onSelectChange={(selectedIds) => setData('assignee_id', selectedIds)}
+                        />
                         <InputError message={errors.assignee_id} />
                     </div>
 

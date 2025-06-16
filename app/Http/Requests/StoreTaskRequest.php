@@ -25,7 +25,8 @@ class StoreTaskRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'assignee_id' => ['required', 'exists:users,id'],
+            'assignee_id' => ['required', 'array', 'min:1'],
+            'assignee_id.*' => ['required', 'exists:users,id'],
             'due_date' => ['nullable', 'date'],
             'priority' => ['required', 'string', 'in:low,medium,high'],
         ];

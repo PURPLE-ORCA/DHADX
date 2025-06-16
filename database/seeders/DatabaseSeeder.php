@@ -61,7 +61,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CollaboratorSeeder::class);
         $this->call(CourSeeder::class);
         $this->call(FormationSeeder::class);
-        $this->call(TaskSeeder::class);
+        // $this->call(TaskSeeder::class);
 
     }
 }

@@ -58,23 +58,28 @@ class TaskController extends Controller
     {
         $validated = $request->validated();
 
-        $task = Task::create([
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'assignee_id' => $validated['assignee_id'],
-            'assigner_id' => Auth::id(),
-            'due_date' => $validated['due_date'],
-            'status' => 'pending',
-            'priority' => $validated['priority'],
-        ]);
+        $assigneeIds = $validated['assignee_id'];
+        unset($validated['assignee_id']); // Remove assignee_id from validated data as it's an array
 
-        // Send notification to assignee
-        $assignee = User::find($validated['assignee_id']);
-        if ($assignee) {
-            $assignee->notify(new \App\Notifications\TaskAssignedNotification($task));
+        foreach ($assigneeIds as $assigneeId) {
+            $task = Task::create([
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+                'assignee_id' => $assigneeId,
+                'assigner_id' => Auth::id(),
+                'due_date' => $validated['due_date'],
+                'status' => 'pending',
+                'priority' => $validated['priority'],
+            ]);
+
+            // Send notification to assignee
+            $assignee = User::find($assigneeId);
+            if ($assignee) {
+                $assignee->notify(new \App\Notifications\TaskAssignedNotification($task));
+            }
         }
 
-        return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
+        return redirect()->route('tasks.index')->with('success', 'Tasks created successfully.');
     }
 
     /**
