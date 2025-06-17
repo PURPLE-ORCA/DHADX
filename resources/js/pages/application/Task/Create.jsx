@@ -12,8 +12,11 @@ import { format } from 'date-fns';
 import { CalendarIcon, LoaderCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from "sonner";
+import { useContext } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 
 export default function Create({ collaborators }) {
+    const { translations } = useContext(TranslationContext);
     const { data, setData, post, processing, errors, reset } = useForm({
         title: '',
         description: '',
@@ -49,10 +52,10 @@ export default function Create({ collaborators }) {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
-                toast.success("Collaborative task created successfully!");
+                toast.success(translations.tasks.create.saved_successfully);
             },
             onError: (errors) => {
-                toast.error("Failed to create collaborative task. Please check the form.");
+                toast.error(translations.tasks.create.failed_to_create);
                 console.error("Save errors:", errors);
             }
         });
@@ -60,26 +63,26 @@ export default function Create({ collaborators }) {
 
     const breadcrumbs = [
         {
-            title: 'Tasks list',
+            title: translations.tasks.list_title,
             href: '/tasks',
         },
         {
-            title: 'Create new task',
+            title: translations.tasks.create.create_new_task,
             href: '/tasks/create',
         },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Create Task" />
+            <Head title={translations.tasks.create.page_title} />
 
             <div className="p-4">
-                <h1 className="mb-6 text-2xl font-bold">Create New Task</h1>
+                <h1 className="mb-6 text-2xl font-bold">{translations.tasks.create.create_new_task_heading}</h1>
 
                 <form className="space-y-6" onSubmit={submitForm}>
                     <div className="grid gap-2">
                         <Label required htmlFor="title">
-                            Title
+                            {translations.tasks.create.title_label}
                         </Label>
                         <Input
                             id="title"
@@ -87,36 +90,36 @@ export default function Create({ collaborators }) {
                             name="title"
                             value={data.title}
                             onChange={(e) => setData('title', e.target.value)}
-                            placeholder="Task Title"
+                            placeholder={translations.tasks.create.title_placeholder}
                             autoComplete="off"
                         />
                         <InputError message={errors.title} />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="description">Description</Label>
+                        <Label htmlFor="description">{translations.tasks.create.description_label}</Label>
                         <Textarea
                             id="description"
                             name="description"
                             value={data.description}
                             onChange={(e) => setData('description', e.target.value)}
-                            placeholder="Task Description"
+                            placeholder={translations.tasks.create.description_placeholder}
                             autoComplete="off"
                         />
                         <InputError message={errors.description} />
                     </div>
 
                     <div className="space-y-4">
-                        <h2 className="text-xl font-semibold">Sub-Tasks</h2>
+                        <h2 className="text-xl font-semibold">{translations.tasks.create.sub_tasks_heading}</h2>
                         {data.sub_tasks.map((subTask, index) => (
                             <div key={index} className="grid grid-cols-1 items-end gap-4 rounded-md border p-4 md:grid-cols-3">
                                 <div className="grid gap-2">
                                     <Label required htmlFor={`sub_task_assignee_${index}`}>
-                                        Assignee
+                                        {translations.tasks.create.assignee_label}
                                     </Label>
                                     <Select onValueChange={(value) => handleSubTaskChange(index, 'assignee_id', value)} value={subTask.assignee_id}>
                                         <SelectTrigger id={`sub_task_assignee_${index}`} className="w-full">
-                                            <SelectValue placeholder="Select assignee" />
+                                            <SelectValue placeholder={translations.tasks.create.select_assignee_placeholder} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {collaborators.map((collaborator) => (
@@ -130,44 +133,44 @@ export default function Create({ collaborators }) {
                                 </div>
                                 <div className="grid gap-2">
                                     <Label required htmlFor={`sub_task_title_${index}`}>
-                                        Sub-Task Title
+                                        {translations.tasks.create.sub_task_title_label}
                                     </Label>
                                     <Input
                                         id={`sub_task_title_${index}`}
                                         type="text"
                                         value={subTask.title}
                                         onChange={(e) => handleSubTaskChange(index, 'title', e.target.value)}
-                                        placeholder="Sub-Task Title"
+                                        placeholder={translations.tasks.create.sub_task_title_placeholder}
                                         autoComplete="off"
                                     />
                                     <InputError message={errors[`sub_tasks.${index}.title`]} />
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label htmlFor={`sub_task_description_${index}`}>Description (Optional)</Label>
+                                    <Label htmlFor={`sub_task_description_${index}`}>{translations.tasks.create.sub_task_description_label}</Label>
                                     <Input
                                         id={`sub_task_description_${index}`}
                                         type="text"
                                         value={subTask.description}
                                         onChange={(e) => handleSubTaskChange(index, 'description', e.target.value)}
-                                        placeholder="Sub-Task Description"
+                                        placeholder={translations.tasks.create.sub_task_description_placeholder}
                                         autoComplete="off"
                                     />
                                     <InputError message={errors[`sub_tasks.${index}.description`]} />
                                 </div>
                                 {data.sub_tasks.length > 1 && (
                                     <Button type="button" variant="destructive" onClick={() => removeSubTask(index)} className="col-span-full">
-                                        Remove Sub-Task
+                                        {translations.tasks.create.remove_sub_task_button}
                                     </Button>
                                 )}
                             </div>
                         ))}
                         <Button type="button" onClick={addSubTask}>
-                            Add Sub-Task
+                            {translations.tasks.create.add_sub_task_button}
                         </Button>
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="due_date">Due Date</Label>
+                        <Label htmlFor="due_date">{translations.tasks.create.due_date_label}</Label>
                         <Popover>
                             <PopoverTrigger asChild>
                                 <Button
@@ -175,7 +178,7 @@ export default function Create({ collaborators }) {
                                     className={cn('w-full justify-start text-left font-normal', !data.due_date && 'text-muted-foreground')}
                                 >
                                     <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {data.due_date ? format(new Date(data.due_date), 'PPP') : <span>Pick a date</span>}
+                                    {data.due_date ? format(new Date(data.due_date), 'PPP') : <span>{translations.tasks.create.pick_a_date}</span>}
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0">
@@ -192,16 +195,16 @@ export default function Create({ collaborators }) {
 
                     <div className="grid gap-2">
                         <Label required htmlFor="priority">
-                            Priority
+                            {translations.tasks.create.priority_label}
                         </Label>
                         <Select onValueChange={(value) => setData('priority', value)} value={data.priority}>
                             <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select priority" />
+                                <SelectValue placeholder={translations.tasks.create.select_priority_placeholder} />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="low">Low</SelectItem>
-                                <SelectItem value="medium">Medium</SelectItem>
-                                <SelectItem value="high">High</SelectItem>
+                                <SelectItem value="low">{translations.tasks.create.priority_low}</SelectItem>
+                                <SelectItem value="medium">{translations.tasks.create.priority_medium}</SelectItem>
+                                <SelectItem value="high">{translations.tasks.create.priority_high}</SelectItem>
                             </SelectContent>
                         </Select>
                         <InputError message={errors.priority} />
@@ -210,7 +213,7 @@ export default function Create({ collaborators }) {
                     <div>
                         <Button type="submit" disabled={processing}>
                             {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
-                            Create Task
+                            {translations.tasks.create.create_button}
                         </Button>
                     </div>
                 </form>

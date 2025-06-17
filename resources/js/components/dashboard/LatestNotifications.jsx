@@ -2,12 +2,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { formatDistanceToNow } from 'date-fns';
+import { useContext } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 
 export default function LatestNotifications({ notifications }) {
+    const { translations } = useContext(TranslationContext);
+
     return (
         <Card className="col-span-full md:col-span-2 lg:col-span-2">
             <CardHeader>
-                <CardTitle>Latest Notifications</CardTitle>
+                <CardTitle>{translations.latest_notifications_widget.title}</CardTitle>
             </CardHeader>
             <CardContent>
                 {notifications.length > 0 ? (
@@ -28,7 +32,7 @@ export default function LatestNotifications({ notifications }) {
                         </div>
                     </ScrollArea>
                 ) : (
-                    <p className="text-sm text-muted-foreground">No new notifications.</p>
+                    <p className="text-sm text-muted-foreground">{translations.latest_notifications_widget.no_notifications}</p>
                 )}
             </CardContent>
         </Card>

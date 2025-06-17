@@ -7,15 +7,18 @@ import LatestNotifications from '@/components/dashboard/LatestNotifications';
 import UpcomingDeadlines from '@/components/dashboard/UpcomingDeadlines';
 import MyCampProgressWidget from '@/components/dashboard/MyCampProgressWidget'; // Import the new widget
 import Masonry from 'react-masonry-css'; // <<<< IMPORT MASONRY
-
-const breadcrumbs = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-    },
-];
+import { useContext } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 
 function Dashboard({ user, collabCount, formationsCount, specialitysCount, coursCount, taskSummaries, latestNotifications, upcomingTasks, collaboratorActiveCamps }) {
+    const { translations } = useContext(TranslationContext);
+
+    const breadcrumbs = [
+        {
+            title: translations.dashboard.title,
+            href: '/dashboard',
+        },
+    ];
     const isAdmin = user.roles.some(role => role.name === 'admin');
     const isCollaborator = user.roles.some(role => role.name === 'collaborator');
 

@@ -3,8 +3,9 @@ import { Slider } from '@/components/ui/slider';
 import { Card } from '@/components/ui/card';
 import { Input as ShadcnInput } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { router } from '@inertiajs/react';
+import { TranslationContext } from '@/context/TranslationProvider';
 import Delete from './Delete';
 
 const getProgressColorClass = (progress) => {
@@ -18,6 +19,7 @@ const getProgressColorClass = (progress) => {
 };
 
 export default function CampCard({ camp, courseColor, onCampUpdated, onCampDeleted }) {
+    const { translations } = useContext(TranslationContext);
     const [currentProgress, setCurrentProgress] = useState(camp.progress);
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
@@ -64,7 +66,7 @@ export default function CampCard({ camp, courseColor, onCampUpdated, onCampDelet
                 <PopoverContent className="w-56 p-4">
                     <div className="space-y-4">
                         <label htmlFor={`progress-slider-${camp.id}`} className="text-sm font-medium">
-                            Set Progress: {currentProgress}%
+                            {translations.camp_card.set_progress}: {currentProgress}%
                         </label>
                         <Slider
                             id={`progress-slider-${camp.id}`}
@@ -90,8 +92,8 @@ export default function CampCard({ camp, courseColor, onCampUpdated, onCampDelet
                             className="my-2"
                         />
                         <div className="flex justify-end space-x-2">
-                            <Button variant="outline" size="sm" onClick={() => setIsPopoverOpen(false)}>Cancel</Button>
-                            <Button size="sm" onClick={handleSaveProgress}>Save</Button>
+                            <Button variant="outline" size="sm" onClick={() => setIsPopoverOpen(false)}>{translations.camp_card.cancel}</Button>
+                            <Button size="sm" onClick={handleSaveProgress}>{translations.camp_card.save}</Button>
                         </div>
                     </div>
                 </PopoverContent>

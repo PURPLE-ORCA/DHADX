@@ -1,8 +1,11 @@
 import { Clock } from 'lucide-react';
 import AdminTableView from './TaskDataComponents/AdminTableView';
 import TasksByStatusView from './TaskDataComponents/TasksByStatusView';
+import { useContext } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 
 export default function TaskData({ tasks, auth, onDeleted }) {
+    const { translations } = useContext(TranslationContext);
     const isAdmin = auth.user.roles.some((role) => role.name === 'admin');
 
     return (
@@ -12,9 +15,9 @@ export default function TaskData({ tasks, auth, onDeleted }) {
                     <div className="mx-auto mb-8 flex h-32 w-32 items-center justify-center rounded-full border-2 border-black bg-white dark:border-white dark:bg-black">
                         <Clock className="h-16 w-16 text-black dark:text-white" />
                     </div>
-                    <h3 className="mb-4 text-2xl font-bold text-black dark:text-white">No tasks found</h3>
+                    <h3 className="mb-4 text-2xl font-bold text-black dark:text-white">{translations.tasks.data.no_tasks_found}</h3>
                     <p className="mx-auto max-w-md font-medium text-neutral-600 dark:text-neutral-300">
-                        There are currently no tasks to display for the selected criteria.
+                        {translations.tasks.data.no_tasks_message}
                     </p>
                 </div>
             ) : (

@@ -12,10 +12,13 @@ import {
 import { Button } from './ui/button';
 import { formatDistanceToNow } from 'date-fns';
 import axios from 'axios';
+import { useContext } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 import { Badge } from './ui/badge';
 import { toast } from 'sonner'; // Import toast from sonner
 
 export default function NotificationBadge() {
+    const { translations } = useContext(TranslationContext);
     const [pendingCount, setPendingCount] = useState(0);
     const [latestNotifications, setLatestNotifications] = useState([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -46,10 +49,10 @@ export default function NotificationBadge() {
                 ? route('notifications.markRead', notificationId)
                 : route('notifications.markRead');
             await axios.post(url);
-            toast.success('Notification(s) marked as read.'); // Use sonner's toast.success
+            toast.success(translations.notifications.mark_as_read_success_toast); // Use sonner's toast.success
             fetchNotifications(); // Refresh counts and list
         } catch (error) {
-            toast.error('Failed to mark notification as read.'); // Use sonner's toast.error
+            toast.error(translations.notifications.mark_as_read_error_toast); // Use sonner's toast.error
         }
     };
 
@@ -66,7 +69,7 @@ export default function NotificationBadge() {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-80">
-                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                <DropdownMenuLabel>{translations.notifications.dropdown_label}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {latestNotifications.length > 0 ? (
                     <>
@@ -88,12 +91,12 @@ export default function NotificationBadge() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="justify-center">
                             <Button variant="link" onClick={() => markAsRead()}>
-                                Mark All As Read
+                                {translations.notifications.mark_all_as_read_button}
                             </Button>
                         </DropdownMenuItem>
                     </>
                 ) : (
-                    <DropdownMenuItem>No new notifications.</DropdownMenuItem>
+                    <DropdownMenuItem>{translations.notifications.no_new_notifications}</DropdownMenuItem>
                 )}
             </DropdownMenuContent>
         </DropdownMenu>

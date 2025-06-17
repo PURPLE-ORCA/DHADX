@@ -1,11 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useContext } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 
 export default function AdminTaskSummary({ collabCount, specialitysCount, coursCount, formationsCount, taskSummaries }) {
+    const { translations } = useContext(TranslationContext);
+
     return (
         <div className="grid w-full grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2">
             <Card className="relative aspect-vide ">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Collaborators</CardTitle>
+                    <CardTitle className="text-sm font-medium">{translations.admin_dashboard.collaborators_title}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex h-full flex-col items-center justify-center text-center">
                     <div className="text-4xl font-bold">{collabCount}</div>
@@ -13,7 +17,7 @@ export default function AdminTaskSummary({ collabCount, specialitysCount, coursC
             </Card>
             <Card className="relative aspect-vide">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Specialities</CardTitle>
+                    <CardTitle className="text-sm font-medium">{translations.admin_dashboard.specialities_title}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex h-full flex-col items-center justify-center text-center">
                     <div className="text-4xl font-bold">{specialitysCount}</div>
@@ -21,7 +25,7 @@ export default function AdminTaskSummary({ collabCount, specialitysCount, coursC
             </Card>
             <Card className="relative aspect-vide">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Courses</CardTitle>
+                    <CardTitle className="text-sm font-medium">{translations.admin_dashboard.courses_title}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex h-full flex-col items-center justify-center text-center">
                     <div className="text-4xl font-bold">{coursCount}</div>
@@ -29,7 +33,7 @@ export default function AdminTaskSummary({ collabCount, specialitysCount, coursC
             </Card>
             <Card className="relative aspect-vide">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Formations</CardTitle>
+                    <CardTitle className="text-sm font-medium">{translations.admin_dashboard.formations_title}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex h-full flex-col items-center justify-center text-center">
                     <div className="text-4xl font-bold">{formationsCount}</div>

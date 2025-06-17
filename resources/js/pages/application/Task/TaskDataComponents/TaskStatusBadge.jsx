@@ -1,5 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { AlertCircle, CheckCircle2, Clock } from 'lucide-react';
+import { useContext } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 
 export const getStatusConfig = (status) => {
     const configs = {
@@ -57,13 +59,14 @@ export const getStatusConfig = (status) => {
 };
 
 export default function TaskStatusBadge({ status }) {
+    const { translations } = useContext(TranslationContext);
     const config = getStatusConfig(status);
     const StatusIcon = config.icon;
 
     return (
         <Badge className={config.badgeClass}>
             <StatusIcon className=" h-2 w-2" />
-            {status.replace('_', ' ').toUpperCase()}
+            {translations.tasks.status[status]}
         </Badge>
     );
 }

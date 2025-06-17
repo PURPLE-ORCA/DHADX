@@ -4,6 +4,9 @@ import { TranslationContext } from '@/context/TranslationProvider';
 import { router, usePage } from '@inertiajs/react';
 import { useContext } from 'react';
 import NotificationBadge from './notification-badge';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
+import { Button } from './ui/button';
+import { Icon } from '@iconify/react';
 
 export function AppSidebarHeader({ breadcrumbs = [] }) {
     const { auth} = usePage().props;
@@ -26,7 +29,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }) {
             </div>
 
             <div className="flex flex-1 items-center justify-end gap-1.5 md:gap-2">
-                {/* <DropdownMenu>
+                <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
                             <Icon icon="fa-solid:language" className="h-4 w-4" />
@@ -44,7 +47,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }) {
                             </DropdownMenuItem>
                         ))}
                     </DropdownMenuContent>
-                </DropdownMenu> */}
+                </DropdownMenu>
 
                 <NotificationBadge />
             </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { TranslationContext } from '@/context/TranslationProvider';
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link } from "@inertiajs/react";
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ const breadcrumbs = [
 ];
 
 export default function Index({ tasks, auth }) {
+  const { translations } = useContext(TranslationContext);
   const [search, setSearch] = useState("");
   const [filteredTasks, setFilteredTasks] = useState(tasks);
 
@@ -33,8 +35,8 @@ export default function Index({ tasks, auth }) {
   const isAdmin = auth.user.roles.some((role) => role.name === "admin");
 
   return (
-      <AppLayout breadcrumbs={breadcrumbs}>
-          <Head title="Tasks Hub" />
+      <AppLayout breadcrumbs={[{ title: translations.tasks.list_title, href: '/tasks' }]}>
+          <Head title={translations.tasks.page_title} />
           <div className="min-h-screen bg-white dark:bg-black">
               {/* Header Section */}
               <div className="">
@@ -48,7 +50,7 @@ export default function Index({ tasks, auth }) {
                                   <Input
                                       className="border-[var(--backgorund)] pl-10 focus:border-[var(--brand-color)] focus:ring-[var(--brand-color)] dark:border-[var(background)]"
                                       type="text"
-                                      placeholder="Search tasks..."
+                                      placeholder={translations.tasks.search_placeholder}
                                       value={search}
                                       onChange={handleSearch}
                                   />
@@ -64,7 +66,7 @@ export default function Index({ tasks, auth }) {
                                               className="flex items-center gap-2 rounded-lg bg-[var(--brand-color)] px-4 text-sm font-medium text-white transition-colors hover:bg-[var(--brand-color)]/90"
                                           >
                                               <Plus className="h-4 w-4" />
-                                              Add New Task
+                                              {translations.tasks.add_new_button}
                                           </Link>
                                       )}
                                   </div>
@@ -74,19 +76,19 @@ export default function Index({ tasks, auth }) {
                           <div className="flex items-center space-x-8">
                               <div className="text-center">
                                   <div className="text-2xl font-bold text-black dark:text-white">{filteredTasks.length}</div>
-                                  <div className="text-sm text-gray-500 dark:text-gray-400">Total Tasks</div>
+                                  <div className="text-sm text-gray-500 dark:text-gray-400">{translations.tasks.total_tasks}</div>
                               </div>
                               <div className="text-center">
                                   <div className="text-2xl font-bold text-[var(--brand-color)]">
                                       {filteredTasks.filter((t) => t.status === 'in_progress').length}
                                   </div>
-                                  <div className="text-sm text-gray-500 dark:text-gray-400">In Progress</div>
+                                  <div className="text-sm text-gray-500 dark:text-gray-400">{translations.tasks.in_progress}</div>
                               </div>
                               <div className="text-center">
                                   <div className="text-2xl font-bold text-black dark:text-white">
                                       {filteredTasks.filter((t) => t.status === 'completed').length}
                                   </div>
-                                  <div className="text-sm text-gray-500 dark:text-gray-400">Completed</div>
+                                  <div className="text-sm text-gray-500 dark:text-gray-400">{translations.tasks.completed}</div>
                               </div>
                           </div>
                       </div>

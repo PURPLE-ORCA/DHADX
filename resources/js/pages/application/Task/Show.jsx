@@ -18,12 +18,14 @@ import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react'; // Removed useForm from here if not used for general actions
 import { format } from 'date-fns';
 import { AlertCircle, Calendar, CheckCircle2, Clock, FileText, MessageSquare, Play, Send, Target, User, XCircle } from 'lucide-react';
-import { useEffect, useState } from 'react'; // Added useEffect
+import { useContext, useEffect, useState } from 'react'; // Added useEffect
+import { TranslationContext } from '@/context/TranslationProvider';
 
 // Assuming useForm for comments is still needed
 import { Link, useForm as useCommentForm } from '@inertiajs/react';
 
 export default function Show({ task, auth }) {
+    const { translations } = useContext(TranslationContext);
     const isAdmin = auth.user.roles.some((role) => role.name === 'admin');
     const isAssignee = auth.user.id === task.assignee_id;
 
@@ -119,49 +121,49 @@ export default function Show({ task, auth }) {
                 icon: Clock,
                 color: 'text-gray-600',
                 bg: 'bg-gray-100',
-                label: 'Pending',
+                label: translations.tasks.status.pending,
             },
             in_progress: {
                 variant: 'default',
                 icon: Play,
                 color: 'text-[var(--brand-color)]',
                 bg: 'bg-[var(--brand-color)]/10',
-                label: 'In Progress',
+                label: translations.tasks.status.in_progress,
             },
             submitted: {
                 variant: 'default',
                 icon: Send,
                 color: 'text-blue-600',
                 bg: 'bg-blue-50',
-                label: 'Submitted',
+                label: translations.tasks.status.submitted,
             },
             completed: {
                 variant: 'default',
                 icon: CheckCircle2,
                 color: 'text-green-600',
                 bg: 'bg-green-50',
-                label: 'Completed',
+                label: translations.tasks.status.completed,
             },
             needs_revision: {
                 variant: 'destructive',
                 icon: AlertCircle,
                 color: 'text-orange-600',
                 bg: 'bg-orange-50',
-                label: 'Needs Revision',
+                label: translations.tasks.status.needs_revision,
             },
             overdue: {
                 variant: 'destructive',
                 icon: AlertCircle,
                 color: 'text-red-600',
                 bg: 'bg-red-50',
-                label: 'Overdue',
+                label: translations.tasks.status.overdue,
             },
             cancelled: {
                 variant: 'outline',
                 icon: XCircle,
                 color: 'text-gray-400',
                 bg: 'bg-gray-50',
-                label: 'Cancelled',
+                label: translations.tasks.status.cancelled,
             },
         };
         return configs[status] || configs.pending;
@@ -169,9 +171,9 @@ export default function Show({ task, auth }) {
 
     const getPriorityConfig = (priority) => {
         const configs = {
-            low: { variant: 'secondary', color: 'text-gray-600', label: 'Low Priority' },
-            medium: { variant: 'default', color: 'text-[var(--brand-color)]', label: 'Medium Priority' },
-            high: { variant: 'destructive', color: 'text-red-600', label: 'High Priority' },
+            low: { variant: 'secondary', color: 'text-gray-600', label: translations.tasks.priority.low },
+            medium: { variant: 'default', color: 'text-[var(--brand-color)]', label: translations.tasks.priority.medium },
+            high: { variant: 'destructive', color: 'text-red-600', label: translations.tasks.priority.high },
         };
         return configs[priority] || configs.low;
     };
@@ -190,7 +192,7 @@ export default function Show({ task, auth }) {
 
     return (
         <AppLayout>
-            <Head title={task.title} />
+            <Head title={translations.tasks.show.page_title.replace(':task_title', task.title)} />
             <div className="min-h-screen bg-white dark:bg-black">
                 {/* Header Section */}
                 <div className="bg-white dark:bg-black">
@@ -199,7 +201,7 @@ export default function Show({ task, auth }) {
                             <div className="flex-1">
                                 {task.parent && (
                                     <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                                        Part of:{' '}
+                                        {translations.tasks.show.part_of}:{' '}
                                         <Link href={route('tasks.show', task.parent.id)} className="text-[var(--brand-color)] hover:underline">
                                             {task.parent.title}
                                         </Link>
@@ -218,12 +220,12 @@ export default function Show({ task, auth }) {
                                 </div>
 
                                 <p className="max-w-3xl text-lg leading-relaxed text-gray-600 dark:text-gray-400">
-                                    {task.description || 'No description provided.'}
+                                    {task.description || translations.tasks.show.no_description_provided}
                                 </p>
 
                                 {task.sub_tasks && task.sub_tasks.length > 0 && (
                                     <div className="mt-8">
-                                        <h2 className="mb-4 text-2xl font-bold text-black dark:text-white">Sub-Tasks</h2>
+                                        <h2 className="mb-4 text-2xl font-bold text-black dark:text-white">{translations.tasks.show.sub_tasks_heading}</h2>
                                         <div className="space-y-4">
                                             {task.sub_tasks.map((subTask) => (
                                                 <Card
@@ -237,7 +239,7 @@ export default function Show({ task, auth }) {
                                                             </h3>
                                                             <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                                                                 <User className="h-4 w-4" />
-                                                                <span>{subTask.assignee?.name || 'Unassigned'}</span>
+                                                                <span>{subTask.assignee?.name || translations.tasks.show.unassigned}</span>
                                                                 <Badge variant={getStatusConfig(subTask.status).variant} className="ml-auto">
                                                                     {getStatusConfig(subTask.status).label}
                                                                 </Badge>
@@ -253,22 +255,22 @@ export default function Show({ task, auth }) {
 
                             {/* Quick Stats */}
                             <div className="min-w-[280px] rounded-xl bg-gray-50 p-6 dark:bg-black">
-                                <h3 className="mb-4 font-semibold text-black dark:text-white">Task Details</h3>
+                                <h3 className="mb-4 font-semibold text-black dark:text-white">{translations.tasks.show.task_details_heading}</h3>
                                 <div className="space-y-3">
 
                                     <div className="flex items-center gap-3">
                                         <Target className="h-4 w-4 text-gray-400" />
                                         <div>
-                                            <div className="text-sm text-gray-500 dark:text-gray-400">Assigner</div>
+                                            <div className="text-sm text-gray-500 dark:text-gray-400">{translations.tasks.show.assigner_label}</div>
                                             <div className="font-medium text-black dark:text-white">{task.assigner?.name || 'N/A'}</div>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <Calendar className="h-4 w-4 text-gray-400" />
                                         <div>
-                                            <div className="text-sm text-gray-500 dark:text-gray-400">Due Date</div>
+                                            <div className="text-sm text-gray-500 dark:text-gray-400">{translations.tasks.show.due_date_label}</div>
                                             <div className="font-medium text-black dark:text-white">
-                                                {task.due_date ? format(new Date(task.due_date), 'MMM dd, yyyy') : 'No due date'}
+                                                {task.due_date ? format(new Date(task.due_date), 'MMM dd, yyyy') : translations.tasks.show.no_due_date}
                                             </div>
                                         </div>
                                     </div>
@@ -276,7 +278,7 @@ export default function Show({ task, auth }) {
                                         <div className="flex items-center gap-3">
                                             <Send className="h-4 w-4 text-gray-400" />
                                             <div>
-                                                <div className="text-sm text-gray-500 dark:text-gray-400">Submitted</div>
+                                                <div className="text-sm text-gray-500 dark:text-gray-400">{translations.tasks.show.submitted_label}</div>
                                                 <div className="font-medium text-black dark:text-white">
                                                     {format(new Date(task.submitted_at), "MMM dd, yyyy 'at' h:mm a")}
                                                 </div>
@@ -287,7 +289,7 @@ export default function Show({ task, auth }) {
                                         <div className="flex items-center gap-3">
                                             <CheckCircle2 className="h-4 w-4 text-gray-400" />
                                             <div>
-                                                <div className="text-sm text-gray-500 dark:text-gray-400">Completed</div>
+                                                <div className="text-sm text-gray-500 dark:text-gray-400">{translations.tasks.show.completed_label}</div>
                                                 <div className="font-medium text-black dark:text-white">
                                                     {format(new Date(task.completed_at), "MMM dd, yyyy 'at' h:mm a")}
                                                 </div>
@@ -311,7 +313,7 @@ export default function Show({ task, auth }) {
                                     <CardHeader>
                                         <CardTitle className="flex items-center gap-2 text-neutral-800 dark:text-neutral-100">
                                             <Target className="h-5 w-5" />
-                                            Available Actions
+                                            {translations.tasks.show.available_actions_heading}
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
@@ -323,7 +325,7 @@ export default function Show({ task, auth }) {
                                                     className="bg-[var(--brand-color)] text-white hover:bg-[var(--brand-color)]/90"
                                                 >
                                                     <Play className="mr-2 h-4 w-4" />
-                                                    Start Progress
+                                                    {translations.tasks.show.start_progress_button}
                                                 </Button>
                                             )}
                                             {isAssignee && task.status === 'in_progress' && (
@@ -333,7 +335,7 @@ export default function Show({ task, auth }) {
                                                     className="bg-[var(--brand-color)] text-white hover:bg-[var(--brand-color)]/90"
                                                 >
                                                     <Send className="mr-2 h-4 w-4" />
-                                                    Submit for Review
+                                                    {translations.tasks.show.submit_for_review_button}
                                                 </Button>
                                             )}
                                             {isAdmin && task.status === 'submitted' && (
@@ -344,7 +346,7 @@ export default function Show({ task, auth }) {
                                                         className="bg-green-600 text-white hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800"
                                                     >
                                                         <CheckCircle2 className="mr-2 h-4 w-4" />
-                                                        Approve Completion
+                                                        {translations.tasks.show.approve_completion_button}
                                                     </Button>
 
                                                     {/* MODIFIED "REQUEST REVISION" BUTTON */}
@@ -352,7 +354,7 @@ export default function Show({ task, auth }) {
                                                         <DialogTrigger asChild>
                                                             <Button variant="destructive" disabled={actionProcessing}>
                                                                 <AlertCircle className="mr-2 h-4 w-4" />
-                                                                Request Revision
+                                                                {translations.tasks.show.request_revision_button}
                                                             </Button>
                                                         </DialogTrigger>
                                                         <DialogContent
@@ -366,19 +368,19 @@ export default function Show({ task, auth }) {
                                                                 <DialogTitle className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
                                                                     {' '}
                                                                     {/* Styled Title */}
-                                                                    Request Revision
+                                                                    {translations.tasks.show.request_revision_dialog_title}
                                                                 </DialogTitle>
                                                                 <DialogDescription className="text-sm text-neutral-600 dark:text-neutral-400">
                                                                     {' '}
                                                                     {/* Styled Description */}
-                                                                    Please provide a reason for requesting revision. This will be added as a comment.
+                                                                    {translations.tasks.show.request_revision_dialog_description}
                                                                 </DialogDescription>
                                                             </DialogHeader>
                                                             <div className="grid gap-4">
                                                                 {' '}
                                                                 {/* Removed py-4, padding is on DialogContent now */}
                                                                 <Textarea
-                                                                    placeholder="Enter reason for revision..."
+                                                                    placeholder={translations.tasks.show.enter_reason_placeholder}
                                                                     value={revisionComment}
                                                                     onChange={(e) => {
                                                                         setRevisionComment(e.target.value);
@@ -401,7 +403,7 @@ export default function Show({ task, auth }) {
                                                                         variant="outline"
                                                                         className="border-neutral-300 text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
                                                                     >
-                                                                        Cancel
+                                                                        {translations.tasks.show.cancel_button}
                                                                     </Button>
                                                                 </DialogClose>
                                                                 {/* Standard Shadcn button styling for primary */}
@@ -410,7 +412,7 @@ export default function Show({ task, auth }) {
                                                                     disabled={actionProcessing || !revisionComment.trim()}
                                                                     className="bg-primary text-primary-foreground hover:bg-primary/90"
                                                                 >
-                                                                    {actionProcessing ? 'Submitting...' : 'Submit Revision'}
+                                                                    {actionProcessing ? translations.tasks.show.submitting_button : translations.tasks.show.submit_revision_button}
                                                                 </Button>
                                                             </div>
                                                         </DialogContent>
@@ -425,13 +427,13 @@ export default function Show({ task, auth }) {
                                                     className="border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
                                                 >
                                                     <XCircle className="mr-2 h-4 w-4" />
-                                                    Cancel Task
+                                                    {translations.tasks.show.cancel_task_button}
                                                 </Button>
                                             )}
                                         </div>
                                         {!isAssignee && !isAdmin && (
                                             <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-                                                You don't have permission to perform actions on this task.
+                                                {translations.tasks.show.no_permission_message}
                                             </p>
                                         )}
                                     </CardContent>
@@ -442,7 +444,7 @@ export default function Show({ task, auth }) {
                                     <CardHeader>
                                         <CardTitle className="flex items-center gap-2 text-neutral-800 dark:text-neutral-100">
                                             <MessageSquare className="h-5 w-5" />
-                                            Comments ({task.comments.length})
+                                            {translations.tasks.show.comments_heading.replace(':count', task.comments.length)}
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent className="space-y-6">
@@ -462,7 +464,7 @@ export default function Show({ task, auth }) {
                                                                     </span>
                                                                 </div>
                                                                 <span className="font-medium text-neutral-800 dark:text-neutral-100">
-                                                                    {comment.user?.name || 'Unknown User'}
+                                                                    {comment.user?.name || translations.tasks.show.unknown_user}
                                                                 </span>
                                                             </div>
                                                             <span className="text-xs text-neutral-500 dark:text-neutral-400">
@@ -475,7 +477,7 @@ export default function Show({ task, auth }) {
                                             ) : (
                                                 <div className="py-8 text-center">
                                                     <MessageSquare className="mx-auto mb-3 h-12 w-12 text-neutral-400 dark:text-neutral-600" />
-                                                    <p className="text-neutral-500 dark:text-gray-400">No comments yet. Be the first to add one!</p>
+                                                    <p className="text-neutral-500 dark:text-gray-400">{translations.tasks.show.no_comments_yet}</p>
                                                 </div>
                                             )}
                                         </div>
@@ -486,12 +488,12 @@ export default function Show({ task, auth }) {
                                         <form onSubmit={handleAddComment} className="space-y-4">
                                             <div>
                                                 <label className="mb-2 block text-sm font-medium text-neutral-800 dark:text-neutral-100">
-                                                    Add a comment
+                                                    {translations.tasks.show.add_comment_label}
                                                 </label>
                                                 <Textarea
                                                     value={commentDataForForm.comment}
                                                     onChange={(e) => setCommentDataForForm('comment', e.target.value)}
-                                                    placeholder="Share your thoughts, updates, or questions..."
+                                                    placeholder={translations.tasks.show.share_thoughts_placeholder}
                                                     rows={4}
                                                     className="focus:border-primary focus:ring-primary border-neutral-300 bg-white/70 dark:border-neutral-600 dark:bg-neutral-800/70 dark:text-neutral-100"
                                                 />
@@ -503,7 +505,7 @@ export default function Show({ task, auth }) {
                                                 className="bg-primary text-primary-foreground hover:bg-primary/90"
                                             >
                                                 <MessageSquare className="mr-2 h-4 w-4" />
-                                                {commentProcessing ? 'Adding...' : 'Add Comment'}
+                                                {commentProcessing ? translations.tasks.show.adding_comment_button : translations.tasks.show.add_comment_button}
                                             </Button>
                                         </form>
                                     </CardContent>
@@ -517,7 +519,7 @@ export default function Show({ task, auth }) {
                                     <CardHeader>
                                         <CardTitle className="flex items-center gap-2 text-neutral-800 dark:text-neutral-100">
                                             <Clock className="h-5 w-5" />
-                                            Timeline
+                                            {translations.tasks.show.timeline_heading}
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
@@ -525,7 +527,7 @@ export default function Show({ task, auth }) {
                                             <div className="flex items-center gap-3">
                                                 <div className="dark:bg-blackrounded-full h-2 w-2 bg-gray-300"></div>
                                                 <div>
-                                                    <div className="text-sm font-medium text-black dark:text-white">Task Created</div>
+                                                    <div className="text-sm font-medium text-black dark:text-white">{translations.tasks.show.task_created}</div>
                                                     <div className="text-xs text-gray-500 dark:text-gray-400">
                                                         {format(new Date(task.created_at), 'MMM dd, yyyy')}
                                                     </div>
@@ -536,8 +538,8 @@ export default function Show({ task, auth }) {
                                                 <div className="flex items-center gap-3">
                                                     <div className="h-2 w-2 rounded-full bg-[var(--brand-color)]"></div>
                                                     <div>
-                                                        <div className="text-sm font-medium text-black dark:text-white">In Progress</div>
-                                                        <div className="text-xs text-gray-500 dark:text-gray-400">Status updated</div>
+                                                        <div className="text-sm font-medium text-black dark:text-white">{translations.tasks.show.in_progress_timeline}</div>
+                                                        <div className="text-xs text-gray-500 dark:text-gray-400">{translations.tasks.show.status_updated}</div>
                                                     </div>
                                                 </div>
                                             )}
@@ -546,7 +548,7 @@ export default function Show({ task, auth }) {
                                                 <div className="flex items-center gap-3">
                                                     <div className="h-2 w-2 rounded-full bg-blue-500 dark:bg-blue-700"></div>
                                                     <div>
-                                                        <div className="text-sm font-medium text-black dark:text-white">Submitted</div>
+                                                        <div className="text-sm font-medium text-black dark:text-white">{translations.tasks.show.submitted_timeline}</div>
                                                         <div className="text-xs text-gray-500 dark:text-gray-400">
                                                             {format(new Date(task.submitted_at), 'MMM dd, yyyy')}
                                                         </div>
@@ -558,7 +560,7 @@ export default function Show({ task, auth }) {
                                                 <div className="flex items-center gap-3">
                                                     <div className="h-2 w-2 rounded-full bg-green-500 dark:bg-green-700"></div>
                                                     <div>
-                                                        <div className="text-sm font-medium text-black dark:text-white">Completed</div>
+                                                        <div className="text-sm font-medium text-black dark:text-white">{translations.tasks.show.completed_timeline}</div>
                                                         <div className="text-xs text-gray-500 dark:text-gray-400">
                                                             {format(new Date(task.completed_at), 'MMM dd, yyyy')}
                                                         </div>
@@ -574,22 +576,22 @@ export default function Show({ task, auth }) {
                                     <CardHeader>
                                         <CardTitle className="flex items-center gap-2 text-neutral-800 dark:text-neutral-100">
                                             <FileText className="h-5 w-5" />
-                                            Quick Info
+                                            {translations.tasks.show.quick_info_heading}
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent className="space-y-3">
                                         <div>
-                                            <div className="text-sm text-gray-500 dark:text-gray-400">Task ID</div>
+                                            <div className="text-sm text-gray-500 dark:text-gray-400">{translations.tasks.show.task_id_label}</div>
                                             <div className="font-mono text-sm text-black dark:text-white">#{task.id}</div>
                                         </div>
                                         <div>
-                                            <div className="text-sm text-gray-500 dark:text-gray-400">Created</div>
+                                            <div className="text-sm text-gray-500 dark:text-gray-400">{translations.tasks.show.created_label}</div>
                                             <div className="text-sm text-black dark:text-white">
                                                 {format(new Date(task.created_at), 'MMM dd, yyyy')}
                                             </div>
                                         </div>
                                         <div>
-                                            <div className="text-sm text-gray-500 dark:text-gray-400">Last Updated</div>
+                                            <div className="text-sm text-gray-500 dark:text-gray-400">{translations.tasks.show.last_updated_label}</div>
                                             <div className="text-sm text-black dark:text-white">
                                                 {format(new Date(task.updated_at), 'MMM dd, yyyy')}
                                             </div>

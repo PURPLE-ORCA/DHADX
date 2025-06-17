@@ -6,8 +6,11 @@ import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { toast } from "sonner";
+import { useContext } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 
 export default function Create({ collaborators, cours }) {
+    const { translations } = useContext(TranslationContext);
     const { data, setData, post, processing, reset, errors } = useForm({
         collaborator_id: '',
         cour_id: '',
@@ -19,10 +22,10 @@ export default function Create({ collaborators, cours }) {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
-                toast.success("Camp created successfully!");
+                toast.success(translations.camps.create_success_toast);
             },
             onError: (errors) => {
-                toast.error("Failed to create camp. Please check selections.");
+                toast.error(translations.camps.create_error_toast);
                 console.error("Save errors:", errors);
             }
         });
@@ -30,34 +33,34 @@ export default function Create({ collaborators, cours }) {
 
     const breadcrumbs = [
         {
-            title: 'Camps list',
+            title: translations.camps.camps_list,
             href: '/camps',
         },
         {
-            title: 'Add new camp',
+            title: translations.camps.add_new_camp,
             href: '/camps/create',
         },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Camps" />
+            <Head title={translations.camps.title} />
 
             <div className="p-4">
-                <h1 className="mb-6 text-2xl font-bold">Add New Camp</h1>
+                <h1 className="mb-6 text-2xl font-bold">{translations.camps.add_new_camp}</h1>
 
                 <form className="space-y-6" onSubmit={submitForm}>
                     {/* Collaborator Select */}
                     <div className="grid gap-2">
                         <Label htmlFor="collaborator_id">
-                            Collaborator
+                            {translations.camps.collaborator_label}
                         </Label>
 <Select
     value={String(data.collaborator_id)}
     onValueChange={(value) => setData('collaborator_id', value)}
 >
     <SelectTrigger className="w-full">
-        <SelectValue placeholder="Select collaborator" />
+        <SelectValue placeholder={translations.camps.select_collaborator_placeholder} />
     </SelectTrigger>
     <SelectContent>
         {collaborators.map((c) => (
@@ -73,14 +76,14 @@ export default function Create({ collaborators, cours }) {
                     {/* Cour Select */}
                     <div className="grid gap-2">
                         <Label htmlFor="cour_id">
-                            Course
+                            {translations.camps.course_label}
                         </Label>
 <Select
     value={String(data.cour_id)}
     onValueChange={(value) => setData('cour_id', value)}
 >
     <SelectTrigger className="w-full">
-        <SelectValue placeholder="Select course" />
+        <SelectValue placeholder={translations.camps.select_course_placeholder} />
     </SelectTrigger>
     <SelectContent>
         {cours.map((c) => (
@@ -97,7 +100,7 @@ export default function Create({ collaborators, cours }) {
                     <div>
                         <Button type="submit" disabled={processing}>
                             {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
-                            Add
+                            {translations.camps.add_button}
                         </Button>
                     </div>
                 </form>

@@ -1,3 +1,5 @@
+import { useContext } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 import CampCard from './CampCard';
 
 function groupCamps(camps) {
@@ -26,6 +28,7 @@ function groupCamps(camps) {
 }
 
 function Data({ camps, onDeleted }) {
+    const { translations } = useContext(TranslationContext);
     const grouped = groupCamps(camps);
 
     const handleCampDeletedForData = (deletedCampId) => {
@@ -35,7 +38,7 @@ function Data({ camps, onDeleted }) {
     };
 
     const handleCampUpdated = () => {
-        console.log("A camp was updated, potentially refresh camps data");
+        // console.log("A camp was updated, potentially refresh camps data");
         if (onDeleted) {
         }
     };
@@ -44,10 +47,10 @@ function Data({ camps, onDeleted }) {
         <div className="space-y-8">
             {Object.entries(grouped).map(([collaboratorName, courses]) => (
                 <div key={collaboratorName}>
-                    <h2 className="mb-2 text-xl font-bold">{collaboratorName}</h2>
+                    <h2 className="mb-2 text-xl font-bold">{translations.camps.data.collaborator_name_heading.replace(':collaborator_name', collaboratorName)}</h2>
                     {Object.entries(courses).map(([courseName, courseData]) => (
                         <div key={courseName} className="mb-4 last:mb-0">
-                            <h3 className="text-md mb-1 font-semibold text-neutral-700 dark:text-neutral-200">{courseName}</h3>
+                            <h3 className="text-md mb-1 font-semibold text-neutral-700 dark:text-neutral-200">{translations.camps.data.course_name_heading.replace(':course_name', courseName)}</h3>
                             <small className="mb-2 block text-neutral-500 dark:text-neutral-400">{courseData.label}</small>
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                                 {courseData.items.map((camp) => (

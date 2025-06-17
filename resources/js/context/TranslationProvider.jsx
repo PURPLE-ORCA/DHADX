@@ -25,10 +25,13 @@ export default function TranslationProvider({ children }) {
 
     const [translations, setTranslations] = useState(getTranslations(language));
 
+    useEffect(() => {
+        setTranslations(getTranslations(language));
+    }, [language]);
+
     const switchLanguage = (lang) => {
         if (!["ar","en", "fr"].includes(lang)) return;
         setLanguage(lang);
-        setTranslations(getTranslations(lang));
         localStorage.setItem("lang", lang);
     };
 
