@@ -10,7 +10,7 @@ export default function MyCampProgressWidget({ camps }) {
 
     if (!camps || camps.length === 0) {
         return (
-            <Card className="md:col-span-2 lg:col-span-1"> {/* Adjust col-span as needed */}
+            <Card className="md:col-span-2 lg:col-span-1 bg-[var(--card-back)]"> 
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <BookMarked className="h-5 w-5" />
@@ -27,7 +27,7 @@ export default function MyCampProgressWidget({ camps }) {
     }
 
     return (
-        <Card className="md:col-span-2 lg:col-span-1"> {/* Adjust col-span as needed for your grid */}
+        <Card className="md:col-span-2 lg:col-span-1 bg-[var(--card-back)]"> 
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <BookMarked className="h-5 w-5" />
@@ -35,7 +35,7 @@ export default function MyCampProgressWidget({ camps }) {
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <ScrollArea className="h-[300px] w-full pr-4"> {/* Set a height for the scrollable area */}
+                <ScrollArea className="h-[300px] w-full pr-4"> 
                     <div className="space-y-4">
                         {camps.map((camp) => (
                             <div key={camp.id} className="space-y-1.5">

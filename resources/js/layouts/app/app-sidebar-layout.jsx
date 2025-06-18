@@ -11,12 +11,12 @@ export default function AppSidebarLayout({ children, breadcrumbs = [] }) {
         <AppShell variant="sidebar">
             <AppSidebar />
             <AppContent variant="sidebar" className="relative isolate">
-                <div
+                {/* <div
                     className="absolute top-1/2 left-1/2 -z-10 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-30 blur-2xl pointer-events-none"
                     style={{
                         backgroundImage: `radial-gradient(circle, ${dotColor} 0%, transparent 60%)`,
                     }}
-                ></div>
+                ></div> */}
                 <div className="relative z-0">
                     <AppSidebarHeader breadcrumbs={breadcrumbs} />
                     {children}

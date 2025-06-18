@@ -112,6 +112,7 @@
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.87 0 0);
     --brand-color: #FF2D20;
+    --card-back: #c3c9c9;
 }
 
 .dark {
@@ -148,6 +149,7 @@
     --sidebar-border: oklch(0.269 0 0);
     --sidebar-ring: oklch(0.439 0 0);
     --brand-color: #FF2D20;
+    --card-back: #1a1919;
 }
 
 @layer base {

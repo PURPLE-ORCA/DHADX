@@ -2,25 +2,35 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import AppLayout from '@/layouts/app-layout';
 import { Transition } from '@headlessui/react';
 import { Head, router, useForm } from '@inertiajs/react';
 import { useContext, useEffect } from 'react';
 import { TranslationContext } from '@/context/TranslationProvider';
 
-export default function Edit({ cour }) {
+export default function Edit({ cour, formations }) {
     const { translations } = useContext(TranslationContext);
     const { data, setData, put, processing, reset, errors, clearErrors, recentlySuccessful } = useForm({
         name: cour.name,
         label: cour.label,
         color: cour.color,
+        formation_ids: cour.formations.map(f => f.id) || [],
     });
+
+    const handleFormationChange = (formationId, checked) => {
+        setData('formation_ids', checked
+            ? [...data.formation_ids, formationId]
+            : data.formation_ids.filter((id) => id !== formationId)
+        );
+    };
 
     useEffect(() => {
         setData({
             name: cour.name,
             label: cour.label,
             color: cour.color,
+            formation_ids: cour.formations.map(f => f.id) || [],
         });
     }, [cour, setData]);
 
@@ -110,6 +120,22 @@ export default function Edit({ cour }) {
                             autoComplete="off"
                         />
                         <InputError message={errors.color} />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label>{translations.courses.edit.formations_label}</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 rounded-md border p-4">
+                            {formations.map((formation) => (
+                                <div key={formation.id} className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id={`formation_${formation.id}`}
+                                        checked={data.formation_ids.includes(formation.id)}
+                                        onCheckedChange={(checked) => handleFormationChange(formation.id, checked)}
+                                    />
+                                    <Label htmlFor={`formation_${formation.id}`}>{formation.name}</Label>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="flex justify-end gap-2">

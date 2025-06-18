@@ -47,29 +47,25 @@ function Dashboard({ user, collabCount, formationsCount, specialitysCount, cours
         );
     }
 
+    widgets.push(<LatestNotifications key="notifications" notifications={latestNotifications} />);
+
     if (isCollaborator) {
         widgets.push(
+            <UpcomingDeadlines
+            key="collab-deadlines"
+            upcomingTasks={upcomingTasks}
+            />,
+            <MyCampProgressWidget
+            key="collab-progress"
+            camps={collaboratorActiveCamps}
+            />,
             <CollaboratorMyTasks
                 key="collab-tasks"
                 taskSummaries={taskSummaries}
-            />,
-            <MyCampProgressWidget
-                key="collab-progress"
-                camps={collaboratorActiveCamps}
-            />,
-            <UpcomingDeadlines
-                key="collab-deadlines"
-                upcomingTasks={upcomingTasks}
             />
         );
     }
 
-        widgets.push(
-            <LatestNotifications
-                key="notifications"
-                notifications={latestNotifications}
-            />
-        );
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

@@ -39,11 +39,15 @@ class CourController extends Controller
     {
         $validatedData = $request->validated();
 
-        Cour::create([
+        $cour = Cour::create([
             'name' => $validatedData['name'],
             'label' => $validatedData['label'],
             'color' => $validatedData['color'],
         ]);
+
+        if (isset($validatedData['formation_ids'])) {
+            $cour->formations()->sync($validatedData['formation_ids']);
+        }
 
         return redirect()->route("cours.index");
     }
@@ -61,8 +65,11 @@ class CourController extends Controller
      */
     public function edit(Cour $cour)
     {
+        $cour->load('formations');
+
         return Inertia::render('application/Cours/Edit', [
             'cour' => $cour,
+            'formations' => Formation::all(),
         ]);
     }
 
@@ -78,6 +85,8 @@ class CourController extends Controller
             'label' => $validatedData['label'],
             'color' => $validatedData['color'],
         ]);
+
+        $cour->formations()->sync($validatedData['formation_ids'] ?? []);
 
         return redirect()->route("cours.index");
     }
