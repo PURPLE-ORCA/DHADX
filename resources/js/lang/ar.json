@@ -9,8 +9,19 @@
     "dashboard": {
         "title": "لوحة القيادة"
     },
+    "sidebar": {
+        "dashboard": "لوحة القيادة",
+        "leaderboard": "لوحة المتصدرين",
+        "my_tasks": "مهامي",
+        "tasks": "المهام",
+        "collaborators": "الشركاء",
+        "specialities": "التخصصات",
+        "cours": "الدورات",
+        "formations": "التكوينات",
+        "camps": "المعسكرات"
+    },
     "admin_dashboard": {
-        "collaborators_title": "المتعاونون",
+        "collaborators_title": "الشركاء",
         "specialities_title": "التخصصات",
         "courses_title": "الدورات",
         "formations_title": "التكوينات"
@@ -51,9 +62,9 @@
         "no_new_notifications": "لا توجد إشعارات جديدة."
     },
     "leaderboard": {
-        "title": "لوحة المتصدرين للمتعاونين",
+        "title": "لوحة المتصدرين للشركاء",
         "rank": "الترتيب",
-        "collaborator": "المتعاون",
+        "collaborator": "الشريك",
         "highest_class_level": "أعلى مستوى صف دراسي",
         "progress_in_class": "التقدم في الصف (%)",
         "no_camp_yet": "لا يوجد معسكر بعد"
@@ -66,13 +77,13 @@
         "create_success_toast": "تم إنشاء المعسكر بنجاح!",
         "create_error_toast": "فشل إنشاء المعسكر. يرجى التحقق من التحديدات.",
         "add_new_camp": "إضافة معسكر جديد",
-        "collaborator_label": "المتعاون",
-        "select_collaborator_placeholder": "اختر المتعاون",
+        "collaborator_label": "الشريك",
+        "select_collaborator_placeholder": "اختر الشريك",
         "course_label": "الدورة",
         "select_course_placeholder": "اختر الدورة",
         "add_button": "إضافة",
         "data": {
-            "collaborator_name_heading": "المتعاون: :collaborator_name",
+            "collaborator_name_heading": "الشريك: :collaborator_name",
             "course_name_heading": "الدورة: :course_name"
         }
     },
@@ -92,13 +103,13 @@
         "delete_button_confirm": "حذف"
     },
     "collaborators": {
-        "collaborators_list": "قائمة المتعاونين",
-        "title": "المتعاونون",
-        "search_placeholder": "البحث عن متعاون...",
+        "collaborators_list": "قائمة الشركاء",
+        "title": "الشركاء",
+        "search_placeholder": "البحث عن شريك...",
         "add_new": "إضافة جديد",
-        "create_success_toast": "تم حفظ المتعاون بنجاح!",
-        "create_error_toast": "فشل حفظ المتعاون. يرجى التحقق من النموذج.",
-        "add_new_collaborator": "إضافة متعاون جديد",
+        "create_success_toast": "تم حفظ الشريك بنجاح!",
+        "create_error_toast": "فشل حفظ الشريك. يرجى التحقق من النموذج.",
+        "add_new_collaborator": "إضافة شريك جديد",
         "name_label": "الاسم",
         "name_placeholder": "الاسم",
         "email_label": "البريد الإلكتروني",
@@ -110,11 +121,11 @@
         "assign_task_button": "تعيين مهمة",
         "edit_button": "تعديل",
         "edit": {
-            "edit_collaborator": "تعديل المتعاون",
-            "page_title": "تعديل المتعاون",
-            "updated_successfully": "تم تحديث المتعاون بنجاح!",
-            "failed_to_update": "فشل تحديث المتعاون. يرجى التحقق من النموذج.",
-            "edit_collaborator_heading": "تعديل المتعاون",
+            "edit_collaborator": "تعديل الشريك",
+            "page_title": "تعديل الشريك",
+            "updated_successfully": "تم تحديث الشريك بنجاح!",
+            "failed_to_update": "فشل تحديث الشريك. يرجى التحقق من النموذج.",
+            "edit_collaborator_heading": "تعديل الشريك",
             "name_label": "الاسم",
             "name_placeholder": "الاسم",
             "email_label": "البريد الإلكتروني",
@@ -272,8 +283,8 @@
         "in_progress": "قيد التقدم",
         "completed": "مكتملة",
         "create": {
-            "saved_successfully": "تم إنشاء المهمة التعاونية بنجاح!",
-            "failed_to_create": "فشل إنشاء المهمة التعاونية. يرجى التحقق من النموذج.",
+            "saved_successfully": "تم إنشاء المهمة بنجاح!",
+            "failed_to_create": "فشل إنشاء المهمة. يرجى التحقق من النموذج.",
             "create_new_task": "إنشاء مهمة جديدة",
             "page_title": "إنشاء مهمة",
             "create_new_task_heading": "إنشاء مهمة جديدة",

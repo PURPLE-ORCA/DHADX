@@ -9,6 +9,17 @@
     "dashboard": {
         "title": "Dashboard"
     },
+    "sidebar": {
+        "dashboard": "Dashboard",
+        "leaderboard": "Leaderboard",
+        "my_tasks": "My Tasks",
+        "tasks": "Tasks",
+        "collaborators": "Collaborators",
+        "specialities": "Specialities",
+        "cours": "Courses",
+        "formations": "Formations",
+        "camps": "Camps"
+    },
     "admin_dashboard": {
         "collaborators_title": "Collaborators",
         "specialities_title": "Specialities",

@@ -9,6 +9,17 @@
     "dashboard": {
         "title": "Tableau de bord"
     },
+    "sidebar": {
+        "dashboard": "Tableau de bord",
+        "leaderboard": "Classement",
+        "my_tasks": "Mes tâches",
+        "tasks": "Tâches",
+        "collaborators": "Collaborateurs",
+        "specialities": "Spécialités",
+        "cours": "Cours",
+        "formations": "Formations",
+        "camps": "Camps"
+    },
     "admin_dashboard": {
         "collaborators_title": "Collaborateurs",
         "specialities_title": "Spécialités",

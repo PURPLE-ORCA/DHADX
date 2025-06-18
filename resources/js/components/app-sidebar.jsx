@@ -4,6 +4,8 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { Link, usePage } from '@inertiajs/react';
 import { BriefcaseBusiness, Layers, LayoutGrid, ListChecks, Shapes, Tent, Trophy, UsersRound, ClipboardList } from 'lucide-react'; // Added ListChecks for My Tasks
 import AppLogo from './app-logo';
+import { useContext } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 
 // Define icons
 const iconDashboard = LayoutGrid;
@@ -18,11 +20,12 @@ const iconMyTasks = ListChecks;
 
 export function AppSidebar() {
     const { auth } = usePage().props;
+    const { translations } = useContext(TranslationContext);
     const navItems = [];
 
     // --- Items everyone sees ---
     navItems.push({
-        title: 'Dashboard',
+        title: translations.sidebar.dashboard,
         url: route('dashboard'),
         routeName: 'dashboard',
         icon: iconDashboard,
@@ -31,7 +34,7 @@ export function AppSidebar() {
     // --- Items for Admins AND Collaborators ---
     if (auth.user && (auth.abilities?.isAdmin || auth.abilities?.isCollaborator)) {
         navItems.push({
-            title: 'Leaderboard',
+            title: translations.sidebar.leaderboard,
             url: route('leaderboard.index'),
             routeName: 'leaderboard.index',
             icon: iconLeaderboard,
@@ -40,7 +43,7 @@ export function AppSidebar() {
 
     if (auth.user && auth.abilities?.isCollaborator) {
         navItems.push({
-            title: 'My Tasks',
+            title: translations.sidebar.my_tasks,
             url: route('collaborator.tasks'), // You'll create this route & page
             routeName: 'collaborator.tasks',
             icon: iconMyTasks,
@@ -51,37 +54,37 @@ export function AppSidebar() {
     if (auth.user && auth.abilities?.isAdmin) {
         navItems.push(
             {
-                title: 'Tasks', // Admin view of all tasks/camps
+                title: translations.sidebar.tasks, // Admin view of all tasks/camps
                 url: route('tasks.index'), // Assuming this is the "all tasks" view
                 routeName: 'tasks.index', // This was previously just "Tasks"
                 icon: iconAdminTasks, // Using a more generic "tasks" icon
             },
             {
-                title: 'Collaborators',
+                title: translations.sidebar.collaborators,
                 url: route('collaborators.index'),
                 routeName: 'collaborators.index',
                 icon: iconCollaborators,
             },
             {
-                title: 'Specialities',
+                title: translations.sidebar.specialities,
                 url: route('specialities.index'),
                 routeName: 'specialities.index',
                 icon: iconSpecialities,
             },
             {
-                title: 'Cours',
+                title: translations.sidebar.cours,
                 url: route('cours.index'),
                 routeName: 'cours.index',
                 icon: iconCours,
             },
             {
-                title: 'Formations',
+                title: translations.sidebar.formations,
                 url: route('formations.index'),
                 routeName: 'formations.index',
                 icon: iconFormations,
             },
             {
-                title: 'Camps',
+                title: translations.sidebar.camps,
                 url: route('camps.index'),
                 routeName: 'camps.index',
                 icon: iconCampsManagement,

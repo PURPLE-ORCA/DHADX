@@ -60,11 +60,9 @@ export default function NotificationBadge() {
         <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative">
-                    <BellIcon className="h-6 w-6" />
+                    <BellIcon className="h-14 w-14 text-[var(--brand-color)]" />
                     {pendingCount > 0 && (
-                        <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 rounded-full">
-                            {pendingCount}
-                        </Badge>
+                        <Badge className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full p-0">{pendingCount}</Badge>
                     )}
                 </Button>
             </DropdownMenuTrigger>
@@ -75,14 +73,10 @@ export default function NotificationBadge() {
                     <>
                         {latestNotifications.map((notification) => (
                             <DropdownMenuItem key={notification.id} className="flex flex-col items-start space-y-1">
-                                <Link
-                                    href={notification.link || '#'}
-                                    onClick={() => markAsRead(notification.id)}
-                                    className="w-full"
-                                >
-                                    <p className="text-sm font-medium leading-none">{notification.type.replace(/_/g, ' ')}</p>
-                                    <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
-                                    <p className="text-xs text-gray-500 mt-1">
+                                <Link href={notification.link || '#'} onClick={() => markAsRead(notification.id)} className="w-full">
+                                    <p className="text-sm leading-none font-medium">{notification.type.replace(/_/g, ' ')}</p>
+                                    <p className="text-muted-foreground mt-1 text-sm">{notification.message}</p>
+                                    <p className="mt-1 text-xs text-gray-500">
                                         {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
                                     </p>
                                 </Link>

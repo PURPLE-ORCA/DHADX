@@ -24,7 +24,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }) {
     return (
         <header className="border-sidebar-border/50 bg-background flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-6">
             <div className="flex items-center gap-2">
-                <SidebarTrigger className="-ml-1.5 md:-ml-1" />
+                <SidebarTrigger className="-ml-1.5 text-[var(--brand-color)] md:-ml-1" />
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
             </div>
 
@@ -32,10 +32,10 @@ export function AppSidebarHeader({ breadcrumbs = [] }) {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-                            <Icon icon="fa-solid:language" className="h-4 w-4" />
+                            <Icon icon="fa-solid:language" className="h-4 w-4 text-[var(--brand-color)]" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-40 border-[var(--border)] bg-[var(--popover)] text-[var(--popover-foreground)]">
+                    <DropdownMenuContent align="end" className="w-40 border-[var(--border)] bg-[var(--popover)] text-[var(--brand-color)]">
                         {locals.map((loc) => (
                             <DropdownMenuItem
                                 key={loc.locale}
