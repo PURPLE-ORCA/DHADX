@@ -1,19 +1,19 @@
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { TranslationContext } from '@/context/TranslationProvider';
 import AppLayout from '@/layouts/app-layout';
+import { cn } from '@/lib/utils';
 import { Head, useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { CalendarIcon, LoaderCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { toast } from "sonner";
 import { useContext } from 'react';
-import { TranslationContext } from '@/context/TranslationProvider';
+import { toast } from 'sonner';
 
 export default function Create({ collaborators }) {
     const { translations } = useContext(TranslationContext);
@@ -35,10 +35,7 @@ export default function Create({ collaborators }) {
     };
 
     const addSubTask = () => {
-        setData('sub_tasks', [
-            ...data.sub_tasks,
-            { assignee_id: '', title: '', description: '' },
-        ]);
+        setData('sub_tasks', [...data.sub_tasks, { assignee_id: '', title: '', description: '' }]);
     };
 
     const removeSubTask = (index) => {
@@ -56,8 +53,8 @@ export default function Create({ collaborators }) {
             },
             onError: (errors) => {
                 toast.error(translations.tasks.create.failed_to_create);
-                console.error("Save errors:", errors);
-            }
+                console.error('Save errors:', errors);
+            },
         });
     };
 
@@ -187,6 +184,8 @@ export default function Create({ collaborators }) {
                                     selected={data.due_date ? new Date(data.due_date) : undefined}
                                     onSelect={(date) => setData('due_date', date ? format(date, 'yyyy-MM-dd') : undefined)}
                                     initialFocus
+                                    // ADD THIS PROP:
+                                    disabled={{ before: new Date() }}
                                 />
                             </PopoverContent>
                         </Popover>

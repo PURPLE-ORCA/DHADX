@@ -26,7 +26,7 @@ class StoreTaskRequest extends FormRequest
             // Rules for the Parent Task
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'due_date' => ['nullable', 'date'],
+            'due_date' => ['nullable', 'date', 'after_or_equal:today'],
             'priority' => ['required', 'in:low,medium,high'],
 
             // --- NEW RULES FOR SUB-TASKS ---
