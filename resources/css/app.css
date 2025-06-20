@@ -112,6 +112,7 @@
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.87 0 0);
     --brand-color: #FF2D20;
+    --card-back: #c3c9c9;
 }
 
 .dark {
@@ -148,6 +149,7 @@
     --sidebar-border: oklch(0.269 0 0);
     --sidebar-ring: oklch(0.439 0 0);
     --brand-color: #FF2D20;
+    --card-back: #1a1919;
 }
 
 @layer base {
@@ -175,4 +177,39 @@
 /* Style your items (the direct children of a column) */
 .my-masonry-grid_column > div { /* Or target the specific Card components if they are direct children */
   margin-bottom: 16px; /* Vertical gap between items in the same column */
+}
+
+/* RTL Overrides */
+html[dir="rtl"] .sidebar-icon {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
+html[dir="rtl"] .special-component {
+  padding-left: 0;
+  padding-right: 1rem;
+}
+
+html[dir="rtl"] .dropdown-caret {
+  right: auto;
+  left: 0.5rem;
+}
+
+html[dir="rtl"] .force-align-left {
+    text-align: left;
+}
+
+/*
+  ==================================================================
+  THE REAL RTL FIX: FLIP THE ENTIRE APP LAYOUT
+  ==================================================================
+*/
+
+/*
+  Assuming your main app layout is a flex container
+  (e.g., <div class="flex"> <Sidebar /> <MainContent /> </div>)
+  This is the magic bullet. It reverses the visual order of the children.
+*/
+html[dir="rtl"] .group\/sidebar-wrapper {
+  flex-direction: row-reverse;
 }

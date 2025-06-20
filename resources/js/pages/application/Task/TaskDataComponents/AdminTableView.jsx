@@ -6,20 +6,23 @@ import { Eye, Pencil } from 'lucide-react';
 import DeleteTask from '../DeleteTask';
 import TaskPriorityBadge from './TaskPriorityBadge';
 import TaskStatusBadge from './TaskStatusBadge';
+import { useContext } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 
 export default function AdminTableView({ tasks, onDeleted }) {
+    const { translations } = useContext(TranslationContext);
     return (
         <div className="overflow-x-hidden ">
             <Table>
                 <TableHeader>
                 <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Assignee</TableHead>
-                    <TableHead>Assigner</TableHead>
-                    <TableHead>Due Date</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Priority</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead>{translations.tasks.data.table_head_title}</TableHead>
+                    <TableHead>{translations.tasks.data.table_head_assignee}</TableHead>
+                    <TableHead>{translations.tasks.data.table_head_assigner}</TableHead>
+                    <TableHead>{translations.tasks.data.table_head_due_date}</TableHead>
+                    <TableHead>{translations.tasks.data.table_head_status}</TableHead>
+                    <TableHead>{translations.tasks.data.table_head_priority}</TableHead>
+                    <TableHead>{translations.tasks.data.table_head_actions}</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -40,10 +43,10 @@ export default function AdminTableView({ tasks, onDeleted }) {
                         <TableCell className="font-medium">
                             <div className="flex items-center justify-end gap-6">
                                 <Link className="flex items-center gap-1" href={route('tasks.show', task.id)}>
-                                    <Eye className="w-4" /> View
+                                    <Eye className="w-4" /> {translations.tasks.data.view_button}
                                 </Link>
                                 <Link className="flex items-center gap-1" href={route('tasks.edit', task.id)}>
-                                    <Pencil className="w-4" /> Edit
+                                    <Pencil className="w-4" /> {translations.tasks.data.edit_button}
                                 </Link>
                                 <DeleteTask task={task} onDeleted={onDeleted} />
                             </div>

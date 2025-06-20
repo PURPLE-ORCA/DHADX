@@ -3,14 +3,18 @@ import { Link } from '@inertiajs/react';
 import { Pencil } from 'lucide-react';
 import Delete from './Delete';
 import { Icon } from '@iconify/react';
+import { useContext } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 
 function Data({ formations, onDeleted }) {
+    const { translations } = useContext(TranslationContext);
+
     return (
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Cours</TableHead>
+                    <TableHead>{translations.formations.data.table_head_name}</TableHead>
+                    <TableHead>{translations.formations.data.table_head_cours}</TableHead>
                     <TableHead></TableHead>
                 </TableRow>
             </TableHeader>
@@ -36,7 +40,7 @@ function Data({ formations, onDeleted }) {
                         <TableCell className="font-medium">
                             <div className="flex items-center justify-end gap-6">
                                 <Link className="flex items-center gap-1" href={route('formations.edit', formation.id)}>
-                                    <Pencil className="w-4" /> Edit
+                                    <Pencil className="w-4" /> {translations.formations.data.edit_button}
                                 </Link>
                                 <Delete formation={formation} onDeleted={onDeleted} />
                             </div>

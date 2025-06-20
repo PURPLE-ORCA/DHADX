@@ -2,17 +2,29 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import AppLayout from '@/layouts/app-layout';
 import { Transition } from '@headlessui/react';
 import { Head, router, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
+import { useContext } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 
-export default function Create() {
+export default function Create({ formations }) {
+    const { translations } = useContext(TranslationContext);
     const { data, setData, post, processing, reset, errors, clearErrors, recentlySuccessful } = useForm({
         name: '',
         label: '',
         color: '',
+        formation_ids: [],
     });
+
+    const handleFormationChange = (formationId, checked) => {
+        setData('formation_ids', checked
+            ? [...data.formation_ids, formationId]
+            : data.formation_ids.filter((id) => id !== formationId)
+        );
+    };
 
     const submitForm = (e) => {
         e.preventDefault();
@@ -28,18 +40,18 @@ export default function Create() {
 
     const breadcrumbs = [
         {
-            title: 'Courses list',
+            title: translations.courses.list_title,
             href: '/cours',
         },
         {
-            title: 'Add new cour',
+            title: translations.courses.create.add_new_cour,
             href: '/courses/create',
         },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Cours" />
+            <Head title={translations.courses.create.page_title} />
 
             <div className="p-4">
                 <Transition
@@ -52,23 +64,23 @@ export default function Create() {
                     leaveTo="opacity-0"
                 >
                     <div className="mb-4 rounded bg-green-500 p-2 text-center">
-                        <p className="text-sm font-semibold text-white">Saved successfully!</p>
+                        <p className="text-sm font-semibold text-white">{translations.courses.create.saved_successfully}</p>
                     </div>
                 </Transition>
 
-                <h1 className="mb-6 text-2xl font-bold">Add New Cours</h1>
+                <h1 className="mb-6 text-2xl font-bold">{translations.courses.create.add_new_cours_heading}</h1>
 
                 <form className="space-y-6" onSubmit={submitForm}>
                     <div className="grid gap-2">
                         <Label required htmlFor="name">
-                            Name
+                            {translations.courses.create.name_label}
                         </Label>
                         <Input
                             id="name"
                             name="name"
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
-                            placeholder="Name"
+                            placeholder={translations.courses.create.name_placeholder}
                             autoComplete="off"
                         />
                         <InputError message={errors.name} />
@@ -76,14 +88,14 @@ export default function Create() {
 
                     <div className="grid gap-2">
                         <Label required htmlFor="label">
-                            Label
+                            {translations.courses.create.label_label}
                         </Label>
                         <Input
                             id="label"
                             name="label"
                             value={data.label}
                             onChange={(e) => setData('label', e.target.value)}
-                            placeholder="Label"
+                            placeholder={translations.courses.create.label_placeholder}
                             autoComplete="off"
                         />
                         <InputError message={errors.label} />
@@ -91,23 +103,39 @@ export default function Create() {
 
                     <div className="grid gap-2">
                         <Label required htmlFor="color">
-                            Color
+                            {translations.courses.create.color_label}
                         </Label>
                         <Input
                             id="color"
                             name="color"
                             value={data.color}
                             onChange={(e) => setData('color', e.target.value)}
-                            placeholder="Color"
+                            placeholder={translations.courses.create.color_placeholder}
                             autoComplete="off"
                         />
                         <InputError message={errors.color} />
                     </div>
 
+                    <div className="space-y-2">
+                        <Label>{translations.courses.create.formations_label}</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 rounded-md border p-4">
+                            {formations.map((formation) => (
+                                <div key={formation.id} className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id={`formation_${formation.id}`}
+                                        checked={data.formation_ids.includes(formation.id)}
+                                        onCheckedChange={(checked) => handleFormationChange(formation.id, checked)}
+                                    />
+                                    <Label htmlFor={`formation_${formation.id}`}>{formation.name}</Label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
                     <div>
                         <Button type="submit" disabled={processing}>
                             {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
-                            Add
+                            {translations.courses.create.add_button}
                         </Button>
                     </div>
                 </form>

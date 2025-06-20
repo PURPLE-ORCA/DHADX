@@ -25,6 +25,8 @@ class StoreCourRequest extends FormRequest
             "name" => "required|unique:cours",
             "label" => "required|unique:cours",
             "color" => "required|unique:cours",
+            'formation_ids' => ['nullable', 'array'],
+            'formation_ids.*' => ['exists:formations,id'],
         ];
     }
 }

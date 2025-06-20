@@ -9,6 +9,8 @@ export default function TranslationProvider({ children }) {
     const [language, setLanguage] = useState(
         () => localStorage.getItem("lang") || "en"
     );
+    // New state for text direction
+    const [direction, setDirection] = useState('ltr');
 
     const getTranslations = (lang) => {
         switch (lang) {
@@ -25,15 +27,27 @@ export default function TranslationProvider({ children }) {
 
     const [translations, setTranslations] = useState(getTranslations(language));
 
+    useEffect(() => {
+        setTranslations(getTranslations(language));
+
+        // Update direction based on the selected language
+        const newDirection = language === 'ar' ? 'rtl' : 'ltr';
+        setDirection(newDirection);
+
+        // Directly manipulate the root HTML element. This is the master switch.
+        document.documentElement.lang = language;
+        document.documentElement.dir = newDirection;
+
+    }, [language]);
+
     const switchLanguage = (lang) => {
         if (!["ar","en", "fr"].includes(lang)) return;
         setLanguage(lang);
-        setTranslations(getTranslations(lang));
         localStorage.setItem("lang", lang);
     };
 
     return (
-        <TranslationContext.Provider value={{ translations, switchLanguage }}>
+        <TranslationContext.Provider value={{ translations, language, direction, switchLanguage }}>
             {children}
         </TranslationContext.Provider>
     );

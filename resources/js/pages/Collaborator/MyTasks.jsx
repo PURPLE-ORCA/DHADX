@@ -3,24 +3,28 @@ import { Head } from "@inertiajs/react";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Building2, GraduationCap } from "lucide-react";
+import { useContext } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 
 export default function MyTasks({ myCamps }) {
+  const { translations } = useContext(TranslationContext);
+
   return (
     <AppLayout>
-      <Head title="My Tasks" />
-      <div className="min-h-screen bg-white dark:bg-gray-950">
+      <Head title={translations.my_tasks.title} />
+      <div className="min-h-screen bg-transparent">
         {/* Header Section */}
-        <div className="border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950">
+        <div className="border-b border-gray-100 dark:border-gray-800 ">
           <div className="container mx-auto px-6 py-8">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-4xl font-bold text-black dark:text-white mb-2">My Tasks</h1>
-                <p className="text-gray-600 dark:text-gray-400">Manage your assigned camps and tasks</p>
+                <h1 className="text-4xl font-bold text-black dark:text-white mb-2">{translations.my_tasks.title}</h1>
+                <p className="text-gray-600 dark:text-gray-400">{translations.my_tasks.subtitle}</p>
               </div>
               <div className="flex items-center space-x-4">
                 <div className="text-right">
                   <div className="text-2xl font-bold text-black dark:text-white">{myCamps.length}</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">Active Camps</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">{translations.my_tasks.active_camps}</div>
                 </div>
               </div>
             </div>
@@ -34,9 +38,9 @@ export default function MyTasks({ myCamps }) {
               <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center">
                 <Calendar className="w-12 h-12 text-gray-400" />
               </div>
-              <h3 className="text-xl font-semibold text-black dark:text-white mb-2">No tasks assigned</h3>
+              <h3 className="text-xl font-semibold text-black dark:text-white mb-2">{translations.my_tasks.no_tasks_assigned_title}</h3>
               <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-                You have no assigned camps or tasks at the moment. Check back later for new assignments.
+                {translations.my_tasks.no_tasks_assigned_description}
               </p>
             </div>
           ) : (
@@ -66,11 +70,11 @@ export default function MyTasks({ myCamps }) {
                     <div className="space-y-2">
                       <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                         <Building2 className="w-4 h-4 mr-2 text-gray-400" />
-                        <span>{camp.cour ? camp.cour.name : "No course assigned"}</span>
+                        <span>{camp.cour ? camp.cour.name : translations.my_tasks.no_course_assigned}</span>
                       </div>
                       <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                         <GraduationCap className="w-4 h-4 mr-2 text-gray-400" />
-                        <span>{camp.formation ? camp.formation.name : "No formation assigned"}</span>
+                        <span>{camp.formation ? camp.formation.name : translations.my_tasks.no_formation_assigned}</span>
                       </div>
                     </div>
 
@@ -79,13 +83,13 @@ export default function MyTasks({ myCamps }) {
 
                     {/* Tasks Section */}
                     <div>
-                      <h4 className="font-medium text-black dark:text-white mb-2">Tasks Overview</h4>
+                      <h4 className="font-medium text-black dark:text-white mb-2">{translations.my_tasks.tasks_overview_title}</h4>
                       <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
                         <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                          Task details and progress for this camp will be displayed here.
+                          {translations.my_tasks.tasks_overview_description}
                         </p>
                         <button className="text-sm font-medium text-[var(--brand-color)] hover:underline">
-                          View all tasks →
+                          {translations.my_tasks.view_all_tasks_button}
                         </button>
                       </div>
                     </div>

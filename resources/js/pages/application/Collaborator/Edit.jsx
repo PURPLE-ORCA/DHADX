@@ -5,10 +5,13 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm } from '@inertiajs/react';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 import { toast } from "sonner";
+import { LoaderCircle } from 'lucide-react';
 
 export default function Edit({ collaborator, specialities }) {
+    const { translations } = useContext(TranslationContext);
     const { data, setData, put, processing, reset, errors, clearErrors } = useForm({
         name: collaborator.name,
         speciality_ids: collaborator.specialities.map((s) => s.id),
@@ -27,10 +30,10 @@ export default function Edit({ collaborator, specialities }) {
         put(route('collaborators.update', collaborator.id), {
             preserveScroll: true,
             onSuccess: () => {
-                toast.success("Collaborator updated successfully!");
+                toast.success(translations.collaborators.edit.updated_successfully);
             },
             onError: (errors) => {
-                toast.error("Failed to update collaborator. Please check the form.");
+                toast.error(translations.collaborators.edit.failed_to_update);
                 console.error("Update errors:", errors);
             }
         });
@@ -38,11 +41,11 @@ export default function Edit({ collaborator, specialities }) {
 
     const breadcrumbs = [
         {
-            title: 'Collaborators list',
+            title: translations.collaborators.list_title,
             href: '/collaborators',
         },
         {
-            title: 'Edit collaborator',
+            title: translations.collaborators.edit.edit_collaborator,
             href: '/collaborators/edit',
         },
     ];
@@ -56,15 +59,15 @@ export default function Edit({ collaborator, specialities }) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Collaborators" />
+            <Head title={translations.collaborators.edit.page_title} />
 
             <div className="p-4">
-                <h1 className="mb-6 text-2xl font-bold">Edit Collaborator</h1>
+                <h1 className="mb-6 text-2xl font-bold">{translations.collaborators.edit.edit_collaborator_heading}</h1>
 
                 <form className="space-y-6" onSubmit={submitForm}>
                     <div className="grid gap-2">
                         <Label required htmlFor="name">
-                            Name
+                            {translations.collaborators.edit.name_label}
                         </Label>
                         <Input
                             id="name"
@@ -72,7 +75,7 @@ export default function Edit({ collaborator, specialities }) {
                             name="name"
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
-                            placeholder="Name"
+                            placeholder={translations.collaborators.edit.name_placeholder}
                             autoComplete="off"
                         />
                         <InputError message={errors.name} />
@@ -80,7 +83,7 @@ export default function Edit({ collaborator, specialities }) {
 
                     <div className="grid gap-2">
                         <Label htmlFor="email">
-                            Email
+                            {translations.collaborators.edit.email_label}
                         </Label>
                         <Input
                             id="email"
@@ -93,7 +96,7 @@ export default function Edit({ collaborator, specialities }) {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="speciality_ids">Specialities</Label>
+                        <Label htmlFor="speciality_ids">{translations.collaborators.edit.specialities_label}</Label>
                         <div className="flex flex-wrap gap-4">
                             {specialities.map((spec) => (
                                 <div key={spec.id} className="flex items-center space-x-2">
@@ -119,11 +122,11 @@ export default function Edit({ collaborator, specialities }) {
                                 router.visit(route('collaborators.index'));
                             }}
                         >
-                            Cancel
+                            {translations.collaborators.edit.cancel_button}
                         </Button>
                         <Button disabled={processing} type="submit">
                             {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
-                            Update
+                            {translations.collaborators.edit.update_button}
                         </Button>
                     </div>
                 </form>

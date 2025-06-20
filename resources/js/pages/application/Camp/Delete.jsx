@@ -2,10 +2,12 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useForm } from '@inertiajs/react';
 import { Trash } from 'lucide-react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { toast } from "sonner";
+import { TranslationContext } from '@/context/TranslationProvider';
 
 function Delete({ camp, onDeleted }) {
+    const { translations } = useContext(TranslationContext);
     const [open, setOpen] = useState(false);
     const { delete: destroy, processing, reset, clearErrors } = useForm({});
 
@@ -17,13 +19,13 @@ function Delete({ camp, onDeleted }) {
             onSuccess: () => {
                 setOpen(false);
                 reset();
-                toast.success(`Camp for ${camp.formation?.name || 'selected formation'} has been deleted.`);
+                toast.success(translations.camp_delete.delete_success_toast.replace(':formation_name', camp.formation?.name || translations.camp_delete.selected_formation));
                 if (onDeleted) {
                     onDeleted(camp.id);
                 }
             },
             onError: () => {
-                toast.error("Failed to delete camp.");
+                toast.error(translations.camp_delete.delete_error_toast);
             }
         });
     };
@@ -40,21 +42,21 @@ function Delete({ camp, onDeleted }) {
                 <DialogTrigger asChild>
                     <Button variant="link" className="!p-0">
                         <Trash />
-                        Delete
+                        {translations.camp_delete.delete_button}
                     </Button>
                 </DialogTrigger>
                 <DialogContent>
-                    <DialogTitle>Are you sure you want to delete {camp.name}?</DialogTitle>
-                    <DialogDescription>This action cannot be undone. All data will be lost.</DialogDescription>
+                    <DialogTitle>{translations.camp_delete.dialog_title.replace(':camp_name', camp.name)}</DialogTitle>
+                    <DialogDescription>{translations.camp_delete.dialog_description}</DialogDescription>
                     <form onSubmit={deleteCamp}>
                         <DialogFooter className="mt-4 gap-2">
                             <DialogClose asChild>
                                 <Button variant="secondary" onClick={closeModal}>
-                                    Cancel
+                                    {translations.camp_delete.cancel_button}
                                 </Button>
                             </DialogClose>
                             <Button type="submit" variant="destructive" disabled={processing}>
-                                Delete
+                                {translations.camp_delete.delete_button_confirm}
                             </Button>
                         </DialogFooter>
                     </form>

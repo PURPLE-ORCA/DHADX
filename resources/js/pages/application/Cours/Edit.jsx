@@ -2,23 +2,35 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import AppLayout from '@/layouts/app-layout';
 import { Transition } from '@headlessui/react';
 import { Head, router, useForm } from '@inertiajs/react';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 
-export default function Edit({ cour }) {
+export default function Edit({ cour, formations }) {
+    const { translations } = useContext(TranslationContext);
     const { data, setData, put, processing, reset, errors, clearErrors, recentlySuccessful } = useForm({
         name: cour.name,
         label: cour.label,
         color: cour.color,
+        formation_ids: cour.formations.map(f => f.id) || [],
     });
+
+    const handleFormationChange = (formationId, checked) => {
+        setData('formation_ids', checked
+            ? [...data.formation_ids, formationId]
+            : data.formation_ids.filter((id) => id !== formationId)
+        );
+    };
 
     useEffect(() => {
         setData({
             name: cour.name,
             label: cour.label,
             color: cour.color,
+            formation_ids: cour.formations.map(f => f.id) || [],
         });
     }, [cour, setData]);
 
@@ -35,18 +47,18 @@ export default function Edit({ cour }) {
 
     const breadcrumbs = [
         {
-            title: 'Courses list',
+            title: translations.courses.list_title,
             href: '/cours',
         },
         {
-            title: 'Edit cour',
+            title: translations.courses.edit.edit_cour,
             href: '/courses/edit',
         },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Cours" />
+            <Head title={translations.courses.edit.page_title} />
             <div className="p-4">
                 <Transition
                     show={recentlySuccessful}
@@ -58,23 +70,23 @@ export default function Edit({ cour }) {
                     leaveTo="opacity-0"
                 >
                     <div className="mb-4 rounded bg-green-500 p-2 text-center">
-                        <p className="text-sm font-semibold text-white">Updated successfully!</p>
+                        <p className="text-sm font-semibold text-white">{translations.courses.edit.updated_successfully}</p>
                     </div>
                 </Transition>
 
-                <h1 className="mb-6 text-2xl font-bold">Edit Cours</h1>
+                <h1 className="mb-6 text-2xl font-bold">{translations.courses.edit.edit_cours_heading}</h1>
 
                 <form className="space-y-6" onSubmit={submitForm}>
                     <div className="grid gap-2">
                         <Label required htmlFor="name">
-                            Name
+                            {translations.courses.edit.name_label}
                         </Label>
                         <Input
                             id="name"
                             name="name"
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
-                            placeholder="Name"
+                            placeholder={translations.courses.edit.name_placeholder}
                             autoComplete="off"
                         />
                         <InputError message={errors.name} />
@@ -82,14 +94,14 @@ export default function Edit({ cour }) {
 
                     <div className="grid gap-2">
                         <Label required htmlFor="label">
-                            Label
+                            {translations.courses.edit.label_label}
                         </Label>
                         <Input
                             id="label"
                             name="label"
                             value={data.label}
                             onChange={(e) => setData('label', e.target.value)}
-                            placeholder="Label"
+                            placeholder={translations.courses.edit.label_placeholder}
                             autoComplete="off"
                         />
                         <InputError message={errors.label} />
@@ -97,23 +109,39 @@ export default function Edit({ cour }) {
 
                     <div className="grid gap-2">
                         <Label required htmlFor="color">
-                            Color
+                            {translations.courses.edit.color_label}
                         </Label>
                         <Input
                             id="color"
                             name="color"
                             value={data.color}
                             onChange={(e) => setData('color', e.target.value)}
-                            placeholder="Color"
+                            placeholder={translations.courses.edit.color_placeholder}
                             autoComplete="off"
                         />
                         <InputError message={errors.color} />
                     </div>
 
+                    <div className="space-y-2">
+                        <Label>{translations.courses.edit.formations_label}</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 rounded-md border p-4">
+                            {formations.map((formation) => (
+                                <div key={formation.id} className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id={`formation_${formation.id}`}
+                                        checked={data.formation_ids.includes(formation.id)}
+                                        onCheckedChange={(checked) => handleFormationChange(formation.id, checked)}
+                                    />
+                                    <Label htmlFor={`formation_${formation.id}`}>{formation.name}</Label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
                     <div className="flex justify-end gap-2">
                         <Button disabled={processing} type="submit">
                             {processing && <span className="mr-2 animate-spin">⏳</span>}
-                            Update
+                            {translations.courses.edit.update_button}
                         </Button>
                     </div>
                 </form>

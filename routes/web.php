@@ -41,7 +41,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/tasks/{task}/submit-for-review', [TaskController::class, 'submitForReview'])->name('tasks.submitForReview');
     Route::post('/tasks/{task}/approve-completion', [TaskController::class, 'approveCompletion'])->name('tasks.approveCompletion');
     Route::post('/tasks/{task}/request-revision', [TaskController::class, 'requestRevision'])->name('tasks.requestRevision');
-    Route::post('/tasks/{task}/cancel', [TaskController::class, 'cancelTask'])->name('tasks.cancel');
+    Route::post('/tasks/{task}/cancel', [TaskController::class, 'cancelTask'])->name('tasks.cancelTask');
     Route::post('/tasks/{task}/comments', [TaskController::class, 'storeComment'])->name('tasks.storeComment');
 
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');

@@ -3,12 +3,14 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Transition } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
 import { Trash } from 'lucide-react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 import { toast } from "sonner";
 
 export default function Delete({ speciality, onDeleted }) {
+    const { translations } = useContext(TranslationContext);
     const [open, setOpen] = useState(false);
-    const { delete: destroy, processing, reset, clearErrors } = useForm({});
+    const { delete: destroy, processing, reset, clearErrors, recentlySuccessful } = useForm({});
 
     const deleteSpeciality = (e) => {
         e.preventDefault();
@@ -18,12 +20,8 @@ export default function Delete({ speciality, onDeleted }) {
             onSuccess: () => {
                 setOpen(false);
                 reset();
-                toast.success(`${speciality.name} has been deleted.`);
-                if (onDeleted) onDeleted(speciality.id);
+                onDeleted?.(speciality.id); // notify parent
             },
-            onError: () => {
-                toast.error(`Failed to delete ${speciality.name}.`);
-            }
         });
     };
 
@@ -35,25 +33,39 @@ export default function Delete({ speciality, onDeleted }) {
 
     return (
         <div>
+            <Transition
+                show={recentlySuccessful}
+                enter="transition-opacity duration-300"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="transition-opacity duration-300"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+            >
+                <div className="fixed top-12 right-3 rounded bg-green-500 p-2 whitespace-nowrap">
+                    <p className="text-sm font-semibold text-white">{translations.specialities.delete.deleted_successfully}</p>
+                </div>
+            </Transition>
+
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                     <Button variant="link" className="!p-0">
                         <Trash />
-                        Delete
+                        {translations.specialities.delete.delete_button}
                     </Button>
                 </DialogTrigger>
                 <DialogContent>
-                    <DialogTitle>Are you sure you want to delete {speciality.name}?</DialogTitle>
-                    <DialogDescription>This action cannot be undone. All data will be lost.</DialogDescription>
+                    <DialogTitle>{translations.specialities.delete.dialog_title.replace(':speciality_name', speciality.name)}</DialogTitle>
+                    <DialogDescription>{translations.specialities.delete.dialog_description}</DialogDescription>
                     <form onSubmit={deleteSpeciality}>
                         <DialogFooter className="mt-4 gap-2">
                             <DialogClose asChild>
                                 <Button variant="secondary" onClick={closeModal}>
-                                    Cancel
+                                    {translations.specialities.delete.cancel_button}
                                 </Button>
                             </DialogClose>
                             <Button type="submit" variant="destructive" disabled={processing}>
-                                Delete
+                                {translations.specialities.delete.delete_button_confirm}
                             </Button>
                         </DialogFooter>
                     </form>

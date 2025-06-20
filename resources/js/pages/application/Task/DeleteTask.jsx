@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
 import { router } from '@inertiajs/react';
@@ -13,6 +14,7 @@ import {
 } from '@/components/ui/dialog';
 
 export default function DeleteTask({ task, onDeleted }) {
+    const { translations } = useContext(TranslationContext);
     const [open, setOpen] = useState(false);
 
     const handleDelete = () => {
@@ -36,23 +38,22 @@ export default function DeleteTask({ task, onDeleted }) {
                     size="icon"
                     className="text-destructive hover:text-destructive/80"
                 >
-                    <Trash2 className="w-4" /> Delete
+                    <Trash2 className="w-4" /> {translations.tasks.delete.delete_button}
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                    <DialogTitle>{translations.tasks.delete.dialog_title.replace(':task_title', task.title)}</DialogTitle>
                     <DialogDescription>
-                        This action cannot be undone. This will permanently delete the task
-                        "{task.title}" and remove its data from our servers.
+                        {translations.tasks.delete.dialog_description}
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
                     <Button variant="outline" onClick={() => setOpen(false)}>
-                        Cancel
+                        {translations.tasks.delete.cancel_button}
                     </Button>
                     <Button variant="destructive" onClick={handleDelete}>
-                        Delete
+                        {translations.tasks.delete.delete_button_confirm}
                     </Button>
                 </DialogFooter>
             </DialogContent>

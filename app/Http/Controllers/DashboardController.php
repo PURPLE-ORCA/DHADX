@@ -25,8 +25,12 @@ class DashboardController extends Controller
         $taskSummaries = [];
 
         if ($user->hasRole('admin')) {
+            // These are the missing pieces of the puzzle for the admin dashboard view
+            $taskSummaries['pendingTasksCount'] = Task::where('status', 'pending')->count();
+            $taskSummaries['overdueTasksCount'] = Task::where('status', 'overdue')->count();
+
+            // You can also keep the other summaries if you plan to use them elsewhere, for example:
             $taskSummaries['submittedForReviewCount'] = Task::where('status', 'submitted')->count();
-            $taskSummaries['globalOverdueCount'] = Task::where('status', 'overdue')->count();
         } elseif ($user->hasRole('collaborator')) {
             $taskSummaries['pendingTasksCount'] = $user->assignedTasks()->where('status', 'pending')->count();
             $taskSummaries['overdueTasksCount'] = $user->assignedTasks()->where('status', 'overdue')->count();

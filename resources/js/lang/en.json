@@ -5,5 +5,422 @@
     "select_academic_year_placeholder": "Select Academic Year",
     "latest_year_indicator": "Latest",
     "profile_link": "Profile",
-    "logout_button": "Log Out"
+    "logout_button": "Log Out",
+    "dashboard": {
+        "title": "Dashboard"
+    },
+    "sidebar": {
+        "dashboard": "Dashboard",
+        "leaderboard": "Leaderboard",
+        "my_tasks": "My Tasks",
+        "tasks": "Tasks",
+        "collaborators": "Collaborators",
+        "specialities": "Specialities",
+        "cours": "Courses",
+        "formations": "Formations",
+        "camps": "Camps"
+    },
+    "admin_dashboard": {
+        "collaborators_title": "Collaborators",
+        "specialities_title": "Specialities",
+        "courses_title": "Courses",
+        "formations_title": "Formations"
+    },
+    "my_tasks": {
+        "title": "My Tasks",
+        "subtitle": "Manage your assigned camps and tasks",
+        "active_camps": "Active Camps",
+        "no_tasks_assigned_title": "No tasks assigned",
+        "no_tasks_assigned_description": "You have no assigned camps or tasks at the moment. Check back later for new assignments.",
+        "no_course_assigned": "No course assigned",
+        "no_formation_assigned": "No formation assigned",
+        "tasks_overview_title": "Tasks Overview",
+        "tasks_overview_description": "Task details and progress for this camp will be displayed here.",
+        "view_all_tasks_button": "View all tasks →"
+    },
+    "my_camp_progress_widget": {
+        "title": "My Learning Progress",
+        "no_camps_assigned": "No active learning camps assigned yet.",
+        "unnamed_formation": "Unnamed Formation"
+    },
+    "upcoming_deadlines_widget": {
+        "title": "Upcoming Deadlines",
+        "due_prefix": "Due:",
+        "no_deadlines": "No upcoming deadlines."
+    },
+    "latest_notifications_widget": {
+        "title": "Latest Notifications",
+        "no_notifications": "No new notifications."
+    },
+    "notifications": {
+        "mark_as_read_success_toast": "Notification(s) marked as read.",
+        "mark_as_read_error_toast": "Failed to mark notification as read.",
+        "dropdown_label": "Notifications",
+        "mark_all_as_read_button": "Mark All As Read",
+        "no_new_notifications": "No new notifications."
+    },
+    "leaderboard": {
+        "title": "Collaborator Leaderboard",
+        "rank": "Rank",
+        "collaborator": "Collaborator",
+        "highest_class_level": "Highest Class Level",
+        "progress_in_class": "Progress in Class (%)",
+        "no_camp_yet": "No camp yet"
+    },
+    "camps": {
+        "camps_list": "Camps list",
+        "title": "Camps",
+        "search_placeholder": "Search camp...",
+        "add_new": "Add new",
+        "create_success_toast": "Camp created successfully!",
+        "create_error_toast": "Failed to create camp. Please check selections.",
+        "add_new_camp": "Add New Camp",
+        "collaborator_label": "Collaborator",
+        "select_collaborator_placeholder": "Select collaborator",
+        "course_label": "Course",
+        "select_course_placeholder": "Select course",
+        "add_button": "Add",
+        "data": {
+            "collaborator_name_heading": "Collaborator: :collaborator_name",
+            "course_name_heading": "Course: :course_name"
+        }
+    },
+    "camp_card": {
+        "set_progress": "Set Progress",
+        "cancel": "Cancel",
+        "save": "Save"
+    },
+    "camp_delete": {
+        "delete_button": "Delete",
+        "delete_success_toast": "Camp for :formation_name has been deleted.",
+        "selected_formation": "selected formation",
+        "delete_error_toast": "Failed to delete camp.",
+        "dialog_title": "Are you sure you want to delete :camp_name?",
+        "dialog_description": "This action cannot be undone. All data will be lost.",
+        "cancel_button": "Cancel",
+        "delete_button_confirm": "Delete"
+    },
+    "collaborators": {
+        "collaborators_list": "Collaborators list",
+        "title": "Collaborators",
+        "search_placeholder": "Search collaborator...",
+        "add_new": "Add new",
+        "create_success_toast": "Collaborator saved successfully!",
+        "create_error_toast": "Failed to save collaborator. Please check the form.",
+        "add_new_collaborator": "Add New Collaborator",
+        "name_label": "Name",
+        "name_placeholder": "Name",
+        "email_label": "Email",
+        "email_placeholder": "collaborator@example.com",
+        "specialities_label": "Specialities",
+        "add_button": "Add",
+        "table_head_name": "Name",
+        "table_head_specialities": "Specialities",
+        "assign_task_button": "Assign Task",
+        "edit_button": "Edit",
+        "edit": {
+            "edit_collaborator": "Edit collaborator",
+            "page_title": "Edit Collaborator",
+            "updated_successfully": "Collaborator updated successfully!",
+            "failed_to_update": "Failed to update collaborator. Please check the form.",
+            "edit_collaborator_heading": "Edit Collaborator",
+            "name_label": "Name",
+            "name_placeholder": "Name",
+            "email_label": "Email",
+            "specialities_label": "Specialities",
+            "cancel_button": "Cancel",
+            "update_button": "Update"
+        }
+    },
+    "collaborator_delete": {
+        "deleted_successfully": "Deleted successfully!",
+        "delete_button": "Delete",
+        "dialog_title": "Are you sure you want to delete :collaborator_name?",
+        "dialog_description": "This action cannot be undone. All data will be lost.",
+        "cancel_button": "Cancel",
+        "delete_button_confirm": "Delete"
+    },
+    "courses": {
+        "list_title": "Courses list",
+        "page_title": "Courses",
+        "search_placeholder": "Search courses...",
+        "add_new_button": "Add new",
+        "create": {
+            "add_new_cour": "Add new cour",
+            "page_title": "Add Cours",
+            "saved_successfully": "Saved successfully!",
+            "add_new_cours_heading": "Add New Cours",
+            "name_label": "Name",
+            "name_placeholder": "Name",
+            "label_label": "Label",
+            "label_placeholder": "Label",
+            "color_label": "Color",
+            "color_placeholder": "Color",
+            "add_button": "Add"
+        },
+        "data": {
+            "table_head_name": "Name",
+            "table_head_label": "Label",
+            "table_head_color": "Color",
+            "table_head_formations": "Formations",
+            "edit_button": "Edit"
+        },
+        "delete": {
+            "deleted_successfully": "Deleted successfully!",
+            "delete_button": "Delete",
+            "dialog_title": "Are you sure you want to delete :cour_name?",
+            "dialog_description": "This action cannot be undone. All data will be lost.",
+            "cancel_button": "Cancel",
+            "delete_button_confirm": "Delete"
+        },
+        "edit": {
+            "edit_cour": "Edit cour",
+            "page_title": "Edit Cours",
+            "updated_successfully": "Updated successfully!",
+            "edit_cours_heading": "Edit Cours",
+            "name_label": "Name",
+            "name_placeholder": "Name",
+            "label_label": "Label",
+            "label_placeholder": "Label",
+            "color_label": "Color",
+            "color_placeholder": "Color",
+            "update_button": "Update"
+        }
+    },
+    "formations": {
+        "list_title": "Formations list",
+        "title": "Formations",
+        "search_placeholder": "Search formation...",
+        "add_new_button": "Add new",
+        "create": {
+            "success_toast": "Formation saved successfully!",
+            "error_toast": "Failed to save formation. Please check the form.",
+            "add_new_formation": "Add new formation",
+            "page_title": "Add Formation",
+            "add_new_formation_heading": "Add New Formation",
+            "name_label": "Name",
+            "name_placeholder": "Name",
+            "icon_name_label": "Icon Name (from Iconify)",
+            "icon_name_placeholder": "e.g., mdi:home, ph:book-fill",
+            "cours_label": "Cours",
+            "add_button": "Add"
+        },
+        "data": {
+            "table_head_name": "Name",
+            "table_head_cours": "Cours",
+            "edit_button": "Edit"
+        },
+        "delete": {
+            "deleted_successfully": "Deleted successfully!",
+            "delete_button": "Delete",
+            "dialog_title": "Are you sure you want to delete :formation_name?",
+            "dialog_description": "This action cannot be undone. All data will be lost.",
+            "cancel_button": "Cancel",
+            "delete_button_confirm": "Delete"
+        },
+        "edit": {
+            "success_toast": "Formation updated successfully!",
+            "error_toast": "Failed to update formation. Please check the form.",
+            "edit_formation": "Edit formation",
+            "page_title": "Edit Formation",
+            "edit_formation_heading": "Edit Formation",
+            "name_label": "Name",
+            "name_placeholder": "Name",
+            "icon_name_label": "Icon Name (from Iconify)",
+            "icon_name_placeholder": "e.g., mdi:home, ph:book-fill",
+            "cours_label": "Cours",
+            "cancel_button": "Cancel",
+            "update_button": "Update"
+        }
+    },
+    "specialities": {
+        "list_title": "Specialities list",
+        "title": "Specialities",
+        "search_placeholder": "Search speciality...",
+        "add_new_button": "Add new",
+        "create": {
+            "success_toast": "Speciality created successfully!",
+            "error_toast": "Failed to create speciality. Please check the form.",
+            "add_new_speciality": "Add new speciality",
+            "page_title": "Add Speciality",
+            "add_new_speciality_heading": "Add New Speciality",
+            "name_label": "Name",
+            "name_placeholder": "Name",
+            "add_button": "Add"
+        },
+        "data": {
+            "table_head_name": "Name",
+            "edit_button": "Edit"
+        },
+        "delete": {
+            "deleted_successfully": "Deleted successfully!",
+            "delete_button": "Delete",
+            "dialog_title": "Are you sure you want to delete :speciality_name?",
+            "dialog_description": "This action cannot be undone. All data will be lost.",
+            "cancel_button": "Cancel",
+            "delete_button_confirm": "Delete"
+        },
+        "edit": {
+            "success_toast": "Speciality updated successfully!",
+            "error_toast": "Failed to update speciality. Please check the form.",
+            "edit_speciality": "Edit speciality",
+            "page_title": "Edit Speciality",
+            "edit_speciality_heading": "Edit Speciality",
+            "name_label": "Name",
+            "name_placeholder": "Name",
+            "cancel_button": "Cancel",
+            "update_button": "Update"
+        }
+    },
+    "tasks": {
+        "list_title": "Tasks Hub",
+        "page_title": "Tasks Hub",
+        "search_placeholder": "Search tasks...",
+        "add_new_button": "Add New Task",
+        "total_tasks": "Total Tasks",
+        "in_progress": "In Progress",
+        "completed": "Completed",
+        "create": {
+            "saved_successfully": "Collaborative task created successfully!",
+            "failed_to_create": "Failed to create collaborative task. Please check the form.",
+            "create_new_task": "Create new task",
+            "page_title": "Create Task",
+            "create_new_task_heading": "Create New Task",
+            "title_label": "Title",
+            "title_placeholder": "Task Title",
+            "description_label": "Description",
+            "description_placeholder": "Task Description",
+            "sub_tasks_heading": "Sub-Tasks",
+            "assignee_label": "Assignee",
+            "select_assignee_placeholder": "Select assignee",
+            "sub_task_title_label": "Sub-Task Title",
+            "sub_task_title_placeholder": "Sub-Task Title",
+            "sub_task_description_label": "Description (Optional)",
+            "sub_task_description_placeholder": "Sub-Task Description",
+            "remove_sub_task_button": "Remove Sub-Task",
+            "add_sub_task_button": "Add Sub-Task",
+            "due_date_label": "Due Date",
+            "pick_a_date": "Pick a date",
+            "priority_label": "Priority",
+            "select_priority_placeholder": "Select priority",
+            "priority_low": "Low",
+            "priority_medium": "Medium",
+            "priority_high": "High",
+            "create_button": "Create Task"
+        },
+        "delete": {
+            "delete_button": "Delete",
+            "dialog_title": "Are you absolutely sure?",
+            "dialog_description": "This action cannot be undone. This will permanently delete the task \":task_title\" and remove its data from our servers.",
+            "cancel_button": "Cancel",
+            "delete_button_confirm": "Delete"
+        },
+        "edit": {
+            "updated_successfully": "Task updated successfully!",
+            "failed_to_update": "Failed to update task. Please check the form.",
+            "edit_task_title": "Edit task: :task_title",
+            "page_title": "Edit Task: :task_title",
+            "edit_task_heading": "Edit Task: :task_title",
+            "title_label": "Title",
+            "title_placeholder": "Task Title",
+            "description_label": "Description",
+            "description_placeholder": "Task Description",
+            "assignee_label": "Assignee",
+            "select_assignee_placeholder": "Select an assignee",
+            "due_date_label": "Due Date",
+            "pick_a_date": "Pick a date",
+            "priority_label": "Priority",
+            "select_priority_placeholder": "Select priority",
+            "priority_low": "Low",
+            "priority_medium": "Medium",
+            "priority_high": "High",
+            "status_label": "Status",
+            "select_status_placeholder": "Select status",
+            "status_pending": "Pending",
+            "status_in_progress": "In Progress",
+            "status_submitted": "Submitted",
+            "status_completed": "Completed",
+            "status_needs_revision": "Needs Revision",
+            "status_overdue": "Overdue",
+            "status_cancelled": "Cancelled",
+            "update_button": "Update Task"
+        },
+        "show": {
+            "page_title": "Task: :task_title",
+            "part_of": "Part of",
+            "no_description_provided": "No description provided.",
+            "sub_tasks_heading": "Sub-Tasks",
+            "unassigned": "Unassigned",
+            "task_details_heading": "Task Details",
+            "assigner_label": "Assigner",
+            "due_date_label": "Due Date",
+            "no_due_date": "No due date",
+            "submitted_label": "Submitted",
+            "completed_label": "Completed",
+            "available_actions_heading": "Available Actions",
+            "start_progress_button": "Start Progress",
+            "submit_for_review_button": "Submit for Review",
+            "approve_completion_button": "Approve Completion",
+            "request_revision_button": "Request Revision",
+            "request_revision_dialog_title": "Request Revision",
+            "request_revision_dialog_description": "Please provide a reason for requesting revision. This will be added as a comment.",
+            "enter_reason_placeholder": "Enter reason for revision...",
+            "revision_reason_empty_error": "Revision reason cannot be empty.",
+            "cancel_button": "Cancel",
+            "submitting_button": "Submitting...",
+            "submit_revision_button": "Submit Revision",
+            "cancel_task_button": "Cancel Task",
+            "no_permission_message": "You don't have permission to perform actions on this task.",
+            "comments_heading": "Comments (:count)",
+            "unknown_user": "Unknown User",
+            "no_comments_yet": "No comments yet. Be the first to add one!",
+            "add_comment_label": "Add a comment",
+            "share_thoughts_placeholder": "Share your thoughts, updates, or questions...",
+            "adding_comment_button": "Adding...",
+            "add_comment_button": "Add Comment",
+            "timeline_heading": "Timeline",
+            "task_created": "Task Created",
+            "in_progress_timeline": "In Progress",
+            "status_updated": "Status updated",
+            "submitted_timeline": "Submitted",
+            "completed_timeline": "Completed",
+            "quick_info_heading": "Quick Info",
+            "task_id_label": "Task ID",
+            "created_label": "Created",
+            "last_updated_label": "Last Updated"
+        },
+        "data": {
+            "no_tasks_found": "No tasks found",
+            "no_tasks_message": "There are currently no tasks to display for the selected criteria.",
+            "table_head_title": "Title",
+            "table_head_assignee": "Assignee",
+            "table_head_assigner": "Assigner",
+            "table_head_due_date": "Due Date",
+            "table_head_status": "Status",
+            "table_head_priority": "Priority",
+            "table_head_actions": "Actions",
+            "view_button": "View",
+            "edit_button": "Edit",
+            "no_tasks_in_status": "No tasks in ':status' status."
+        },
+        "card": {
+            "due_date_prefix": "Due",
+            "no_due_date": "No due date",
+            "view_details_button": "View Details"
+        },
+        "status": {
+            "pending": "Pending",
+            "in_progress": "In Progress",
+            "submitted": "Submitted",
+            "completed": "Completed",
+            "needs_revision": "Needs Revision",
+            "overdue": "Overdue",
+            "cancelled": "Cancelled"
+        },
+        "priority": {
+            "low": "Low Priority",
+            "medium": "Medium Priority",
+            "high": "High Priority"
+        }
+    }
 }

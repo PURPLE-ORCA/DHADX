@@ -7,8 +7,11 @@ import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm } from '@inertiajs/react';
 import { useEffect } from 'react';
 import { toast } from "sonner";
+import { useContext } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 
 export default function Edit({ formation, cours }) {
+    const { translations } = useContext(TranslationContext);
     const { data, setData, put, processing, reset, errors, clearErrors } = useForm({
         name: formation.name,
         icon_name: formation.icon_name || '', // Add icon_name to the form data
@@ -29,10 +32,10 @@ export default function Edit({ formation, cours }) {
         put(route('formations.update', formation.id), {
             preserveScroll: true,
             onSuccess: () => {
-                toast.success("Formation updated successfully!");
+                toast.success(translations.formations.edit.success_toast);
             },
             onError: (errors) => {
-                toast.error("Failed to update formation. Please check the form.");
+                toast.error(translations.formations.edit.error_toast);
                 console.error("Update errors:", errors);
             }
         });
@@ -40,11 +43,11 @@ export default function Edit({ formation, cours }) {
 
     const breadcrumbs = [
         {
-            title: 'Formations list',
+            title: translations.formations.list_title,
             href: '/formations',
         },
         {
-            title: 'Edit formation',
+            title: translations.formations.edit.edit_formation,
             href: '/formations/edit',
         },
     ];
@@ -58,14 +61,14 @@ export default function Edit({ formation, cours }) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Formations" />
+            <Head title={translations.formations.edit.page_title} />
             <div className="p-4">
-                <h1 className="mb-6 text-2xl font-bold">Edit Formation</h1>
+                <h1 className="mb-6 text-2xl font-bold">{translations.formations.edit.edit_formation_heading}</h1>
 
                 <form className="space-y-6" onSubmit={submitForm}>
                     <div className="grid gap-2">
                         <Label required htmlFor="name">
-                            Name
+                            {translations.formations.edit.name_label}
                         </Label>
                         <Input
                             id="name"
@@ -73,7 +76,7 @@ export default function Edit({ formation, cours }) {
                             name="name"
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
-                            placeholder="Name"
+                            placeholder={translations.formations.edit.name_placeholder}
                             autoComplete="off"
                         />
                         <InputError message={errors.name} />
@@ -81,21 +84,21 @@ export default function Edit({ formation, cours }) {
 
                     <div className="grid gap-2">
                         <Label htmlFor="icon_name">
-                            Icon Name (from Iconify)
+                            {translations.formations.edit.icon_name_label}
                         </Label>
                         <Input
                             id="icon_name"
                             name="icon_name"
                             value={data.icon_name}
                             onChange={(e) => setData('icon_name', e.target.value)}
-                            placeholder="e.g., mdi:home, ph:book-fill"
+                            placeholder={translations.formations.edit.icon_name_placeholder}
                             autoComplete="off"
                         />
                         <InputError message={errors.icon_name} />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="cour_ids">Cours</Label>
+                        <Label htmlFor="cour_ids">{translations.formations.edit.cours_label}</Label>
                         <div className="flex flex-wrap gap-4">
                             {cours.map((cour) => (
                                 <div key={cour.id} className="flex items-center space-x-2">
@@ -121,11 +124,11 @@ export default function Edit({ formation, cours }) {
                                 router.visit(route('formations.index'));
                             }}
                         >
-                            Cancel
+                            {translations.formations.edit.cancel_button}
                         </Button>
                         <Button disabled={processing} type="submit">
                             {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
-                            Update
+                            {translations.formations.edit.update_button}
                         </Button>
                     </div>
                 </form>

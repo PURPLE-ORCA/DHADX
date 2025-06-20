@@ -1,21 +1,25 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useContext } from 'react';
 import { Clock } from 'lucide-react';
 import { AnimatedBackground } from '@/components/motion-primitives/animated-background'; // Adjust import path
 import TaskCard from './TaskCard'; // Assuming this is your individual task card
 import { getStatusConfig } from './TaskStatusBadge'; // Your helper for icon/color
-
-// Define your statuses - these will be the segments
-// You might want to map these to more human-readable labels for the buttons
-const STATUS_OPTIONS = [
-    { id: 'pending', label: 'Pending' },
-    { id: 'in_progress', label: 'In Progress' },
-    { id: 'submitted', label: 'Submitted' },
-    { id: 'needs_revision', label: 'Needs Revision' },
-    { id: 'completed', label: 'Completed' },
-    // Add other statuses like 'overdue', 'cancelled' if they should be filterable segments
-];
+import { TranslationContext } from '@/context/TranslationProvider';
 
 export default function TasksByStatusView({ tasks }) {
+    const { translations } = useContext(TranslationContext);
+
+    // Define your statuses - these will be the segments
+    // Use useMemo to ensure translations are available when STATUS_OPTIONS is defined
+    const STATUS_OPTIONS = useMemo(() => [
+        { id: 'pending', label: translations.tasks.status.pending },
+        { id: 'in_progress', label: translations.tasks.status.in_progress },
+        { id: 'submitted', label: translations.tasks.status.submitted },
+        { id: 'needs_revision', label: translations.tasks.status.needs_revision },
+        { id: 'completed', label: translations.tasks.status.completed },
+        { id: 'overdue', label: translations.tasks.status.overdue },
+        { id: 'cancelled', label: translations.tasks.status.cancelled },
+    ], [translations]); // Dependency array includes translations
+
     const [activeStatus, setActiveStatus] = useState(STATUS_OPTIONS[0].id); // Default to the first status ID
 
     // Memoize filtered tasks to avoid re-filtering on every render unless tasks or activeStatus changes
@@ -75,7 +79,7 @@ export default function TasksByStatusView({ tasks }) {
                                     <StatusIcon className="h-8 w-8 text-neutral-500 dark:text-neutral-400" />
                                 </div>
                                 <p className="font-medium text-neutral-700 dark:text-neutral-300">
-                                    No tasks in '{STATUS_OPTIONS.find(s => s.id === activeStatus)?.label || activeStatus}' status.
+                                    {(translations.tasks.data?.no_tasks_in_status || 'No tasks in \':status\' status.').replace(':status', STATUS_OPTIONS.find(s => s.id === activeStatus)?.label || activeStatus)}
                                 </p>
                             </>
                         );

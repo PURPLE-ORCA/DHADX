@@ -15,9 +15,11 @@ class UpdateCourRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', Rule::unique('cours', 'name')->ignore($this->id)],
-            'label' => ['required', Rule::unique('cours', 'label')->ignore($this->id)],
-            'color' => ['required', Rule::unique('cours', 'color')->ignore($this->id)],
+            'name' => ['required', Rule::unique('cours', 'name')->ignore($this->route()->parameter('cour')->id)],
+            'label' => ['required', Rule::unique('cours', 'label')->ignore($this->route()->parameter('cour')->id)],
+            'color' => ['required', Rule::unique('cours', 'color')->ignore($this->route()->parameter('cour')->id)],
+            'formation_ids' => ['nullable', 'array'],
+            'formation_ids.*' => ['exists:formations,id'],
         ];
 
         // return [];

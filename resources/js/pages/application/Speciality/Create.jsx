@@ -7,8 +7,11 @@ import { Transition } from '@headlessui/react';
 import { Head, router, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { toast } from "sonner";
+import { useContext } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 
 export default function Create() {
+    const { translations } = useContext(TranslationContext);
     const { data, setData, post, processing, reset, errors } = useForm({
         name: '',
     });
@@ -21,10 +24,10 @@ export default function Create() {
             onSuccess: () => {
                 reset();
                 router.reload({ only: ['specialities'] });
-                toast.success("Speciality created successfully!");
+                toast.success(translations.specialities.create.success_toast);
             },
             onError: (errors) => {
-                toast.error("Failed to create speciality. Please check the form.");
+                toast.error(translations.specialities.create.error_toast);
                 console.error("Save errors:", errors);
             }
         });
@@ -32,33 +35,33 @@ export default function Create() {
 
     const breadcrumbs = [
         {
-            title: 'Specialities list',
+            title: translations.specialities.list_title,
             href: '/specialities',
         },
         {
-            title: 'Add new speciality',
+            title: translations.specialities.create.add_new_speciality,
             href: '/specialities/create',
         },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Specialities" />
+            <Head title={translations.specialities.create.page_title} />
 
             <div className="p-4">
-                <h1 className="mb-6 text-2xl font-bold">Add New Speciality</h1>
+                <h1 className="mb-6 text-2xl font-bold">{translations.specialities.create.add_new_speciality_heading}</h1>
 
                 <form className="space-y-6" onSubmit={submitForm}>
                     <div className="grid gap-2">
                         <Label required htmlFor="name">
-                            Name
+                            {translations.specialities.create.name_label}
                         </Label>
                         <Input
                             id="name"
                             name="name"
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
-                            placeholder="Name"
+                            placeholder={translations.specialities.create.name_placeholder}
                             autoComplete="off"
                         />
                         <InputError message={errors.name} />
@@ -67,7 +70,7 @@ export default function Create() {
                     <div>
                         <Button type="submit" disabled={processing}>
                             {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
-                            Add
+                            {translations.specialities.create.add_button}
                         </Button>
                     </div>
                 </form>

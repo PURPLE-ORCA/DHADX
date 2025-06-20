@@ -3,9 +3,11 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Transition } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
 import { Trash } from 'lucide-react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 
 export default function Delete({ cour, onDeleted }) {
+    const { translations } = useContext(TranslationContext);
     const [open, setOpen] = useState(false);
     const { delete: destroy, processing, reset, clearErrors, recentlySuccessful } = useForm({});
 
@@ -40,7 +42,7 @@ export default function Delete({ cour, onDeleted }) {
                 leaveTo="opacity-0"
             >
                 <div className="fixed top-12 right-3 rounded bg-green-500 p-2 whitespace-nowrap">
-                    <p className="text-sm font-semibold text-white">Deleted successfully!</p>
+                    <p className="text-sm font-semibold text-white">{translations.courses.delete.deleted_successfully}</p>
                 </div>
             </Transition>
 
@@ -48,21 +50,21 @@ export default function Delete({ cour, onDeleted }) {
                 <DialogTrigger asChild>
                     <Button variant="link" className="!p-0">
                         <Trash />
-                        Delete
+                        {translations.courses.delete.delete_button}
                     </Button>
                 </DialogTrigger>
                 <DialogContent>
-                    <DialogTitle>Are you sure you want to delete {cour.name} ?</DialogTitle>
-                    <DialogDescription>This action cannot be undone. All data will be lost.</DialogDescription>
+                    <DialogTitle>{translations.courses.delete.dialog_title.replace(':cour_name', cour.name)}</DialogTitle>
+                    <DialogDescription>{translations.courses.delete.dialog_description}</DialogDescription>
                     <form onSubmit={deleteCour}>
                         <DialogFooter className="mt-4 gap-2">
                             <DialogClose asChild>
                                 <Button variant="secondary" onClick={closeModal}>
-                                    Cancel
+                                    {translations.courses.delete.cancel_button}
                                 </Button>
                             </DialogClose>
                             <Button type="submit" variant="destructive" disabled={processing}>
-                                Delete
+                                {translations.courses.delete.delete_button_confirm}
                             </Button>
                         </DialogFooter>
                     </form>

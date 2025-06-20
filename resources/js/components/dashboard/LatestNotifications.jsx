@@ -2,12 +2,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { formatDistanceToNow } from 'date-fns';
+import { useContext } from 'react';
+import { TranslationContext } from '@/context/TranslationProvider';
 
 export default function LatestNotifications({ notifications }) {
+    const { translations } = useContext(TranslationContext);
+
     return (
-        <Card className="col-span-full md:col-span-2 lg:col-span-2">
+        <Card className="col-span-full bg-[var(--card-back)] md:col-span-2 lg:col-span-2">
             <CardHeader>
-                <CardTitle>Latest Notifications</CardTitle>
+                <CardTitle>{translations.latest_notifications_widget.title}</CardTitle>
             </CardHeader>
             <CardContent>
                 {notifications.length > 0 ? (
@@ -16,10 +20,8 @@ export default function LatestNotifications({ notifications }) {
                             {notifications.map((notification) => (
                                 <div key={notification.id} className="flex items-start space-x-4">
                                     <div className="flex-1">
-                                        <p className="text-sm font-medium leading-none">
-                                            {notification.data.message}
-                                        </p>
-                                        <p className="text-sm text-muted-foreground">
+                                        <p className="text-sm leading-none font-medium">{notification.data.message}</p>
+                                        <p className="text-muted-foreground text-sm">
                                             {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
                                         </p>
                                     </div>
@@ -28,7 +30,7 @@ export default function LatestNotifications({ notifications }) {
                         </div>
                     </ScrollArea>
                 ) : (
-                    <p className="text-sm text-muted-foreground">No new notifications.</p>
+                    <p className="text-muted-foreground text-sm">{translations.latest_notifications_widget.no_notifications}</p>
                 )}
             </CardContent>
         </Card>
