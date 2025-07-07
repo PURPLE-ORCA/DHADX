@@ -2,7 +2,6 @@ import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 import AdminTaskSummary from '@/components/dashboard/AdminTaskSummary';
-import CollaboratorMyTasks from '@/components/dashboard/CollaboratorMyTasks';
 import LatestNotifications from '@/components/dashboard/LatestNotifications';
 import UpcomingDeadlines from '@/components/dashboard/UpcomingDeadlines';
 import MyCampProgressWidget from '@/components/dashboard/MyCampProgressWidget'; // Import the new widget
@@ -10,7 +9,7 @@ import Masonry from 'react-masonry-css'; // <<<< IMPORT MASONRY
 import { useContext } from 'react';
 import { TranslationContext } from '@/context/TranslationProvider';
 
-function Dashboard({ user, collabCount, formationsCount, specialitysCount, coursCount, taskSummaries, latestNotifications, upcomingTasks, collaboratorActiveCamps }) {
+function Dashboard({ user, collabCount, formationsCount, specialitysCount, coursCount, taskSummaries, latestNotifications, urgentTasks, collaboratorActiveCamps }) {
     const { translations } = useContext(TranslationContext);
 
     const breadcrumbs = [
@@ -53,16 +52,12 @@ function Dashboard({ user, collabCount, formationsCount, specialitysCount, cours
         widgets.push(
             <UpcomingDeadlines
             key="collab-deadlines"
-            upcomingTasks={upcomingTasks}
+            urgentTasks={urgentTasks}
             />,
             <MyCampProgressWidget
             key="collab-progress"
             camps={collaboratorActiveCamps}
             />,
-            <CollaboratorMyTasks
-                key="collab-tasks"
-                taskSummaries={taskSummaries}
-            />
         );
     }
 
@@ -72,7 +67,6 @@ function Dashboard({ user, collabCount, formationsCount, specialitysCount, cours
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
 
-                {/* Replace your old grid div with Masonry */}
                 <Masonry
                     breakpointCols={breakpointColumnsObj}
                     className="my-masonry-grid flex w-auto" // `flex w-auto` is from react-masonry-css docs

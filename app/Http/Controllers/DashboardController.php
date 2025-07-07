@@ -44,13 +44,19 @@ class DashboardController extends Controller
             $isCollaborator = $user->hasRole('collaborator');
 
             if ($isCollaborator) {
-                $upcomingTasks = $user->assignedTasks()
-                    ->where('status', '!=', 'completed') // Exclude completed tasks
-                    ->where('due_date', '>=', now())
+                $overdueTasks = $user->assignedTasks()
+                    ->where('status', 'overdue')
+                    ->orderBy('due_date', 'asc') // Oldest overdue tasks first
+                    ->get();
+
+                $imminentTasks = $user->assignedTasks()
+                    ->whereNotIn('status', ['completed', 'cancelled', 'overdue'])
+                    ->where('due_date', '>=', now()->startOfDay()) // From today onwards
                     ->where('due_date', '<=', now()->addDays(7))
                     ->orderBy('due_date', 'asc')
-                    ->take(5) // Limit to 5 upcoming tasks
                     ->get();
+
+                $urgentTasks = $overdueTasks->merge($imminentTasks)->unique('id');
             }
 
             $collaboratorActiveCamps = collect(); // Initialize as empty collection
@@ -72,7 +78,7 @@ class DashboardController extends Controller
                 'coursCount' => $coursCount,
                 'taskSummaries' => $taskSummaries,
                 'latestNotifications' => $latestNotifications, // Pass latest notifications
-                'upcomingTasks' => $upcomingTasks, // Pass upcoming tasks
+                'urgentTasks' => $urgentTasks ?? collect(), // Pass urgent tasks, initialize as empty if not set
                 'collaboratorActiveCamps' => $collaboratorActiveCamps, // NEW PROP
             ]);
     }
