@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\WhiteboardController;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -46,6 +47,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
     Route::get('/my-tasks', [CollaboratorPortalController::class, 'myTasks'])->name('collaborator.tasks');
+
+    // Whiteboard Routes
+    Route::get('/whiteboards', [WhiteboardController::class, 'index'])->name('whiteboards.index');
+    Route::post('/whiteboards', [WhiteboardController::class, 'store'])->name('whiteboards.store');
+    Route::get('/whiteboards/{whiteboard}', [WhiteboardController::class, 'show'])->name('whiteboards.show');
+    Route::put('/whiteboards/{whiteboard}', [WhiteboardController::class, 'update'])->name('whiteboards.update');
+    Route::patch('/whiteboards/{whiteboard}/toggle-public', [WhiteboardController::class, 'togglePublic'])->name('whiteboards.togglePublic');
+    Route::delete('/whiteboards/{whiteboard}', [WhiteboardController::class, 'destroy'])->name('whiteboards.destroy');
 
 });
 
