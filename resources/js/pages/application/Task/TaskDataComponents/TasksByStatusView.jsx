@@ -1,8 +1,8 @@
 import { useState, useMemo, useContext } from 'react';
 import { Clock } from 'lucide-react';
-import { AnimatedBackground } from '@/components/motion-primitives/animated-background'; // Adjust import path
-import TaskCard from './TaskCard'; // Assuming this is your individual task card
-import { getStatusConfig } from './TaskStatusBadge'; // Your helper for icon/color
+import { AnimatedBackground } from '@/components/motion-primitives/animated-background'; 
+import TaskCard from './TaskCard'; 
+import { getStatusConfig } from './TaskStatusBadge';
 import { TranslationContext } from '@/context/TranslationProvider';
 
 export default function TasksByStatusView({ tasks }) {
@@ -70,7 +70,7 @@ export default function TasksByStatusView({ tasks }) {
                 </div>
             ) : (
                 <div className="py-12 text-center">
-                    {(() => { // IIFE to get status config easily
+                    {(() => {
                         const statusConfig = getStatusConfig(activeStatus);
                         const StatusIcon = statusConfig.icon || Clock; // Fallback icon
                         return (

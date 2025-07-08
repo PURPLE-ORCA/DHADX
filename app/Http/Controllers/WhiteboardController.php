@@ -11,9 +11,19 @@ class WhiteboardController extends Controller
 {
     public function index()
     {
-        $whiteboards = Auth::user()->whiteboards()->latest()->get();
+        // Get the user's personal whiteboards
+        $myWhiteboards = Auth::user()->whiteboards()->latest()->get();
+
+        // Get all public whiteboards, including the author's name
+        $publicWhiteboards = Whiteboard::where('is_public', true)
+            ->where('user_id', '!=', Auth::id()) // Optional: Exclude your own from the public tab
+            ->with('user:id,name')
+            ->latest()
+            ->get();
+
         return Inertia::render('application/Whiteboard/Index', [
-            'whiteboards' => $whiteboards,
+            'myWhiteboards' => $myWhiteboards,
+            'publicWhiteboards' => $publicWhiteboards,
         ]);
     }
 

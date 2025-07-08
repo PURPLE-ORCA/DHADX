@@ -8,6 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import '@excalidraw/excalidraw/index.css';
 import axios from 'axios';
+import AppLayout from '@/layouts/app-layout';
 
 export default function Show({ whiteboard }) {
     const { auth } = usePage().props;
@@ -69,51 +70,51 @@ export default function Show({ whiteboard }) {
 
 
     return (
-        <div className="flex flex-col h-screen">
-            {isOwner && (
-                <div className="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center space-x-4">
-                        <Label htmlFor="whiteboard-title" className="sr-only">Whiteboard Title</Label>
-                        <Input
-                            id="whiteboard-title"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            onBlur={handleTitleBlur}
-                            className="w-64 bg-white dark:bg-gray-900"
-                        />
-                        <div className="flex items-center space-x-2">
-                            <Switch
-                                id="is-public-toggle"
-                                checked={isPublic}
-                                onCheckedChange={() => {
-                                    axios.patch(route('whiteboards.togglePublic', whiteboard.id))
-                                        .then(response => {
+            <div className="flex h-screen flex-col">
+                {isOwner && (
+                    <div className="flex items-center justify-between bg-[color:var(--background)] p-4">
+                        <div className="flex items-center space-x-4">
+                            <Link href={route('whiteboards.index')} className="text-black dark:text-white hover:underline">
+                                &larr; Go Back
+                            </Link>
+                            <Label htmlFor="whiteboard-title" className="sr-only ml-4">
+                                Whiteboard Title
+                            </Label>
+                            <Input
+                                id="whiteboard-title"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                onBlur={handleTitleBlur}
+                                className="w-64"
+                            />
+                            <div className="flex items-center space-x-2">
+                                <Switch
+                                    id="is-public-toggle"
+                                    checked={isPublic}
+                                    onCheckedChange={() => {
+                                        axios.patch(route('whiteboards.togglePublic', whiteboard.id)).then((response) => {
                                             setIsPublic(response.data.is_public);
                                         });
-                                }}
-                            />
-                            <Label htmlFor="is-public-toggle">
-                                {isPublic ? 'Public' : 'Private'}
-                            </Label>
+                                    }}
+                                />
+                                <Label htmlFor="is-public-toggle">{isPublic ? 'Public' : 'Private'}</Label>
+                            </div>
                         </div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">{saveStatus}</div>
                     </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {saveStatus}
-                    </div>
-                </div>
-            )}
+                )}
 
-            <div className="flex-grow" style={{ height: 'calc(100vh - 5rem)' }}>
-                <Excalidraw
-                    initialData={{
-                        elements: whiteboard.scene_data?.elements || [],
-                        appState: whiteboard.scene_data?.appState || {},
-                    }}
-                    viewModeEnabled={!isOwner}
-                    onChange={handleExcalidrawChange}
-                    theme={currentTheme}
-                />
+                <div className="flex-grow" style={{ height: 'calc(100vh - 5rem)' }}>
+                    <Excalidraw
+                        initialData={{
+                            elements: whiteboard.scene_data?.elements || [],
+                            appState: whiteboard.scene_data?.appState || {},
+                        }}
+                        viewModeEnabled={!isOwner}
+                        onChange={handleExcalidrawChange}
+                        theme={currentTheme}
+                    />
+                </div>
             </div>
-        </div>
     );
 }
