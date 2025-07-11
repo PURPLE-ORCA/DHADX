@@ -37,7 +37,7 @@ export default function Index({ tasks, auth }) {
   return (
       <AppLayout breadcrumbs={[{ title: translations.tasks.list_title, href: '/tasks' }]}>
           <Head title={translations.tasks.page_title} />
-          <div className="min-h-screen bg-white dark:bg-black">
+          <div className="min-h-screen">
               {/* Header Section */}
               <div className="">
                   <div className="px-6 py-8">
@@ -63,9 +63,9 @@ export default function Index({ tasks, auth }) {
                                       {isAdmin && (
                                           <Link
                                               href={route('tasks.create')}
-                                              className="flex items-center gap-2 rounded-lg bg-[var(--brand-color)] px-4 text-sm font-medium text-white transition-colors hover:bg-[var(--brand-color)]/90"
+                                              className="flex items-center gap-2 rounded-lg bg-[var(--brand-color)] p-2 text-sm font-medium text-white transition-colors hover:bg-[var(--brand-color)]/90"
                                           >
-                                              <Plus className="h-4 w-4" />
+                                              <Plus className="h-6 w-6" />
                                               {translations.tasks.add_new_button}
                                           </Link>
                                       )}

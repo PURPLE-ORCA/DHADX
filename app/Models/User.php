@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Task;
 use App\Models\TaskComment;
+use App\Models\Whiteboard;
 
 class User extends Authenticatable
 {
@@ -48,6 +49,11 @@ class User extends Authenticatable
     public function taskComments()
     {
         return $this->hasMany(TaskComment::class);
+    }
+
+    public function whiteboards()
+    {
+        return $this->hasMany(Whiteboard::class);
     }
 
     /**

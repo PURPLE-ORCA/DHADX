@@ -112,11 +112,11 @@
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.87 0 0);
     --brand-color: #FF2D20;
-    --card-back: #c3c9c9;
+    --card-back:  oklch(0.97 0 0);
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
+    --background: #0d0d0d;
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.145 0 0);
     --card-foreground: oklch(0.985 0 0);
@@ -149,7 +149,7 @@
     --sidebar-border: oklch(0.269 0 0);
     --sidebar-ring: oklch(0.439 0 0);
     --brand-color: #FF2D20;
-    --card-back: #1a1919;
+    --card-back: oklch(0.205 0 0);
 }
 
 @layer base {
