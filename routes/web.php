@@ -12,6 +12,7 @@ use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\WhiteboardController;
+use App\Http\Controllers\SeanceController;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -34,6 +35,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('cours', CourController::class);
         Route::resource('tasks', TaskController::class)->except(['index', 'show']);
     });
+
+    // SEANCE MANAGEMENT (for Mentors/Admins)
+    Route::middleware('can:is_admin')->group(function () {
+        Route::get('/seances', [SeanceController::class, 'index'])->name('seances.index'); // List all seances
+        Route::get('/seances/create', [SeanceController::class, 'create'])->name('seances.create'); // Show create form
+        Route::post('/seances', [SeanceController::class, 'store'])->name('seances.store'); // Save new seance
+        Route::get('/seances/{seance}/edit', [SeanceController::class, 'edit'])->name('seances.edit'); // Show edit form
+        Route::put('/seances/{seance}', [SeanceController::class, 'update'])->name('seances.update'); // Update seance
+        Route::delete('/seances/{seance}', [SeanceController::class, 'destroy'])->name('seances.destroy');
+
+        // Exercise Management within a Seance
+        Route::post('/seances/{seance}/exercises', [SeanceController::class, 'storeExercise'])->name('seances.exercises.store');
+    });
+
+    // LIVE SEANCE VIEW (for Mentors and Collaborators)
+    Route::get('/seances/{seance}', [SeanceController::class, 'show'])->name('seances.show');
+
+    // EXERCISE SUBMISSION (for Collaborators)
+    Route::post('/seance-exercises/{exercise}/submissions', [SeanceController::class, 'storeSubmission'])->name('exercises.submissions.store');
 
     Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
     Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');

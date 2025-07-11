@@ -18,6 +18,11 @@ class Cour extends Model
         return $this->belongsToMany(Formation::class);
     }
 
+    public function seances()
+    {
+        return $this->hasMany(Seance::class, 'course_id');
+    }
+
     public function camps()
     {
         return $this->hasMany(Camp::class);
