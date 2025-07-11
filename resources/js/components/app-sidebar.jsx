@@ -2,7 +2,7 @@ import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { Link, usePage } from '@inertiajs/react';
-import { BriefcaseBusiness, Layers, LayoutGrid, ListChecks, Shapes, Tent, Trophy, UsersRound, ClipboardList, Brush } from 'lucide-react'; // Added ListChecks for My Tasks
+import { BriefcaseBusiness, Layers, LayoutGrid, ListChecks, Shapes, Tent, Trophy, UsersRound, ClipboardList, Brush, CalendarDays } from 'lucide-react'; // Added CalendarDays for Seances
 import AppLogo from './app-logo';
 import { useContext } from 'react';
 import { TranslationContext } from '@/context/TranslationProvider';
@@ -18,6 +18,7 @@ const iconCampsManagement = Tent; // Keep Tent if 'Camps' is a separate admin me
 const iconLeaderboard = Trophy;
 const iconMyTasks = ListChecks;
 const iconWhiteboard = Brush;
+const iconSeances = CalendarDays; // Icon for Seances
 
 export function AppSidebar() {
     const { auth } = usePage().props;
@@ -89,6 +90,12 @@ export function AppSidebar() {
                 url: route('formations.index'),
                 routeName: 'formations.index',
                 icon: iconFormations,
+            },
+            {
+                title: translations.sidebar.seances || 'Seances', // Add Seances link
+                url: route('seances.index'),
+                routeName: 'seances.index',
+                icon: iconSeances,
             },
             {
                 title: translations.sidebar.camps,

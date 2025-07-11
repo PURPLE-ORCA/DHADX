@@ -103,7 +103,7 @@ class SeanceController extends Controller
         return Inertia::render('application/Seance/Show', [
             'seance' => $seance,
             'isMentor' => $isMentor,
-            'mySubmission' => $mySubmission,
+            'current_user_id' => $user->id, // Pass current user ID for frontend logic
         ]);
     }
 
@@ -122,21 +122,34 @@ class SeanceController extends Controller
     }
 
     public function storeSubmission(Request $request, SeanceExercise $exercise) {
-        // NOTE: This assumes a file upload for now. Will need logic for other types.
         $validated = $request->validate([
-            'submission_file' => 'required|file|max:10240', // 10MB max
+            'text_content' => 'nullable|string',
+            'file' => 'nullable|file|max:10240', // 10MB max
         ]);
 
-        $path = $request->file('submission_file')->store('submissions', 'public');
-        
+        if (empty($validated['text_content']) && empty($validated['file'])) {
+            return back()->withErrors(['submission' => 'Either text content or a file must be provided.']);
+        }
+
         $collaborator = Auth::user()->collaboratorProfile;
-        if (!$collaborator) abort(403, 'User is not a collaborator.');
+        if (!$collaborator) {
+            abort(403, 'User is not a collaborator.');
+        }
 
-        $exercise->submissions()->create([
+        $submissionData = [
             'collaborator_id' => $collaborator->id,
-            'submission_type' => 'file',
-            'content' => $path,
-        ]);
+        ];
+
+        if (isset($validated['file'])) {
+            $path = $request->file('file')->store('submissions', 'public');
+            $submissionData['submission_type'] = 'file';
+            $submissionData['content'] = $path;
+        } elseif (isset($validated['text_content'])) {
+            $submissionData['submission_type'] = 'text';
+            $submissionData['content'] = $validated['text_content'];
+        }
+
+        $exercise->submissions()->create($submissionData);
 
         return back()->with('message', 'Submission successful!');
     }
