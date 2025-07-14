@@ -40,7 +40,7 @@ class SeanceController extends Controller
             'topic' => 'required|string|max:255',
             'agenda' => 'nullable|string',
             'meeting_link' => 'nullable|url',
-            'scheduled_at' => 'required|date',
+            'scheduled_at' => 'required|date|after:now',
         ]);
         $seance = Seance::create($validated);
 
@@ -68,7 +68,7 @@ class SeanceController extends Controller
             'topic' => 'required|string|max:255',
             'agenda' => 'nullable|string',
             'meeting_link' => 'nullable|url',
-            'scheduled_at' => 'required|date',
+            'scheduled_at' => 'required|date|after:now',
         ]);
         $seance->update($validated);
 
@@ -128,7 +128,7 @@ class SeanceController extends Controller
         $seance->load([
             'course:id,name',
             'mentor:id,name',
-            'exercises.submissions.collaborator.user:id,name', // Deeply nested load
+            'exercises.submissions.collaborator.user:id,name',
             'attendees.user:id,name' // Load the user for each collaborator in the attendance list
         ]);
         

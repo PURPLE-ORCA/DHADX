@@ -5,11 +5,12 @@ import AdminTaskSummary from '@/components/dashboard/AdminTaskSummary';
 import LatestNotifications from '@/components/dashboard/LatestNotifications';
 import UpcomingDeadlines from '@/components/dashboard/UpcomingDeadlines';
 import MyCampProgressWidget from '@/components/dashboard/MyCampProgressWidget'; // Import the new widget
+import UpcomingSeanceWidget from '@/components/dashboard/UpcomingSeanceWidget';
 import Masonry from 'react-masonry-css'; // <<<< IMPORT MASONRY
 import { useContext } from 'react';
 import { TranslationContext } from '@/context/TranslationProvider';
 
-function Dashboard({ user, collabCount, formationsCount, specialitysCount, coursCount, taskSummaries, latestNotifications, urgentTasks, collaboratorActiveCamps }) {
+function Dashboard({ user, collabCount, formationsCount, specialitysCount, coursCount, taskSummaries, latestNotifications, urgentTasks, collaboratorActiveCamps, upcomingSeance }) {
     const { translations } = useContext(TranslationContext);
 
     const breadcrumbs = [
@@ -59,8 +60,13 @@ function Dashboard({ user, collabCount, formationsCount, specialitysCount, cours
             camps={collaboratorActiveCamps}
             />,
         );
+        widgets.push(
+            <UpcomingSeanceWidget
+                key="upcoming-seance"
+                seance={upcomingSeance}
+            />,
+        );
     }
-
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

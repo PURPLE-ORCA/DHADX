@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Camp; // Add Camp model
+use App\Models\Camp;
 use App\Models\Collaborator;
 use App\Models\Cour;
 use App\Models\Formation;
@@ -10,6 +10,7 @@ use App\Models\Speciality;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Task;
+use App\Models\Seance;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -57,6 +58,20 @@ class DashboardController extends Controller
                     ->get();
 
                 $urgentTasks = $overdueTasks->merge($imminentTasks)->unique('id');
+
+                $upcomingSeance = null;
+                $collaboratorProfile = $user->collaboratorProfile;
+
+                if ($collaboratorProfile) {
+                    $upcomingSeance = Seance::whereHas('attendees', function ($query) use ($collaboratorProfile) {
+                            $query->where('collaborator_id', $collaboratorProfile->id);
+                        })
+                        ->where('status', 'scheduled')
+                        ->where('scheduled_at', '>=', now())
+                        ->orderBy('scheduled_at', 'asc')
+                        ->with('course:id,name', 'mentor:id,name') // Get the essentials
+                        ->first();
+                }
             }
 
             $collaboratorActiveCamps = collect(); // Initialize as empty collection
@@ -80,6 +95,7 @@ class DashboardController extends Controller
                 'latestNotifications' => $latestNotifications, // Pass latest notifications
                 'urgentTasks' => $urgentTasks ?? collect(), // Pass urgent tasks, initialize as empty if not set
                 'collaboratorActiveCamps' => $collaboratorActiveCamps, // NEW PROP
+                'upcomingSeance' => $upcomingSeance ?? null, // Pass upcoming seance
             ]);
     }
 }

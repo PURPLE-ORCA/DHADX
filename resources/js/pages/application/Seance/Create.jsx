@@ -24,17 +24,24 @@ export default function Create({ courses, mentors }) {
         mentor_id: '',
         meeting_link: '',
         scheduled_at: null,
+        scheduled_time: '09:00',
     });
 
     const submitForm = (e) => {
         e.preventDefault();
 
-        post(route('seances.store'), {
+        const combinedDateTime = new Date(data.scheduled_at);
+        const [hours, minutes] = data.scheduled_time.split(':');
+        combinedDateTime.setHours(hours, minutes);
+
+        const submissionData = {
+            ...data,
+            scheduled_at: combinedDateTime.toISOString()
+        };
+
+        router.post(route('seances.store'), submissionData, {
             preserveScroll: true,
-            onSuccess: () => {
-                reset();
-                router.reload({ only: ['seances'] });
-            },
+            onSuccess: () => reset(),
         });
     };
 
@@ -123,14 +130,19 @@ export default function Create({ courses, mentors }) {
                         </Label>
                         <Select
                             onValueChange={(value) => setData('course_id', value)}
-                            value={data.course_id}
+                            value={String(data.course_id)}
                         >
                             <SelectTrigger className="w-full">
-                                <SelectValue placeholder={translations.seances?.create?.select_course_placeholder || 'Select a course'} />
+                                <SelectValue>
+                                    {data.course_id
+                                        ? courses.find(course => course.id === data.course_id)?.name
+                                        : (translations.seances?.create?.select_course_placeholder || 'Select a course')
+                                    }
+                                </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
                                 {courses.map((course) => (
-                                    <SelectItem key={course.id} value={course.id}>
+                                    <SelectItem key={course.id} value={String(course.id)}>
                                         {course.name}
                                     </SelectItem>
                                 ))}
@@ -145,14 +157,19 @@ export default function Create({ courses, mentors }) {
                         </Label>
                         <Select
                             onValueChange={(value) => setData('mentor_id', value)}
-                            value={data.mentor_id}
+                            value={String(data.mentor_id)}
                         >
                             <SelectTrigger className="w-full">
-                                <SelectValue placeholder={translations.seances?.create?.select_mentor_placeholder || 'Select a mentor'} />
+                                <SelectValue>
+                                    {data.mentor_id
+                                        ? mentors.find(mentor => mentor.id === data.mentor_id)?.name
+                                        : (translations.seances?.create?.select_mentor_placeholder || 'Select a mentor')
+                                    }
+                                </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
                                 {mentors.map((mentor) => (
-                                    <SelectItem key={mentor.id} value={mentor.id}>
+                                    <SelectItem key={mentor.id} value={String(mentor.id)}>
                                         {mentor.name}
                                     </SelectItem>
                                 ))}
@@ -165,29 +182,37 @@ export default function Create({ courses, mentors }) {
                         <Label required htmlFor="scheduled_at">
                             {translations.seances?.create?.scheduled_at_label || 'Scheduled At'}
                         </Label>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant={'outline'}
-                                    className={cn(
-                                        'w-[280px] justify-start text-left font-normal',
-                                        !data.scheduled_at && 'text-muted-foreground'
-                                    )}
-                                >
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {data.scheduled_at ? format(new Date(data.scheduled_at), 'PPP p') : <span>{translations.seances?.create?.pick_date_time || 'Pick a date and time'}</span>}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                                <Calendar
-                                    mode="single"
-                                    selected={data.scheduled_at ? new Date(data.scheduled_at) : undefined}
-                                    onSelect={(date) => setData('scheduled_at', date)}
-                                    initialFocus
-                                />
-                                {/* Time picker can be added here if needed, e.g., using another input or custom component */}
-                            </PopoverContent>
-                        </Popover>
+                        <div className="flex items-center gap-4">
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant={'outline'}
+                                        className={cn(
+                                            'w-[280px] justify-start text-left font-normal',
+                                            !data.scheduled_at && 'text-muted-foreground'
+                                        )}
+                                    >
+                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                                        {data.scheduled_at ? format(new Date(data.scheduled_at), 'PPP') : <span>{translations.seances?.create?.pick_date || 'Pick a date'}</span>}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0">
+                                    <Calendar
+                                        mode="single"
+                                        selected={data.scheduled_at ? new Date(data.scheduled_at) : undefined}
+                                        onSelect={(date) => setData('scheduled_at', date)}
+                                        disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
+                                        initialFocus
+                                    />
+                                </PopoverContent>
+                            </Popover>
+                            <Input
+                                type="time"
+                                value={data.scheduled_time}
+                                onChange={(e) => setData('scheduled_time', e.target.value)}
+                                className="w-[120px]"
+                            />
+                        </div>
                         <InputError message={errors.scheduled_at} />
                     </div>
 
