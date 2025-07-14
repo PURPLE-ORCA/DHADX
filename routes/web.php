@@ -44,13 +44,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/seances/{seance}/edit', [SeanceController::class, 'edit'])->name('seances.edit'); // Show edit form
         Route::put('/seances/{seance}', [SeanceController::class, 'update'])->name('seances.update'); // Update seance
         Route::delete('/seances/{seance}', [SeanceController::class, 'destroy'])->name('seances.destroy');
-
-        // Exercise Management within a Seance
-        Route::post('/seances/{seance}/exercises', [SeanceController::class, 'storeExercise'])->name('seances.exercises.store');
     });
+
+    // Mentor-specific presence check initiation
+    Route::post('/seances/{seance}/presence/start', [SeanceController::class, 'startPresenceCheck'])
+        ->middleware('can:startPresenceCheck,seance') // <-- USE THE POLICY
+        ->name('seances.presence.start');
+
+    // Exercise Management within a Seance
+    Route::post('/seances/{seance}/exercises', [SeanceController::class, 'storeExercise'])
+        ->name('seances.exercises.store');
 
     // LIVE SEANCE VIEW (for Mentors and Collaborators)
     Route::get('/seances/{seance}', [SeanceController::class, 'show'])->name('seances.show');
+
+    // Presence Check Routes
+    Route::post('/seances/{seance}/check-in', [SeanceController::class, 'recordCheckIn'])->name('seances.presence.checkin');
 
     // EXERCISE SUBMISSION (for Collaborators)
     Route::post('/seance-exercises/{exercise}/submissions', [SeanceController::class, 'storeSubmission'])->name('exercises.submissions.store');

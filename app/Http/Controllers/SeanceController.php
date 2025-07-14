@@ -9,6 +9,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use App\Events\PresenceCheckStarted; 
+use App\Models\Camp;
 
 class SeanceController extends Controller
 {
@@ -41,7 +43,7 @@ class SeanceController extends Controller
         $seance = Seance::create($validated);
 
         // **CRITICAL LOGIC:** Automatically enroll all collaborators from the course's camps
-        $collaboratorIds = $seance->course->camps()->pluck('collaborator_id')->unique();
+        $collaboratorIds = Camp::where('cour_id', $seance->course_id)->pluck('collaborator_id')->unique();
         $seance->attendees()->sync($collaboratorIds); // This creates the initial attendance records
 
         return redirect()->route('seances.index')->with('message', 'Seance created successfully.');
@@ -69,7 +71,7 @@ class SeanceController extends Controller
         $seance->update($validated);
 
         // Re-sync attendees if course changed or for any reason
-        $collaboratorIds = $seance->course->camps()->pluck('collaborator_id')->unique();
+        $collaboratorIds = Camp::where('cour_id', $seance->course_id)->pluck('collaborator_id')->unique();
         $seance->attendees()->sync($collaboratorIds);
 
         return redirect()->route('seances.index')->with('message', 'Seance updated successfully.');
@@ -78,6 +80,36 @@ class SeanceController extends Controller
     public function destroy(Seance $seance) {
         $seance->delete();
         return redirect()->route('seances.index')->with('message', 'Seance deleted successfully.');
+    }
+
+    public function startPresenceCheck(Seance $seance)
+    {
+        broadcast(new PresenceCheckStarted($seance->id));
+        return response()->json(['message' => 'Presence check initiated.']);
+    }
+
+    public function recordCheckIn(Seance $seance)
+    {
+        $collaborator = Auth::user()->collaboratorProfile;
+        if (!$collaborator) {
+            return response()->json(['error' => 'User is not a collaborator.'], 403);
+        }
+
+        // Find the attendance record and update it
+        $attendance = $seance->attendees()->where('collaborator_id', $collaborator->id)->first();
+        
+        if ($attendance) {
+            // This uses the pivot accessor to update the pivot table data
+            $attendance->pivot->status = 'present';
+            $attendance->pivot->checked_in_at = now();
+            $attendance->pivot->save();
+
+            // Later, we will broadcast an event back to the mentor here
+            // For now, just confirm success.
+            return response()->json(['message' => 'Checked in successfully.']);
+        }
+
+        return response()->json(['error' => 'Attendance record not found.'], 404);
     }
 
     // --- Live Seance View (The Main Event) ---
@@ -110,9 +142,6 @@ class SeanceController extends Controller
     // --- Action Methods ---
 
     public function storeExercise(Request $request, Seance $seance) {
-        // Authorization check
-        if ($seance->mentor_id !== Auth::id()) abort(403);
-
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
