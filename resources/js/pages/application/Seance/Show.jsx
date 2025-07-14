@@ -6,73 +6,88 @@ import SeanceHeader from './components/SeanceHeader';
 import AttendanceList from './components/AttendanceList';
 import ExerciseManager from './components/ExerciseManager';
 import ExerciseList from './components/ExerciseList';
-import { Button } from '@/components/ui/button'; // Import Button component
-import axios from 'axios'; // Import axios
+import { Button } from '@/components/ui/button';
+import axios from 'axios';
 
-export default function Show({ seance, isMentor }) {
+export default function Show({ seance, isMentor, current_user_id }) {
     const { translations } = useContext(TranslationContext);
 
-    // --- NEW STATE FOR COLLABORATOR VIEW ---
+    // --- ALL STATE DEFINED AT THE TOP ---
     const [showPresenceButton, setShowPresenceButton] = useState(false);
-    const [isCheckedIn, setIsCheckedIn] = useState(false); // To prevent double-clicking
-
-    // --- LIFT ATTENDEES INTO STATE ---
+    const [isCheckedIn, setIsCheckedIn] = useState(false);
     const [attendees, setAttendees] = useState(seance.attendees);
+    const [exercises, setExercises] = useState(seance.exercises); 
 
-    // --- MENTOR'S REAL-TIME LISTENER ---
+    // --- CONSOLIDATED AND CORRECTED USEEFFECT ---
     useEffect(() => {
-        // Only listen if the user is the mentor
-        if (isMentor && window.Echo) {
-            const channel = window.Echo.private(`seance.${seance.id}`);
+        if (!window.Echo) return;
 
-            channel.listen('.App\\Events\\CollaboratorCheckedIn', (event) => {
+        // Setup listeners for the shared seance channel
+        const seanceChannel = window.Echo.private(`seance.${seance.id}`);
+
+        if (!isMentor) {
+            // Collaborator-specific listeners on the seance channel
+            seanceChannel.listen('.App\\Events\\PresenceCheckStarted', (event) => {
+                console.log('Presence check started!', event);
+                if (!isCheckedIn) {
+                    setShowPresenceButton(true);
+                    setTimeout(() => setShowPresenceButton(false), 60000);
+                }
+            });
+        }
+        
+        if (isMentor) {
+            // Mentor-specific listeners on the seance channel
+            seanceChannel.listen('.App\\Events\\CollaboratorCheckedIn', (event) => {
                 console.log('A collaborator checked in!', event);
+                setAttendees(currentAttendees =>
+                    currentAttendees.map(attendee => 
+                        attendee.id === event.collaborator.id
+                            ? { ...attendee, pivot: { ...attendee.pivot, status: 'present' } }
+                            : attendee
+                    )
+                );
+            });
+        }
 
-                // Update the local state to reflect the change
-                setAttendees(currentAttendees => 
-                    currentAttendees.map(attendee => {
-                        if (attendee.id === event.collaborator.id) {
-                            // Update the pivot data for the specific attendee
-                            return { ...attendee, pivot: { ...attendee.pivot, status: 'present' } };
+        // Setup listener for the mentor's private channel (only if they are the mentor)
+        let userChannel;
+        if (isMentor) {
+            userChannel = window.Echo.private(`App.Models.User.${current_user_id}`);
+            userChannel.listen('.App\\Events\\ExerciseSubmitted', (event) => {
+                console.log('New exercise submission received!', event);
+                setExercises(currentExercises =>
+                    currentExercises.map(exercise => {
+                        if (exercise.id === event.submission.seance_exercise_id) {
+                            const submissions = exercise.submissions || [];
+                            return {
+                                ...exercise,
+                                submissions: [...submissions, event.submission]
+                            };
                         }
-                        return attendee;
+                        return exercise;
                     })
                 );
             });
-
-            return () => {
-                if (window.Echo) {
-                    window.Echo.leave(`seance.${seance.id}`);
-                }
-            };
         }
-    }, [seance.id, isMentor]); // This effect depends on seance.id and isMentor
-
-    // --- REAL-TIME LISTENER ---
-    useEffect(() => {
-        if (!isMentor && window.Echo) {
-            const channel = window.Echo.private(`seance.${seance.id}`);
-
-            channel.listen('.App\\Events\\PresenceCheckStarted', (event) => {
-                console.log('EVENT RECEIVED! The system works!', event);
-
-                if (!isCheckedIn) {
-                    setShowPresenceButton(true);
-                    setTimeout(() => {
-                        setShowPresenceButton(false);
-                    }, 60000);
+        
+        // The master cleanup function
+        return () => {
+            if (window.Echo) {
+                // Always leave the main seance channel
+                window.Echo.leave(`seance.${seance.id}`);
+                
+                // Only leave the user channel if we subscribed to it
+                if (userChannel) {
+                    window.Echo.leave(`App.Models.User.${current_user_id}`);
                 }
-            });
+            }
+        };
 
-            return () => {
-                if (window.Echo) {
-                    window.Echo.leave(`seance.${seance.id}`);
-                }
-            };
-        }
-    }, [seance.id, isMentor, isCheckedIn]);
-    
-    // --- HANDLER FOR THE "I'M HERE!" BUTTON ---
+    }, [seance.id, isMentor, current_user_id, isCheckedIn]);
+
+
+    // --- All your handler functions (handleCheckIn, handleStartCheck) are correct and can stay as they are ---
     const handleCheckIn = () => {
         // Disable the button immediately to prevent multiple clicks
         setShowPresenceButton(false);
@@ -116,6 +131,7 @@ export default function Show({ seance, isMentor }) {
         },
     ];
 
+    // In your return JSX, make sure to pass the state, not the prop
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={seance.topic} />
@@ -126,9 +142,9 @@ export default function Show({ seance, isMentor }) {
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                     {isMentor ? (
                         <>
-                            <Button onClick={handleStartCheck} className="mb-4">Start Presence Check</Button> {/* Mentor's button */}
-                            <AttendanceList attendees={attendees} /> {/* <-- Use the state variable */}
-                            <ExerciseManager seance={seance} />
+                            <AttendanceList attendees={attendees} />
+                            <ExerciseManager seance={seance} exercises={exercises} /> {/* <-- PASS STATE */}
+                            <Button onClick={handleStartCheck} className="mb-4">Start Presence Check</Button>
                         </>
                     ) : (
                         <div className="md:col-span-2">

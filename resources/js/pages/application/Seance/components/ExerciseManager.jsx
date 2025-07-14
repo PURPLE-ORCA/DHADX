@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import { TranslationContext } from '@/context/TranslationProvider';
 import CreateExerciseForm from './CreateExerciseForm';
 
-export default function ExerciseManager({ seance }) {
+export default function ExerciseManager({ seance, exercises }) {
     const { translations } = useContext(TranslationContext);
 
     return (
@@ -15,9 +15,9 @@ export default function ExerciseManager({ seance }) {
             <CardContent className="space-y-6">
                 <div className="space-y-4">
                     <h3 className="text-lg font-semibold">{translations.seances?.show?.exercise_manager?.existing_exercises || 'Existing Exercises'}</h3>
-                    {seance.exercises && seance.exercises.length > 0 ? (
+                    {exercises && exercises.length > 0 ? (
                         <ul className="space-y-4">
-                            {seance.exercises.map((exercise) => (
+                            {exercises.map((exercise) => (
                                 <li key={exercise.id} className="rounded-md border p-4">
                                     <h4 className="font-semibold">{exercise.title}</h4>
                                     <p className="text-sm text-muted-foreground">{exercise.description}</p>

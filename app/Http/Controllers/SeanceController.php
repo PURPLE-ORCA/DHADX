@@ -12,6 +12,7 @@ use Inertia\Inertia;
 use App\Events\PresenceCheckStarted; 
 use App\Models\Camp;
 use App\Events\CollaboratorCheckedIn; // <-- Add this import at the top
+use App\Events\ExerciseSubmitted;
 
 class SeanceController extends Controller
 {
@@ -183,7 +184,17 @@ class SeanceController extends Controller
             $submissionData['content'] = $validated['text_content'];
         }
 
-        $exercise->submissions()->create($submissionData);
+        $submission = $exercise->submissions()->create($submissionData);
+
+        // --- THE REVISED, SECURE LOGIC ---
+        $submission->load('collaborator.user:id,name');
+        
+        // Find the mentor's ID from the exercise's parent seance
+        $mentorId = $exercise->seance->mentor_id;
+
+        // Dispatch the event with the submission AND the mentor's ID
+        broadcast(new ExerciseSubmitted($submission, $mentorId));
+        // ------------------------------------
 
         return back()->with('message', 'Submission successful!');
     }

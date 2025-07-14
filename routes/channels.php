@@ -1,14 +1,23 @@
 <?php
+
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Broadcast;
 use App\Models\Seance;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use App\Models\Collaborator; // <-- ADD THIS IMPORT
+use App\Models\Collaborator;
 
+// --- ADD THIS MISSING BLOCK ---
+Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
+    // This ensures a user can only listen to their own private channel.
+    return (int) $user->id === (int) $id;
+});
+// -----------------------------
+
+// Your existing, correct seance channel authorization
 Broadcast::channel('seance.{seanceId}', function ($user, $seanceId) {
-    Log::info('--- BROADCAST AUTH CHECK ---');
-    Log::info('Checking auth for user:', $user->toArray()); // DUMP THE ENTIRE USER OBJECT
+    Log::info('--- BROADCAST AUTH CHECK for seance.{seanceId} ---');
+    Log::info('Checking auth for user:', $user->toArray());
     Log::info('For Seance ID: ' . $seanceId);
 
     $seance = Seance::find($seanceId);
@@ -23,14 +32,9 @@ Broadcast::channel('seance.{seanceId}', function ($user, $seanceId) {
         return true;
     }
 
-    // --- THE FINAL FIX ---
-    // Instead of relying on the relationship, fetch the collaborator profile directly.
     $collaborator = Collaborator::where('user_id', $user->id)->first();
-    // -------------------
-
     if ($collaborator) {
-        Log::info('Collaborator profile found via direct query. Collaborator ID: ' . $collaborator->id);
-        
+        Log::info('Collaborator profile found. Collaborator ID: ' . $collaborator->id);
         $isAttendee = DB::table('seance_attendances')
                         ->where('seance_id', $seanceId)
                         ->where('collaborator_id', $collaborator->id)
@@ -43,7 +47,7 @@ Broadcast::channel('seance.{seanceId}', function ($user, $seanceId) {
             Log::warning('Collaborator is NOT an attendee.');
         }
     } else {
-        Log::warning('No collaborator profile found for this user via direct query.');
+        Log::warning('No collaborator profile found for user.');
     }
 
     Log::error('Authorization failed for User ID: ' . $user->id);
