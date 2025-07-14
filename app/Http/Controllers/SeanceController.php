@@ -13,6 +13,7 @@ use App\Events\PresenceCheckStarted;
 use App\Models\Camp;
 use App\Events\CollaboratorCheckedIn; // <-- Add this import at the top
 use App\Events\ExerciseSubmitted;
+use App\Events\SeanceStatusUpdated; // We will create this event next
 
 class SeanceController extends Controller
 {
@@ -82,6 +83,36 @@ class SeanceController extends Controller
     public function destroy(Seance $seance) {
         $seance->delete();
         return redirect()->route('seances.index')->with('message', 'Seance deleted successfully.');
+    }
+
+    public function startSeance(Seance $seance) {
+        $seance->update([
+            'status' => 'live',
+            'started_at' => now(),
+        ]);
+        // Load the relationships before broadcasting
+        $seance->load('course:id,name', 'mentor:id,name');
+        broadcast(new SeanceStatusUpdated($seance)); // Announce the change
+        return back();
+    }
+
+    public function finishSeance(Seance $seance) {
+        $seance->update([
+            'status' => 'finished',
+            'finished_at' => now(),
+        ]);
+        // Load the relationships before broadcasting
+        $seance->load('course:id,name', 'mentor:id,name');
+        broadcast(new SeanceStatusUpdated($seance));
+        return back();
+    }
+
+    public function cancelSeance(Seance $seance) {
+        $seance->update(['status' => 'cancelled']);
+        // Load the relationships before broadcasting
+        $seance->load('course:id,name', 'mentor:id,name');
+        broadcast(new SeanceStatusUpdated($seance));
+        return back();
     }
 
     public function startPresenceCheck(Seance $seance)

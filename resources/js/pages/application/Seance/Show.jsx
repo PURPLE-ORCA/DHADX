@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react'; // Import Link
 import { useContext, useEffect, useState } from 'react';
 import { TranslationContext } from '@/context/TranslationProvider';
 import SeanceHeader from './components/SeanceHeader';
@@ -13,6 +13,7 @@ export default function Show({ seance, isMentor, current_user_id }) {
     const { translations } = useContext(TranslationContext);
 
     // --- ALL STATE DEFINED AT THE TOP ---
+    const [seanceData, setSeanceData] = useState(seance);
     const [showPresenceButton, setShowPresenceButton] = useState(false);
     const [isCheckedIn, setIsCheckedIn] = useState(false);
     const [attendees, setAttendees] = useState(seance.attendees);
@@ -23,7 +24,17 @@ export default function Show({ seance, isMentor, current_user_id }) {
         if (!window.Echo) return;
 
         // Setup listeners for the shared seance channel
-        const seanceChannel = window.Echo.private(`seance.${seance.id}`);
+        const seanceChannel = window.Echo.private(`seance.${seanceData.id}`); // Use seanceData.id
+
+        // Listener for SeanceStatusUpdated event (for everyone)
+        seanceChannel.listen('.App\\Events\\SeanceStatusUpdated', (event) => {
+            console.log('Seance status updated!', event.seance.status);
+            // Merge the new data with the old, preserving loaded relationships
+            setSeanceData(prevSeanceData => ({
+                ...prevSeanceData,  // Keep the old data (like .course and .mentor)
+                ...event.seance      // Overwrite with new data (like .status)
+            }));
+        });
 
         if (!isMentor) {
             // Collaborator-specific listeners on the seance channel
@@ -75,7 +86,7 @@ export default function Show({ seance, isMentor, current_user_id }) {
         return () => {
             if (window.Echo) {
                 // Always leave the main seance channel
-                window.Echo.leave(`seance.${seance.id}`);
+                window.Echo.leave(`seance.${seanceData.id}`); // Use seanceData.id
                 
                 // Only leave the user channel if we subscribed to it
                 if (userChannel) {
@@ -84,7 +95,7 @@ export default function Show({ seance, isMentor, current_user_id }) {
             }
         };
 
-    }, [seance.id, isMentor, current_user_id, isCheckedIn]);
+    }, [seanceData.id, isMentor, current_user_id, isCheckedIn]); // Use seanceData.id in dependency array
 
 
     // --- All your handler functions (handleCheckIn, handleStartCheck) are correct and can stay as they are ---
@@ -131,24 +142,47 @@ export default function Show({ seance, isMentor, current_user_id }) {
         },
     ];
 
-    // In your return JSX, make sure to pass the state, not the prop
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={seance.topic} />
 
             <div className="p-4">
-                <SeanceHeader seance={seance} />
+                <SeanceHeader seance={seanceData} /> {/* Use seanceData */}
 
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                     {isMentor ? (
                         <>
+                            {/* Mentor Control Buttons */}
+                            <div className="seance-controls p-4 bg-card-dark rounded-lg">
+                                {seanceData.status === 'scheduled' && (
+                                    <Link as="button" method="post" href={route('seances.start', seanceData.id)} className="w-full">
+                                        Start Seance
+                                    </Link>
+                                )}
+
+                                {seanceData.status === 'live' && (
+                                    <Link as="button" method="post" href={route('seances.finish', seanceData.id)} className="w-full">
+                                        End Seance
+                                    </Link>
+                                )}
+
+                                {(seanceData.status === 'scheduled' || seanceData.status === 'live') && (
+                                    <Link as="button" method="post" href={route('seances.cancel', seanceData.id)} className="w-full text-red-500 mt-2">
+                                        Cancel Seance
+                                    </Link>
+                                )}
+                                
+                                {seanceData.status === 'finished' && <p>This seance has finished.</p>}
+                                {seanceData.status === 'cancelled' && <p>This seance was cancelled.</p>}
+                            </div>
+
                             <AttendanceList attendees={attendees} />
-                            <ExerciseManager seance={seance} exercises={exercises} /> {/* <-- PASS STATE */}
-                            <Button onClick={handleStartCheck} className="mb-4">Start Presence Check</Button>
+                            <ExerciseManager seance={seanceData} exercises={exercises} /> 
+                            <Button onClick={handleStartCheck} className="mb-4" disabled={seanceData.status !== 'live'}>Start Presence Check</Button> {/* Status-aware */}
                         </>
                     ) : (
                         <div className="md:col-span-2">
-                            <ExerciseList seance={seance} />
+                            <ExerciseList seance={seanceData} />
                         </div>
                     )}
                 </div>

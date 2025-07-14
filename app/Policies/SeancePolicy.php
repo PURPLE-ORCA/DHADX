@@ -17,5 +17,8 @@ class SeancePolicy
         return $user->id === $seance->mentor_id;
     }
 
-    // You can add other policy methods here later like 'update', 'delete', etc.
+    public function update(User $user, Seance $seance): bool
+    {
+        return $user->id === $seance->mentor_id;
+    }
 }

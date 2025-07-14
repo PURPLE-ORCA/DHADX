@@ -44,6 +44,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/seances/{seance}/edit', [SeanceController::class, 'edit'])->name('seances.edit'); // Show edit form
         Route::put('/seances/{seance}', [SeanceController::class, 'update'])->name('seances.update'); // Update seance
         Route::delete('/seances/{seance}', [SeanceController::class, 'destroy'])->name('seances.destroy');
+
+    // Add these alongside your other seance action routes
+    Route::post('/seances/{seance}/start', [SeanceController::class, 'startSeance'])
+        ->middleware('can:update,seance') // Reuse the update policy or create a new one
+        ->name('seances.start');
+
+    Route::post('/seances/{seance}/finish', [SeanceController::class, 'finishSeance'])
+        ->middleware('can:update,seance')
+        ->name('seances.finish');
+        
+    Route::post('/seances/{seance}/cancel', [SeanceController::class, 'cancelSeance'])
+        ->middleware('can:update,seance')
+        ->name('seances.cancel');
     });
 
     // Mentor-specific presence check initiation

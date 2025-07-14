@@ -16,6 +16,15 @@ class Seance extends Model
         'finished_at' => 'datetime',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($seance) {
+            $seance->status = 'scheduled'; // Default status
+        });
+    }
+
     public function course() {
         return $this->belongsTo(Cour::class, 'course_id');
     }
