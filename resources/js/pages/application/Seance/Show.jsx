@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
-import { useContext, useEffect, useState } from 'react'; // Add useEffect and useState
+import { useContext, useEffect, useState } from 'react';
 import { TranslationContext } from '@/context/TranslationProvider';
 import SeanceHeader from './components/SeanceHeader';
 import AttendanceList from './components/AttendanceList';
@@ -15,6 +15,38 @@ export default function Show({ seance, isMentor }) {
     // --- NEW STATE FOR COLLABORATOR VIEW ---
     const [showPresenceButton, setShowPresenceButton] = useState(false);
     const [isCheckedIn, setIsCheckedIn] = useState(false); // To prevent double-clicking
+
+    // --- LIFT ATTENDEES INTO STATE ---
+    const [attendees, setAttendees] = useState(seance.attendees);
+
+    // --- MENTOR'S REAL-TIME LISTENER ---
+    useEffect(() => {
+        // Only listen if the user is the mentor
+        if (isMentor && window.Echo) {
+            const channel = window.Echo.private(`seance.${seance.id}`);
+
+            channel.listen('.App\\Events\\CollaboratorCheckedIn', (event) => {
+                console.log('A collaborator checked in!', event);
+
+                // Update the local state to reflect the change
+                setAttendees(currentAttendees => 
+                    currentAttendees.map(attendee => {
+                        if (attendee.id === event.collaborator.id) {
+                            // Update the pivot data for the specific attendee
+                            return { ...attendee, pivot: { ...attendee.pivot, status: 'present' } };
+                        }
+                        return attendee;
+                    })
+                );
+            });
+
+            return () => {
+                if (window.Echo) {
+                    window.Echo.leave(`seance.${seance.id}`);
+                }
+            };
+        }
+    }, [seance.id, isMentor]); // This effect depends on seance.id and isMentor
 
     // --- REAL-TIME LISTENER ---
     useEffect(() => {
@@ -95,7 +127,7 @@ export default function Show({ seance, isMentor }) {
                     {isMentor ? (
                         <>
                             <Button onClick={handleStartCheck} className="mb-4">Start Presence Check</Button> {/* Mentor's button */}
-                            <AttendanceList attendees={seance.attendees} />
+                            <AttendanceList attendees={attendees} /> {/* <-- Use the state variable */}
                             <ExerciseManager seance={seance} />
                         </>
                     ) : (

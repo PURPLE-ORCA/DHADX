@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Events\PresenceCheckStarted; 
 use App\Models\Camp;
+use App\Events\CollaboratorCheckedIn; // <-- Add this import at the top
 
 class SeanceController extends Controller
 {
@@ -104,8 +105,12 @@ class SeanceController extends Controller
             $attendance->pivot->checked_in_at = now();
             $attendance->pivot->save();
 
-            // Later, we will broadcast an event back to the mentor here
-            // For now, just confirm success.
+            // --- THE NEW LOGIC ---
+            // Load the user relationship so the name is available on the frontend
+            $collaborator->load('user:id,name'); 
+            broadcast(new CollaboratorCheckedIn($seance->id, $collaborator));
+            // --------------------
+
             return response()->json(['message' => 'Checked in successfully.']);
         }
 

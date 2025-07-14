@@ -15,12 +15,28 @@ export default function AttendanceList({ attendees }) {
                 {attendees && attendees.length > 0 ? (
                     <ul className="space-y-2">
                         {attendees.map((attendee) => (
-                            <li key={attendee.id} className="flex items-center gap-3">
-                                <Avatar>
-                                    <AvatarImage src={attendee.profile_photo_url} alt={attendee.name} />
-                                    <AvatarFallback>{attendee.name.charAt(0)}</AvatarFallback>
-                                </Avatar>
-                                <span>{attendee.name}</span>
+                            <li key={attendee.id} className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <Avatar>
+                                        <AvatarImage src={attendee.profile_photo_url} alt={attendee.name} />
+                                        <AvatarFallback>{attendee.name.charAt(0)}</AvatarFallback>
+                                    </Avatar>
+                                    <span>{attendee.user.name}</span>
+                                </div>
+                                
+                                {/* --- THE UI UPDATE --- */}
+                                {attendee.pivot.status === 'present' ? (
+                                    <span className="flex items-center text-xs text-green-400">
+                                        <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+                                        Present
+                                    </span>
+                                ) : (
+                                    <span className="flex items-center text-xs text-gray-500">
+                                        <div className="w-2 h-2 rounded-full bg-gray-600 mr-2"></div>
+                                        Absent
+                                    </span>
+                                )}
+                                {/* --------------------- */}
                             </li>
                         ))}
                     </ul>
