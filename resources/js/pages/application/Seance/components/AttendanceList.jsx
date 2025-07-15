@@ -18,14 +18,13 @@ export default function AttendanceList({ attendees }) {
                             <li key={attendee.id} className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <Avatar>
-                                        <AvatarImage src={attendee.profile_photo_url} alt={attendee.name} />
-                                        <AvatarFallback>{attendee.name.charAt(0)}</AvatarFallback>
+                                        <AvatarImage src={attendee.profile_photo_url} alt={attendee.user?.name || 'N/A'} />
+                                        <AvatarFallback>{attendee.user?.name?.charAt(0) || '?'}</AvatarFallback>
                                     </Avatar>
-                                    <span>{attendee.user.name}</span>
+                                    <span>{attendee.user?.name || 'N/A'}</span>
                                 </div>
                                 
-                                {/* --- THE UI UPDATE --- */}
-                                {attendee.pivot.status === 'present' ? (
+                                {attendee.pivot?.status === 'present' ? (
                                     <span className="flex items-center text-xs text-green-400">
                                         <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
                                         Present
@@ -36,7 +35,6 @@ export default function AttendanceList({ attendees }) {
                                         Absent
                                     </span>
                                 )}
-                                {/* --------------------- */}
                             </li>
                         ))}
                     </ul>

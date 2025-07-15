@@ -9,11 +9,13 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 use App\Events\PresenceCheckStarted; 
 use App\Models\Camp;
 use App\Events\CollaboratorCheckedIn; // <-- Add this import at the top
 use App\Events\ExerciseSubmitted;
 use App\Events\SeanceStatusUpdated; // We will create this event next
+use App\Events\AttendanceStateReset; // New event for resetting attendance
 
 class SeanceController extends Controller
 {
@@ -117,8 +119,47 @@ class SeanceController extends Controller
 
     public function startPresenceCheck(Seance $seance)
     {
+        // Authorization is handled by the policy, so we're good here.
+
+        // --- THE NEW LOGIC: RESETTING THE BOARD ---
+        // First, find all attendance records for this seance and reset their status.
+        // We'll do this with a direct DB update for efficiency.
+        DB::table('seance_attendances')
+            ->where('seance_id', $seance->id)
+            ->update(['status' => 'absent', 'checked_in_at' => null]);
+        // ------------------------------------------
+
+        // Now, broadcast the event as before to trigger the check-in button.
         broadcast(new PresenceCheckStarted($seance->id));
-        return response()->json(['message' => 'Presence check initiated.']);
+        
+        // We should also broadcast a "state reset" event to the mentor's UI.
+        // Re-fetch the attendees with all their data
+        $freshAttendeesCollection = $seance->attendees()->with('user:id,name')->get();
+
+        // --- THE FINAL, FINAL, FINAL FIX ---
+        // Convert the Eloquent Collection into a plain PHP array.
+        $freshAttendeesArray = $freshAttendeesCollection->map(function ($attendee) {
+            return [
+                'id' => $attendee->id,
+                'user' => [
+                    'id' => $attendee->user->id,
+                    'name' => $attendee->user->name,
+                ],
+                'pivot' => [
+                    'seance_id' => $attendee->pivot->seance_id,
+                    'collaborator_id' => $attendee->pivot->collaborator_id,
+                    'status' => $attendee->pivot->status, // This will be 'absent'
+                ],
+                // You can add profile_photo_url here if you need it
+                'profile_photo_url' => $attendee->profile_photo_url, 
+            ];
+        })->toArray();
+        // ------------------------------------
+
+        // Broadcast the plain array, not the Eloquent Collection
+        broadcast(new AttendanceStateReset($seance->id, $freshAttendeesArray));
+
+        return response()->json(['message' => 'New presence check initiated.']);
     }
 
     public function recordCheckIn(Seance $seance)
