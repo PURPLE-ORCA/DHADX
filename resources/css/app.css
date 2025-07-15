@@ -213,3 +213,30 @@ html[dir="rtl"] .force-align-left {
 html[dir="rtl"] .group\/sidebar-wrapper {
   flex-direction: row-reverse;
 }
+
+
+::-webkit-scrollbar {
+  width: 8px; /* How wide the scrollbar is */
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Make the track invisible */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #404040; /* A nice dark-neutral color for the thumb */
+  border-radius: 10px; /* Rounded corners */
+  border: 2px solid transparent; /* Creates a "padding" effect */
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #525252; /* Slightly lighter on hover */
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin; /* "thin" or "auto" */
+  scrollbar-color: #404040 transparent; /* thumb color and track color */
+}

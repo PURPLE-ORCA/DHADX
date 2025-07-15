@@ -3,6 +3,9 @@ import { Link } from '@inertiajs/react';
 import { useContext } from 'react';
 import { TranslationContext } from '@/context/TranslationProvider';
 import CreateExerciseForm from './CreateExerciseForm';
+import SubmissionViewerDrawer from './SubmissionViewerDrawer';
+import { Eye } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function ExerciseManager({ seance, exercises }) {
     const { translations } = useContext(TranslationContext);
@@ -27,15 +30,16 @@ export default function ExerciseManager({ seance, exercises }) {
                                             <ul className="space-y-1 pl-4 text-sm">
                                                 {exercise.submissions.map((submission) => (
                                                     <li key={submission.id} className="flex items-center justify-between">
-                                                        <span>{submission.collaborator?.name}</span>
-                                                        {submission.file_path && (
-                                                            <Link href={submission.file_path} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                                                                {translations.seances?.show?.exercise_manager?.view_submission || 'View Submission'}
-                                                            </Link>
-                                                        )}
-                                                        {submission.text_content && (
-                                                            <span className="text-muted-foreground">({translations.seances?.show?.exercise_manager?.text_submission || 'Text Submission'})</span>
-                                                        )}
+                                                        <span>{submission.collaborator?.user?.name}</span>
+                                                        <SubmissionViewerDrawer
+                                                            submission={submission}
+                                                            exercise_title={exercise.title}
+                                                            trigger={
+                                                                <Button variant="ghost" size="icon">
+                                                                    <Eye className="h-4 w-4" />
+                                                                </Button>
+                                                            }
+                                                        />
                                                     </li>
                                                 ))}
                                             </ul>

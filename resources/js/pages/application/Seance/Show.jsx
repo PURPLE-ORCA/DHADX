@@ -13,6 +13,7 @@ export default function Show({ seance, isMentor, current_user_id }) {
     const { translations } = useContext(TranslationContext);
 
     // --- ALL STATE DEFINED AT THE TOP ---
+    
     const [seanceData, setSeanceData] = useState(seance);
     const [showPresenceButton, setShowPresenceButton] = useState(false);
     const [isCheckedIn, setIsCheckedIn] = useState(false);
