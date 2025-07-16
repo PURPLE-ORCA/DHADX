@@ -55,10 +55,12 @@ export default function ExerciseManager({ seance, exercises }) {
                     )}
                 </div>
 
-                <div className="pt-4 border-t">
-                    <h3 className="text-lg font-semibold mb-4">{translations.seances?.show?.exercise_manager?.create_new_exercise || 'Create New Exercise'}</h3>
-                    <CreateExerciseForm seanceId={seance.id} />
-                </div>
+                {seance.status === 'live' && (
+                    <div className="pt-4 border-t">
+                        <h3 className="text-lg font-semibold mb-4">{translations.seances?.show?.exercise_manager?.create_new_exercise || 'Create New Exercise'}</h3>
+                        <CreateExerciseForm seanceId={seance.id} />
+                    </div>
+                )}
             </CardContent>
         </Card>
     );

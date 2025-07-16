@@ -15,7 +15,7 @@ class AttendanceStateReset implements ShouldBroadcast
 
     public function __construct(
         public int $seanceId, 
-        public array $attendees // <-- CHANGE THIS TO `array`
+        public array $attendees   
     )
     {
     }

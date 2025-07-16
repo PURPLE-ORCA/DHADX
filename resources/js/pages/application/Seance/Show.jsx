@@ -141,63 +141,48 @@ export default function Show({ seance, isMentor, current_user_id }) {
             });
     };
 
-    const breadcrumbs = [
-        {
+    const breadcrumbs = [];
+
+    if (isMentor) {
+        breadcrumbs.push({
             title: translations.seances?.list_title || 'Seances list',
             href: '/seances',
-        },
-        {
-            title: seance.topic,
-            href: route('seances.show', seance.id),
-        },
-    ];
+        });
+    }
+
+    breadcrumbs.push({
+        title: seance.topic,
+        href: route('seances.show', seance.id),
+    });
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={seance.topic} />
 
-            <div className="p-4">
-                <SeanceHeader seance={seanceData} /> {/* Use seanceData */}
-                <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="p-4 flex flex-col h-full"> {/* Make the main container a flex column */}
+                
+                {/* Pass all necessary data and handlers to the header */}
+                <SeanceHeader 
+                    seance={seanceData} 
+                    isMentor={isMentor}
+                    onStartCheck={handleStartCheck} 
+                /> 
+
+                <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
                     {isMentor ? (
                         <>
-                            {/* Mentor Control Buttons */}
-                            <div className="seance-controls bg-card-dark rounded-lg p-4">
-                                {seanceData.status === 'scheduled' && (
-                                    <Link as="button" method="post" href={route('seances.start', seanceData.id)} className="w-full">
-                                        Start Seance
-                                    </Link>
-                                )}
-
-                                {seanceData.status === 'live' && (
-                                    <Link as="button" method="post" href={route('seances.finish', seanceData.id)} className="w-full">
-                                        End Seance
-                                    </Link>
-                                )}
-
-                                {(seanceData.status === 'scheduled' || seanceData.status === 'live') && (
-                                    <Link
-                                        as="button"
-                                        method="post"
-                                        href={route('seances.cancel', seanceData.id)}
-                                        className="mt-2 w-full text-red-500"
-                                    >
-                                        Cancel Seance
-                                    </Link>
-                                )}
-
-                                {seanceData.status === 'finished' && <p>This seance has finished.</p>}
-                                {seanceData.status === 'cancelled' && <p>This seance was cancelled.</p>}
+                            {/* Column 1: Attendance List */}
+                            <div className="lg:col-span-1">
+                                <AttendanceList attendees={attendees} />
                             </div>
-                            <AttendanceList attendees={attendees} />
-                            <ExerciseManager seance={seanceData} exercises={exercises} />
-                            <Button onClick={handleStartCheck} className="mb-4" disabled={seanceData.status !== 'live'}>
-                                Start Presence Check
-                            </Button>{' '}
-                            {/* Status-aware */}
+
+                            {/* Column 2: Exercise Manager (takes up more space) */}
+                            <div className="lg:col-span-2">
+                                <ExerciseManager seance={seanceData} exercises={exercises} />
+                            </div>
                         </>
                     ) : (
-                        <div className="md:col-span-2">
+                        <div className="lg:col-span-3"> {/* Collaborator view takes full width */}
                             <ExerciseList seance={seanceData} />
                         </div>
                     )}
