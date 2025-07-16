@@ -32,20 +32,6 @@ class TaskSubmittedForReviewNotification extends Notification
     }
 
     /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
-    {
-        return [
-            'message' => 'Task "' . $this->task->title . '" has been submitted for review.',
-            'link' => route('tasks.show', $this->task->id),
-            'type' => 'task_submitted_for_review',
-        ];
-    }
-
-    /**
      * Get the database representation of the notification.
      */
     public function toDatabase(object $notifiable): array

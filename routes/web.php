@@ -24,6 +24,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/notifications/pending-count', [NotificationController::class, 'pendingCount'])->name('notifications.pendingCount');
     Route::get('/notifications/latest', [NotificationController::class, 'latest'])->name('notifications.latest');
     Route::post('/notifications/mark-read/{notification?}', [NotificationController::class, 'markRead'])->name('notifications.markRead');
+    Route::get('/notifications/unread', [NotificationController::class, 'unread'])->name('notifications.unread');
 
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
     

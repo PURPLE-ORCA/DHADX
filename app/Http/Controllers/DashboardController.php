@@ -37,7 +37,19 @@ class DashboardController extends Controller
             $taskSummaries['overdueTasksCount'] = $user->assignedTasks()->where('status', 'overdue')->count();
         }
 
-        $latestNotifications = $user->notifications()->latest()->take(5)->get();
+        $latestNotifications = $user->notifications()
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function ($notification) {
+                return [
+                    'id' => $notification->id,
+                    'type' => $notification->data['type'] ?? 'generic', // USE THE STORED SIMPLE TYPE
+                    'message' => $notification->data['message'] ?? 'No message',
+                    'link' => $notification->data['link'] ?? '#',
+                    'created_at' => $notification->created_at,
+                ];
+            });
             $upcomingTasks = collect(); // Initialize as empty collection
             $personalProgress = [];
 
@@ -63,14 +75,21 @@ class DashboardController extends Controller
                 $collaboratorProfile = $user->collaboratorProfile;
 
                 if ($collaboratorProfile) {
-                    $upcomingSeance = Seance::whereHas('attendees', function ($query) use ($collaboratorProfile) {
-                            $query->where('collaborator_id', $collaboratorProfile->id);
-                        })
+                // First, try to find a seance that is currently live.
+                $activeSeance = Seance::whereHas('attendees', fn($q) => $q->where('collaborator_id', $collaboratorProfile->id))
+                    ->where('status', 'live')
+                    ->with('course:id,name', 'mentor:id,name')
+                    ->first();
+
+                // If no seance is live, find the very next scheduled one.
+                if (!$activeSeance) {
+                    $activeSeance = Seance::whereHas('attendees', fn($q) => $q->where('collaborator_id', $collaboratorProfile->id))
                         ->where('status', 'scheduled')
                         ->where('scheduled_at', '>=', now())
                         ->orderBy('scheduled_at', 'asc')
-                        ->with('course:id,name', 'mentor:id,name') // Get the essentials
+                        ->with('course:id,name', 'mentor:id,name')
                         ->first();
+                }
                 }
             }
 
@@ -95,7 +114,7 @@ class DashboardController extends Controller
                 'latestNotifications' => $latestNotifications, // Pass latest notifications
                 'urgentTasks' => $urgentTasks ?? collect(), // Pass urgent tasks, initialize as empty if not set
                 'collaboratorActiveCamps' => $collaboratorActiveCamps, // NEW PROP
-                'upcomingSeance' => $upcomingSeance ?? null, // Pass upcoming seance
+                'activeSeance' => $activeSeance ?? null, // Use a new prop name for clarity
             ]);
     }
 }

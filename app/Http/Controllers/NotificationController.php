@@ -27,7 +27,7 @@ class NotificationController extends Controller
                 ->map(function ($notification) {
                     return [
                         'id' => $notification->id,
-                        'type' => class_basename($notification->type), // Get the notification type name
+                        'type' => $notification->data['type'] ?? 'generic', // Use the simple type string we stored
                         'message' => $notification->data['message'] ?? 'No message',
                         'link' => $notification->data['link'] ?? '#',
                         'created_at' => $notification->created_at,
@@ -49,5 +49,26 @@ class NotificationController extends Controller
             return response()->json(['success' => true]);
         }
         return response()->json(['success' => false, 'message' => 'Not authenticated']);
+    }
+
+    public function unread()
+    {
+        if (Auth::check()) {
+            $notifications = Auth::user()->unreadNotifications()
+                ->latest()
+                ->limit(5)
+                ->get()
+                ->map(function ($notification) {
+                    return [
+                        'id' => $notification->id,
+                        'type' => $notification->data['type'] ?? 'generic',
+                        'message' => $notification->data['message'] ?? 'No message',
+                        'link' => $notification->data['link'] ?? '#',
+                        'created_at' => $notification->created_at,
+                    ];
+                });
+            return response()->json(['notifications' => $notifications]);
+        }
+        return response()->json(['notifications' => []]);
     }
 }

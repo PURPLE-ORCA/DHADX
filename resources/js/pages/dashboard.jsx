@@ -5,12 +5,11 @@ import AdminTaskSummary from '@/components/dashboard/AdminTaskSummary';
 import LatestNotifications from '@/components/dashboard/LatestNotifications';
 import UpcomingDeadlines from '@/components/dashboard/UpcomingDeadlines';
 import MyCampProgressWidget from '@/components/dashboard/MyCampProgressWidget'; // Import the new widget
-import UpcomingSeanceWidget from '@/components/dashboard/UpcomingSeanceWidget';
-import Masonry from 'react-masonry-css'; // <<<< IMPORT MASONRY
+import LiveSeanceWidget from '@/components/dashboard/LiveSeanceWidget';
 import { useContext } from 'react';
 import { TranslationContext } from '@/context/TranslationProvider';
 
-function Dashboard({ user, collabCount, formationsCount, specialitysCount, coursCount, taskSummaries, latestNotifications, urgentTasks, collaboratorActiveCamps, upcomingSeance }) {
+function Dashboard({ user, collabCount, formationsCount, specialitysCount, coursCount, taskSummaries, latestNotifications, urgentTasks, collaboratorActiveCamps, activeSeance }) {
     const { translations } = useContext(TranslationContext);
 
     const breadcrumbs = [
@@ -22,22 +21,42 @@ function Dashboard({ user, collabCount, formationsCount, specialitysCount, cours
     const isAdmin = user.roles.some(role => role.name === 'admin');
     const isCollaborator = user.roles.some(role => role.name === 'collaborator');
 
-    // Define breakpoint columns for Masonry
-    // This tells Masonry how many columns to use at different screen widths
+    if (isCollaborator) {
+        // --- DITCH MASONRY FOR A CSS GRID ---
+        return (
+            <AppLayout breadcrumbs={breadcrumbs}>
+                <Head title="Dashboard" />
+                <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Main Column */}
+                    <div className="lg:col-span-2 flex flex-col gap-6">
+                        <LiveSeanceWidget seance={activeSeance} />
+                        <UpcomingDeadlines urgentTasks={urgentTasks} />
+                    </div>
+
+                    {/* Sidebar Column */}
+                    <div className="lg:col-span-1 flex flex-col gap-6">
+                        <MyCampProgressWidget camps={collaboratorActiveCamps} />
+                        <LatestNotifications notifications={latestNotifications} />
+                    </div>
+                </div>
+            </AppLayout>
+        );
+    }
+
+    // Admin rendering logic can stay the same with Masonry
     const breakpointColumnsObj = {
-        default: 4, // Default number of columns (e.g., for very large screens or if others don't match)
-        1280: 3,    // 3 columns at 1280px wide and up (xl)
-        1024: 2,    // 2 columns at 1024px wide and up (lg)
-        768: 1      // 1 column at 768px wide and up (md)
+        default: 4,
+        1280: 3,
+        1024: 2,
+        768: 1
     };
 
-    // Collect all widgets that should be part of the Masonry layout
     const widgets = [];
 
     if (isAdmin) {
         widgets.push(
             <AdminTaskSummary
-                key="admin-summary" // Important: add unique keys to children of Masonry
+                key="admin-summary"
                 collabCount={collabCount}
                 specialitysCount={specialitysCount}
                 coursCount={coursCount}
@@ -60,25 +79,17 @@ function Dashboard({ user, collabCount, formationsCount, specialitysCount, cours
             camps={collaboratorActiveCamps}
             />,
         );
-        widgets.push(
-            <UpcomingSeanceWidget
-                key="upcoming-seance"
-                seance={upcomingSeance}
-            />,
-        );
     }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-
                 <Masonry
                     breakpointCols={breakpointColumnsObj}
-                    className="my-masonry-grid flex w-auto" // `flex w-auto` is from react-masonry-css docs
-                    columnClassName="my-masonry-grid_column bg-clip-padding px-2" // `px-2` for gap, adjust as needed
+                    className="my-masonry-grid flex w-auto"
+                    columnClassName="my-masonry-grid_column bg-clip-padding px-2"
                 >
-                    {/* Render all collected widgets */}
                     {widgets}
                 </Masonry>
             </div>

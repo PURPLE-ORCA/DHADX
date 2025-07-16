@@ -18,7 +18,8 @@ class CollaboratorEnrolledInCampNotification extends Notification
      */
     public function __construct(Camp $camp)
     {
-        $this->camp = $camp;
+        // Eager load the relationships right away
+        $this->camp = $camp->load(['cour:id,name', 'formation:id,name']);
     }
 
     /**
@@ -32,28 +33,21 @@ class CollaboratorEnrolledInCampNotification extends Notification
     }
 
     /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
-    {
-        return [
-            'message' => 'You have been enrolled in the camp: "' . $this->camp->name . '".',
-            'link' => route('camps.show', $this->camp->id),
-            'type' => 'camp_enrolled',
-        ];
-    }
-
-    /**
      * Get the database representation of the notification.
      */
     public function toDatabase(object $notifiable): array
     {
+        // Build a useful, descriptive message
+        $message = 'You have been enrolled in the ' . $this->camp->cour->name 
+                     . ' camp for the ' . $this->camp->formation->name . ' formation.';
+            
+        // The link for a collaborator should go to THEIR dashboard, not an admin page.
+        $link = route('dashboard'); 
+
         return [
-            'message' => 'You have been enrolled in the camp: "' . $this->camp->name . '".',
-            'link' => route('camps.show', $this->camp->id),
-            'type' => 'camp_enrolled',
+            'message' => $message,
+            'link' => $link,
+            'type' => 'camp_enrollment', // A simple, clean type string
         ];
     }
 }
