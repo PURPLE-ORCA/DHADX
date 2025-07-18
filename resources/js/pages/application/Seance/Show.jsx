@@ -8,17 +8,19 @@ import AttendanceList from './components/AttendanceList';
 import ExerciseList from './components/ExerciseList';
 import ExerciseManager from './components/ExerciseManager';
 import SeanceHeader from './components/SeanceHeader';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import HandRaiseQueue from './components/HandRaiseQueue';
+import { Hand } from 'lucide-react';
 
 export default function Show({ seance, isMentor, current_user_id }) {
     const { translations } = useContext(TranslationContext);
-
-    // --- ALL STATE DEFINED AT THE TOP ---
-
     const [seanceData, setSeanceData] = useState(seance);
     const [showPresenceButton, setShowPresenceButton] = useState(false);
     const [isCheckedIn, setIsCheckedIn] = useState(false);
     const [attendees, setAttendees] = useState(seance.attendees);
     const [exercises, setExercises] = useState(seance.exercises);
+    const [isHandRaised, setIsHandRaised] = useState(false); // New state for collaborator's hand
+    const [handRaiseQueue, setHandRaiseQueue] = useState([]); // New state for mentor's queue
 
     // --- CONSOLIDATED AND CORRECTED USEEFFECT ---
     useEffect(() => {
@@ -26,6 +28,10 @@ export default function Show({ seance, isMentor, current_user_id }) {
 
         // Setup listeners for the shared seance channel
         const seanceChannel = window.Echo.private(`seance.${seanceData.id}`); // Use seanceData.id
+
+        // Declare userChannel and mentorUserChannel outside the if blocks
+        let userChannel = null;
+        let mentorUserChannel = null;
 
         // Listener for SeanceStatusUpdated event (for everyone)
         seanceChannel.listen('.App\\Events\\SeanceStatusUpdated', (event) => {
@@ -50,6 +56,13 @@ export default function Show({ seance, isMentor, current_user_id }) {
                 setShowPresenceButton(true);
                 setTimeout(() => setShowPresenceButton(false), 60000);
             });
+
+            // Listener for HandDismissedByMentor event (whispered to collaborator)
+            userChannel = window.Echo.private(`App.Models.User.${current_user_id}`);
+            userChannel.listen('.App\\Events\\HandDismissedByMentor', (event) => {
+                console.log('Mentor dismissed my hand.');
+                setIsHandRaised(false);
+            });
         }
 
         if (isMentor) {
@@ -63,6 +76,22 @@ export default function Show({ seance, isMentor, current_user_id }) {
                 );
             });
 
+            // Listener for CollaboratorHandStateChanged event (for mentor's queue)
+            seanceChannel.listen('.App\\Events\\CollaboratorHandStateChanged', (event) => {
+                setHandRaiseQueue(currentQueue => {
+                    // Remove the collaborator first to handle both raise/lower cases
+                    const filteredQueue = currentQueue.filter(c => c.id !== event.collaborator.id);
+                    
+                    // If their hand is raised, add them to the end of the new queue
+                    if (event.isRaised) {
+                        return [...filteredQueue, event.collaborator];
+                    }
+                    
+                    // Otherwise, just return the filtered queue (hand is lowered)
+                    return filteredQueue;
+                });
+            });
+
             // Add a listener for our new AttendanceStateReset event.
             seanceChannel.listen('.App\\Events\\AttendanceStateReset', (event) => {
                 console.log('Attendance state has been reset!', event);
@@ -72,10 +101,9 @@ export default function Show({ seance, isMentor, current_user_id }) {
         }
 
         // Setup listener for the mentor's private channel (only if they are the mentor)
-        let userChannel;
         if (isMentor) {
-            userChannel = window.Echo.private(`App.Models.User.${current_user_id}`);
-            userChannel.listen('.App\\Events\\ExerciseSubmitted', (event) => {
+            mentorUserChannel = window.Echo.private(`App.Models.User.${current_user_id}`);
+            mentorUserChannel.listen('.App\\Events\\ExerciseSubmitted', (event) => {
                 console.log('New exercise submission received!', event);
                 setExercises(currentExercises =>
                     currentExercises.map(exercise => {
@@ -99,7 +127,10 @@ export default function Show({ seance, isMentor, current_user_id }) {
                 window.Echo.leave(`seance.${seanceData.id}`); // Use seanceData.id
 
                 // Only leave the user channel if we subscribed to it
-                if (userChannel) {
+                if (!isMentor && userChannel) { // Collaborator's private channel
+                    window.Echo.leave(`App.Models.User.${current_user_id}`);
+                }
+                if (isMentor && mentorUserChannel) { // Mentor's private channel
                     window.Echo.leave(`App.Models.User.${current_user_id}`);
                 }
             }
@@ -141,6 +172,13 @@ export default function Show({ seance, isMentor, current_user_id }) {
             });
     };
 
+    // Create the handler function for collaborator's hand raise/lower
+    const handleToggleHand = () => {
+        const newHandState = !isHandRaised;
+        setIsHandRaised(newHandState);
+        axios.post(route('seances.hand.toggle', seance.id), { isRaised: newHandState });
+    };
+
     const breadcrumbs = [];
 
     if (isMentor) {
@@ -171,9 +209,10 @@ export default function Show({ seance, isMentor, current_user_id }) {
                 <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
                     {isMentor ? (
                         <>
-                            {/* Column 1: Attendance List */}
-                            <div className="lg:col-span-1">
-                                <AttendanceList attendees={attendees} />
+                            {/* Column 1: Attendance List and Hand Raise Queue */}
+                            <div className="lg:col-span-1 space-y-6">
+                                <AttendanceList attendees={attendees} handRaiseQueue={handRaiseQueue} />
+                                <HandRaiseQueue queue={handRaiseQueue} seanceId={seanceData.id} />
                             </div>
 
                             {/* Column 2: Exercise Manager (takes up more space) */}
@@ -198,6 +237,22 @@ export default function Show({ seance, isMentor, current_user_id }) {
                             I'm Here!
                         </Button>
                     </div>
+                </div>
+            )}
+
+            {/* --- COLLABORATOR'S HAND RAISE BUTTON --- */}
+            {!isMentor && (
+                <div className="fixed bottom-4 right-4">
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button onClick={handleToggleHand} size="icon" className={`rounded-full h-14 w-14 ${isHandRaised ? 'bg-blue-600 hover:bg-blue-700' : 'bg-secondary'}`}>
+                                    <Hand className="h-7 w-7" />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent><p>{isHandRaised ? 'Lower Hand' : 'Raise Hand'}</p></TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 </div>
             )}
         </AppLayout>

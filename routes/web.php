@@ -55,14 +55,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('can:update,seance')
         ->name('seances.finish');
         
-    Route::post('/seances/{seance}/cancel', [SeanceController::class, 'cancelSeance'])
-        ->middleware('can:update,seance')
-        ->name('seances.cancel');
-    });
+        Route::post('/seances/{seance}/cancel', [SeanceController::class, 'cancelSeance'])
+            ->middleware('can:update,seance')
+            ->name('seances.cancel');
 
+    });
+    // Collaborator action to raise/lower their own hand (ANY authenticated user can try)
+    Route::post('/seances/{seance}/hand-state', [SeanceController::class, 'toggleHandState'])
+        ->name('seances.hand.toggle');
+
+    // Mentor action to dismiss a hand from the queue
+    Route::post('/seances/{seance}/dismiss-hand/{collaborator}', [SeanceController::class, 'dismissHand'])
+        ->middleware('can:update,seance') // The policy protects this for mentors
+        ->name('seances.hand.dismiss');
+    
     // Mentor-specific presence check initiation
     Route::post('/seances/{seance}/presence/start', [SeanceController::class, 'startPresenceCheck'])
-        ->middleware('can:startPresenceCheck,seance') // <-- USE THE POLICY
+        ->middleware('can:startPresenceCheck,seance')
         ->name('seances.presence.start');
 
     // Exercise Management within a Seance

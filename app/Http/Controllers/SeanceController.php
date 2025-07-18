@@ -16,6 +16,9 @@ use App\Events\CollaboratorCheckedIn; // <-- Add this import at the top
 use App\Events\ExerciseSubmitted;
 use App\Events\SeanceStatusUpdated; // We will create this event next
 use App\Events\AttendanceStateReset; // New event for resetting attendance
+use App\Events\CollaboratorHandStateChanged;
+use App\Events\HandDismissedByMentor;
+use App\Models\Collaborator;
 
 class SeanceController extends Controller
 {
@@ -269,5 +272,29 @@ class SeanceController extends Controller
         // ------------------------------------
 
         return back()->with('message', 'Submission successful!');
+    }
+
+    public function toggleHandState(Request $request, Seance $seance) {
+        $request->validate(['isRaised' => 'required|boolean']);
+        
+        $collaborator = Auth::user()->collaboratorProfile->load('user:id,name');
+        
+        broadcast(new CollaboratorHandStateChanged($seance->id, $collaborator, $request->isRaised));
+        
+        return response()->json(['status' => 'success']);
+    }
+    
+    public function dismissHand(Seance $seance, Collaborator $collaborator) {
+        // Find the user associated with this collaborator profile
+        $userToNotify = $collaborator->user;
+        
+        if ($userToNotify) {
+            broadcast(new HandDismissedByMentor($userToNotify->id));
+        }
+
+        // We also need to tell everyone else the hand was lowered
+        broadcast(new CollaboratorHandStateChanged($seance->id, $collaborator->load('user:id,name'), false));
+        
+        return response()->json(['status' => 'success']);
     }
 }
