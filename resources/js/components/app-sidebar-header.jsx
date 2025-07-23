@@ -35,7 +35,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }) {
                             <Icon icon="fa-solid:language" className="h-4 w-4 text-[var(--brand-color)]" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-40 border-[var(--border)] bg-[var(--popover)] text-[var(--brand-color)]">
+                    <DropdownMenuContent align="end" className="text-foreground w-40 border-[var(--border)] bg-[var(--popover)]">
                         {locals.map((loc) => (
                             <DropdownMenuItem
                                 key={loc.locale}

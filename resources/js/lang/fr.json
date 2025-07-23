@@ -416,7 +416,8 @@
             "completed": "Terminée",
             "needs_revision": "Nécessite une révision",
             "overdue": "En retard",
-            "cancelled": "Annulée"
+            "cancelled": "Annulée",
+            "all": "Tout"
         },
         "priority": {
             "low": "Faible priorité",

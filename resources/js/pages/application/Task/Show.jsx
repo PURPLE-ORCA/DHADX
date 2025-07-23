@@ -1,5 +1,5 @@
 'use client';
-import InputError from '@/components/input-error'; // Assuming you might need this for dialog
+import InputError from '@/components/input-error'; 
 import {
     Dialog,
     DialogClose,
@@ -8,18 +8,19 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from '@/components/motion-primitives/dialog'; // Adjust path for motion-primitives dialog
+} from '@/components/motion-primitives/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Textarea } from '@/components/ui/textarea'; // Shadcn Textarea
+import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
-import { Head, router } from '@inertiajs/react'; // Removed useForm from here if not used for general actions
+import { Head, router } from '@inertiajs/react'; 
 import { format } from 'date-fns';
 import { AlertCircle, Calendar, CheckCircle2, Clock, FileText, MessageSquare, Play, Send, Target, User, XCircle } from 'lucide-react';
-import { useContext, useEffect, useState } from 'react'; // Added useEffect
+import { useContext, useEffect, useState } from 'react';
 import { TranslationContext } from '@/context/TranslationProvider';
+import { Breadcrumbs } from '@/components/breadcrumbs';
 
 // Assuming useForm for comments is still needed
 import { Link, useForm as useCommentForm } from '@inertiajs/react';
@@ -29,23 +30,28 @@ export default function Show({ task, auth }) {
     const isAdmin = auth.user.roles.some((role) => role.name === 'admin');
     const isAssignee = auth.user.id === task.assignee_id;
 
+    const breadcrumbs = [
+        { title: translations?.sidebar?.tasks || 'Tasks', href: route('tasks.index') },
+        { title: task.title },
+    ];
+
     const {
-        data: commentDataForForm, // Renamed to avoid confusion with revisionComment
+        data: commentDataForForm,
         setData: setCommentDataForForm,
         post: postComment,
         processing: commentProcessing,
         errors: commentErrors,
         reset: resetCommentForm,
     } = useCommentForm({
-        // Explicitly useCommentForm
         comment: '',
     });
 
     // State for the revision dialog
     const [isRevisionDialogOpen, setIsRevisionDialogOpen] = useState(false);
     const [revisionComment, setRevisionComment] = useState('');
-    const [revisionCommentError, setRevisionCommentError] = useState(''); // For local validation
-    const [actionProcessing, setActionProcessing] = useState(false); // For general status actions
+    const [revisionCommentError, setRevisionCommentError] = useState('');
+    const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false); // New state for cancel dialog
+    const [actionProcessing, setActionProcessing] = useState(false);
 
     const handleAddComment = (e) => {
         e.preventDefault();
@@ -106,6 +112,25 @@ export default function Show({ task, auth }) {
         );
     };
 
+    // Handler for confirming task cancellation
+    const handleCancelConfirmation = () => {
+        setActionProcessing(true);
+        router.post(
+            route('tasks.cancelTask', task.id),
+            {},
+            {
+                preserveScroll: true,
+                preserveState: false,
+                onSuccess: () => {
+                    router.reload({ only: ['task'] });
+                    setIsCancelDialogOpen(false); // Close dialog
+                },
+                onError: (errors) => console.error('Cancel Task Action failed', errors),
+                onFinish: () => setActionProcessing(false),
+            },
+        );
+    };
+
     // Reset revision comment when dialog closes
     useEffect(() => {
         if (!isRevisionDialogOpen) {
@@ -113,6 +138,13 @@ export default function Show({ task, auth }) {
             setRevisionCommentError('');
         }
     }, [isRevisionDialogOpen]);
+
+    // Reset cancel dialog state when it closes
+    useEffect(() => {
+        if (!isCancelDialogOpen) {
+            // No specific state to reset for cancel dialog other than its open status
+        }
+    }, [isCancelDialogOpen]);
 
     const getStatusConfig = (status) => {
         const configs = {
@@ -191,7 +223,7 @@ export default function Show({ task, auth }) {
     const dialogTransition = { duration: 0.3, ease: 'anticipate' };
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={translations.tasks.show.page_title.replace(':task_title', task.title)} />
             <div className="min-h-screen bg-white dark:bg-black">
                 {/* Header Section */}
@@ -199,6 +231,7 @@ export default function Show({ task, auth }) {
                     <div className="px-6 py-8">
                         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                             <div className="flex-1">
+                                {/* {translations && <Breadcrumbs breadcrumbs={breadcrumbs} />} */}
                                 {task.parent && (
                                     <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
                                         {translations.tasks.show.part_of}:{' '}
@@ -225,7 +258,9 @@ export default function Show({ task, auth }) {
 
                                 {task.sub_tasks && task.sub_tasks.length > 0 && (
                                     <div className="mt-8">
-                                        <h2 className="mb-4 text-2xl font-bold text-black dark:text-white">{translations.tasks.show.sub_tasks_heading}</h2>
+                                        <h2 className="mb-4 text-2xl font-bold text-black dark:text-white">
+                                            {translations.tasks.show.sub_tasks_heading}
+                                        </h2>
                                         <div className="space-y-4">
                                             {task.sub_tasks.map((subTask) => (
                                                 <Card
@@ -257,7 +292,6 @@ export default function Show({ task, auth }) {
                             <div className="min-w-[280px] rounded-xl bg-gray-50 p-6 dark:bg-black">
                                 <h3 className="mb-4 font-semibold text-black dark:text-white">{translations.tasks.show.task_details_heading}</h3>
                                 <div className="space-y-3">
-
                                     <div className="flex items-center gap-3">
                                         <Target className="h-4 w-4 text-gray-400" />
                                         <div>
@@ -270,7 +304,9 @@ export default function Show({ task, auth }) {
                                         <div>
                                             <div className="text-sm text-gray-500 dark:text-gray-400">{translations.tasks.show.due_date_label}</div>
                                             <div className="font-medium text-black dark:text-white">
-                                                {task.due_date ? format(new Date(task.due_date), 'MMM dd, yyyy') : translations.tasks.show.no_due_date}
+                                                {task.due_date
+                                                    ? format(new Date(task.due_date), 'MMM dd, yyyy')
+                                                    : translations.tasks.show.no_due_date}
                                             </div>
                                         </div>
                                     </div>
@@ -278,7 +314,9 @@ export default function Show({ task, auth }) {
                                         <div className="flex items-center gap-3">
                                             <Send className="h-4 w-4 text-gray-400" />
                                             <div>
-                                                <div className="text-sm text-gray-500 dark:text-gray-400">{translations.tasks.show.submitted_label}</div>
+                                                <div className="text-sm text-gray-500 dark:text-gray-400">
+                                                    {translations.tasks.show.submitted_label}
+                                                </div>
                                                 <div className="font-medium text-black dark:text-white">
                                                     {format(new Date(task.submitted_at), "MMM dd, yyyy 'at' h:mm a")}
                                                 </div>
@@ -289,7 +327,9 @@ export default function Show({ task, auth }) {
                                         <div className="flex items-center gap-3">
                                             <CheckCircle2 className="h-4 w-4 text-gray-400" />
                                             <div>
-                                                <div className="text-sm text-gray-500 dark:text-gray-400">{translations.tasks.show.completed_label}</div>
+                                                <div className="text-sm text-gray-500 dark:text-gray-400">
+                                                    {translations.tasks.show.completed_label}
+                                                </div>
                                                 <div className="font-medium text-black dark:text-white">
                                                     {format(new Date(task.completed_at), "MMM dd, yyyy 'at' h:mm a")}
                                                 </div>
@@ -412,7 +452,9 @@ export default function Show({ task, auth }) {
                                                                     disabled={actionProcessing || !revisionComment.trim()}
                                                                     className="bg-primary text-primary-foreground hover:bg-primary/90"
                                                                 >
-                                                                    {actionProcessing ? translations.tasks.show.submitting_button : translations.tasks.show.submit_revision_button}
+                                                                    {actionProcessing
+                                                                        ? translations.tasks.show.submitting_button
+                                                                        : translations.tasks.show.submit_revision_button}
                                                                 </Button>
                                                             </div>
                                                         </DialogContent>
@@ -420,15 +462,51 @@ export default function Show({ task, auth }) {
                                                 </>
                                             )}
                                             {isAdmin && ['pending', 'in_progress', 'submitted', 'needs_revision'].includes(task.status) && (
-                                                <Button
-                                                    variant="outline"
-                                                    onClick={() => handleSimpleStatusAction('tasks.cancelTask')}
-                                                    disabled={actionProcessing}
-                                                    className="border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
-                                                >
-                                                    <XCircle className="mr-2 h-4 w-4" />
-                                                    {translations.tasks.show.cancel_task_button}
-                                                </Button>
+                                                <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
+                                                    <DialogTrigger asChild>
+                                                        <Button
+                                                            variant="outline"
+                                                            disabled={actionProcessing}
+                                                            className="border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+                                                        >
+                                                            <XCircle className="mr-2 h-4 w-4" />
+                                                            {translations.tasks.show.cancel_task_button}
+                                                        </Button>
+                                                    </DialogTrigger>
+                                                    <DialogContent
+                                                        className="border-neutral-200 bg-white p-6 sm:max-w-[425px] dark:border-neutral-800 dark:bg-neutral-900"
+                                                        variants={dialogVariants}
+                                                        transition={dialogTransition}
+                                                    >
+                                                        <DialogHeader className="mb-4">
+                                                            <DialogTitle className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+                                                                {translations.tasks.show.cancel_task_dialog_title || 'Confirm Cancellation'}
+                                                            </DialogTitle>
+                                                            <DialogDescription className="text-sm text-neutral-600 dark:text-neutral-400">
+                                                                {translations.tasks.show.cancel_task_dialog_description || 'Are you sure you want to cancel this task? This action cannot be undone.'}
+                                                            </DialogDescription>
+                                                        </DialogHeader>
+                                                        <div className="mt-6 flex justify-end gap-3">
+                                                            <DialogClose asChild>
+                                                                <Button
+                                                                    variant="outline"
+                                                                    className="border-neutral-300 text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                                                                >
+                                                                    {translations.tasks.show.cancel_button}
+                                                                </Button>
+                                                            </DialogClose>
+                                                            <Button
+                                                                onClick={handleCancelConfirmation}
+                                                                disabled={actionProcessing}
+                                                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                                            >
+                                                                {actionProcessing
+                                                                    ? translations.tasks.show.cancelling_button || 'Cancelling...'
+                                                                    : translations.tasks.show.confirm_cancel_button || 'Confirm Cancel'}
+                                                            </Button>
+                                                        </div>
+                                                    </DialogContent>
+                                                </Dialog>
                                             )}
                                         </div>
                                         {!isAssignee && !isAdmin && (
@@ -505,7 +583,9 @@ export default function Show({ task, auth }) {
                                                 className="bg-primary text-primary-foreground hover:bg-primary/90"
                                             >
                                                 <MessageSquare className="mr-2 h-4 w-4" />
-                                                {commentProcessing ? translations.tasks.show.adding_comment_button : translations.tasks.show.add_comment_button}
+                                                {commentProcessing
+                                                    ? translations.tasks.show.adding_comment_button
+                                                    : translations.tasks.show.add_comment_button}
                                             </Button>
                                         </form>
                                     </CardContent>
@@ -527,7 +607,9 @@ export default function Show({ task, auth }) {
                                             <div className="flex items-center gap-3">
                                                 <div className="dark:bg-blackrounded-full h-2 w-2 bg-gray-300"></div>
                                                 <div>
-                                                    <div className="text-sm font-medium text-black dark:text-white">{translations.tasks.show.task_created}</div>
+                                                    <div className="text-sm font-medium text-black dark:text-white">
+                                                        {translations.tasks.show.task_created}
+                                                    </div>
                                                     <div className="text-xs text-gray-500 dark:text-gray-400">
                                                         {format(new Date(task.created_at), 'MMM dd, yyyy')}
                                                     </div>
@@ -538,8 +620,12 @@ export default function Show({ task, auth }) {
                                                 <div className="flex items-center gap-3">
                                                     <div className="h-2 w-2 rounded-full bg-[var(--brand-color)]"></div>
                                                     <div>
-                                                        <div className="text-sm font-medium text-black dark:text-white">{translations.tasks.show.in_progress_timeline}</div>
-                                                        <div className="text-xs text-gray-500 dark:text-gray-400">{translations.tasks.show.status_updated}</div>
+                                                        <div className="text-sm font-medium text-black dark:text-white">
+                                                            {translations.tasks.show.in_progress_timeline}
+                                                        </div>
+                                                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                                                            {translations.tasks.show.status_updated}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             )}
@@ -548,7 +634,9 @@ export default function Show({ task, auth }) {
                                                 <div className="flex items-center gap-3">
                                                     <div className="h-2 w-2 rounded-full bg-blue-500 dark:bg-blue-700"></div>
                                                     <div>
-                                                        <div className="text-sm font-medium text-black dark:text-white">{translations.tasks.show.submitted_timeline}</div>
+                                                        <div className="text-sm font-medium text-black dark:text-white">
+                                                            {translations.tasks.show.submitted_timeline}
+                                                        </div>
                                                         <div className="text-xs text-gray-500 dark:text-gray-400">
                                                             {format(new Date(task.submitted_at), 'MMM dd, yyyy')}
                                                         </div>
@@ -560,7 +648,9 @@ export default function Show({ task, auth }) {
                                                 <div className="flex items-center gap-3">
                                                     <div className="h-2 w-2 rounded-full bg-green-500 dark:bg-green-700"></div>
                                                     <div>
-                                                        <div className="text-sm font-medium text-black dark:text-white">{translations.tasks.show.completed_timeline}</div>
+                                                        <div className="text-sm font-medium text-black dark:text-white">
+                                                            {translations.tasks.show.completed_timeline}
+                                                        </div>
                                                         <div className="text-xs text-gray-500 dark:text-gray-400">
                                                             {format(new Date(task.completed_at), 'MMM dd, yyyy')}
                                                         </div>
@@ -591,7 +681,9 @@ export default function Show({ task, auth }) {
                                             </div>
                                         </div>
                                         <div>
-                                            <div className="text-sm text-gray-500 dark:text-gray-400">{translations.tasks.show.last_updated_label}</div>
+                                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                                                {translations.tasks.show.last_updated_label}
+                                            </div>
                                             <div className="text-sm text-black dark:text-white">
                                                 {format(new Date(task.updated_at), 'MMM dd, yyyy')}
                                             </div>

@@ -5,6 +5,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { initializeTheme } from './hooks/use-appearance';
 import TranslationProvider from './context/TranslationProvider';
+import './echo'; // Import the Echo setup file
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 

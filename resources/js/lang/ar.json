@@ -417,7 +417,8 @@
             "completed": "مكتملة",
             "needs_revision": "تحتاج إلى مراجعة",
             "overdue": "متأخرة",
-            "cancelled": "ملغاة"
+            "cancelled": "ملغاة",
+            "all": "الكل"
         },
         "priority": {
             "low": "أولوية منخفضة",

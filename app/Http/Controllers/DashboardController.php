@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Camp; // Add Camp model
+use App\Models\Camp;
 use App\Models\Collaborator;
 use App\Models\Cour;
 use App\Models\Formation;
@@ -10,6 +10,7 @@ use App\Models\Speciality;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Task;
+use App\Models\Seance;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -36,7 +37,19 @@ class DashboardController extends Controller
             $taskSummaries['overdueTasksCount'] = $user->assignedTasks()->where('status', 'overdue')->count();
         }
 
-        $latestNotifications = $user->notifications()->latest()->take(5)->get();
+        $latestNotifications = $user->notifications()
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function ($notification) {
+                return [
+                    'id' => $notification->id,
+                    'type' => $notification->data['type'] ?? 'generic', // USE THE STORED SIMPLE TYPE
+                    'message' => $notification->data['message'] ?? 'No message',
+                    'link' => $notification->data['link'] ?? '#',
+                    'created_at' => $notification->created_at,
+                ];
+            });
             $upcomingTasks = collect(); // Initialize as empty collection
             $personalProgress = [];
 
@@ -57,6 +70,27 @@ class DashboardController extends Controller
                     ->get();
 
                 $urgentTasks = $overdueTasks->merge($imminentTasks)->unique('id');
+
+                $upcomingSeance = null;
+                $collaboratorProfile = $user->collaboratorProfile;
+
+                if ($collaboratorProfile) {
+                // First, try to find a seance that is currently live.
+                $activeSeance = Seance::whereHas('attendees', fn($q) => $q->where('collaborator_id', $collaboratorProfile->id))
+                    ->where('status', 'live')
+                    ->with('course:id,name', 'mentor:id,name')
+                    ->first();
+
+                // If no seance is live, find the very next scheduled one.
+                if (!$activeSeance) {
+                    $activeSeance = Seance::whereHas('attendees', fn($q) => $q->where('collaborator_id', $collaboratorProfile->id))
+                        ->where('status', 'scheduled')
+                        ->where('scheduled_at', '>=', now())
+                        ->orderBy('scheduled_at', 'asc')
+                        ->with('course:id,name', 'mentor:id,name')
+                        ->first();
+                }
+                }
             }
 
             $collaboratorActiveCamps = collect(); // Initialize as empty collection
@@ -80,6 +114,7 @@ class DashboardController extends Controller
                 'latestNotifications' => $latestNotifications, // Pass latest notifications
                 'urgentTasks' => $urgentTasks ?? collect(), // Pass urgent tasks, initialize as empty if not set
                 'collaboratorActiveCamps' => $collaboratorActiveCamps, // NEW PROP
+                'activeSeance' => $activeSeance ?? null, // Use a new prop name for clarity
             ]);
     }
 }

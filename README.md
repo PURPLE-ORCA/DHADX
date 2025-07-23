@@ -1,117 +1,97 @@
-# DAHDTRACK
 
-## Overview
-DAHDTRACK is a full-stack application designed for managing and tracking educational or training programs. It provides robust features for managing collaborators, courses, camps, and formations, with a strong emphasis on a dynamic leaderboard and a comprehensive task management system. The application aims to centralize progress tracking, streamline work assignments, and enhance communication through real-time notifications.
+# **DHADX - v1.0 Beta**
 
-## Features
+## **Overview**
 
-### Core Management
-- **Collaborator Management:** CRUD operations for collaborators, including personal details and associated specialities.
-- **Course and Camp Management:** Define courses with different levels and associate them with specific camps, tracking progress within each.
+DHADX is a comprehensive, real-time platform designed for interactive training and collaborative development management. It provides a full suite of tools for mentors and collaborators to engage in live training sessions, manage complex projects, and track skill progression. The application is built around a powerful **Live Seance Module**, which centralizes learning activities and eliminates the need for scattered, third-party tools.
 
-### Leaderboard System
-- Displays collaborators ranked by their highest course level achieved and progress within that level.
+## **Features**
 
-### Task Management System
-- **Task Lifecycle:** Supports various task statuses: `pending`, `in_progress`, `submitted`, `completed`, `needs_revision`, `overdue`, `cancelled`.
-- **Role-Based Access Control:** Admins can create, edit, view, and delete tasks, assigning them to collaborators. Collaborators can view, update status, and add comments to their assigned tasks.
-- **Automated Overdue Tracking:** Daily scheduled command (`tasks:check-overdue`) automatically updates overdue task statuses.
-- **Task Review Workflow:** Assigners/Admins can review submitted tasks, approve completion, or request revisions.
-- **Dashboard Integration:** Task summaries are displayed on the dashboard based on user roles.
+### **The Live Seance Module (Real-Time)**
+The core of the DHADX platform. A dedicated environment for interactive learning.
+-   **Seance Lifecycle Management:** Mentors can schedule, start, finish, and cancel sessions, with the UI for all participants updating in real-time.
+-   **Real-Time Presence Checking:** At any point during a live seance, mentors can initiate a presence check, prompting collaborators to confirm their attendance within a time limit. The mentor's attendance list updates live.
+-   **Live Exercise Submissions:** Mentors can create exercises on the fly. Collaborators submit their work (text, code, or files) directly in the app, and submissions appear instantly on the mentor's screen for immediate review.
+-   **Integrated Submission Viewer:** A clean, drawer-style UI allows mentors to view text, code, and image submissions without leaving the seance page.
 
-### Notification System
-- Real-time notifications for:
-    - Task assignments to collaborators.
-    - Task submissions for review to admins.
-    - Collaborator enrollment in camps.
-- Notifications are displayed via a bell icon with a pending count and a dropdown of latest notifications.
-- Users can mark notifications as read.
+### **Standalone Whiteboard Library**
+-   A full-featured, persistent digital whiteboard powered by **Excalidraw**.
+-   Each user has a personal library of whiteboards with auto-saving functionality.
+-   Supports a "Public/Private" toggle to generate shareable, view-only links.
 
-### User Interface & Experience
-- Modern, responsive, and intuitive UI built with Tailwind CSS and shadcn/ui.
-- Supports **dark mode** as the default.
-- Implemented **multi-language support** using `i18next` (Arabic, English, French).
+### **Core Management & Tracking**
+-   **Collaborator & Course Management:** Robust CRUD interfaces for managing users, courses, camps, and their relationships.
+-   **Leaderboard System:** Ranks collaborators based on course progression, fostering healthy competition.
+-   **Hierarchical Task Management:** A comprehensive system for assigning and tracking nested tasks with various statuses and priorities.
 
-## Technologies Used
+### **User Experience & Notifications**
+-   **Modern UI:** A sleek, dark-mode-first, and responsive interface built with Tailwind CSS and Shadcn UI.
+-   **Intelligent Notification System:** A centralized helper formats notifications for a clean, user-friendly experience. The header dropdown shows unread items, while the dashboard widget provides a history.
+-   **Role-Specific Dashboards:**
+    -   **Admin:** High-level overview of platform statistics.
+    -   **Collaborator:** A "mission control" layout featuring a dynamic "Live or Next Seance" widget with a countdown, urgent tasks, and progress tracking.
+-   **Multi-language Support:** Fully translated into Arabic, English, and French.
 
-### Backend
-- **Laravel 12 (PHP):** Core backend framework.
-- **PostgreSQL:** Relational database.
-- **Pest:** PHP testing framework.
+## **Technologies Used**
 
-### Frontend
-- **React 19 (JavaScript/JSX):** Frontend framework.
-- **Inertia.js:** SPA bridge between Laravel and React.
-- **Tailwind CSS 4:** Utility-first CSS framework for styling.
-- **shadcn/ui:** Reusable UI component library.
-- **Vite:** Frontend build tool.
-- **i18next:** Internationalization library.
+### **Backend**
+-   **Laravel 12 (PHP):** Core backend framework.
+-   **PostgreSQL:** Primary relational database.
+-   **Laravel Reverb:** First-party WebSocket server for real-time communication.
+-   **Redis:** High-performance key-value store used for both **Queueing** and as the **Pub/Sub driver** for broadcasting events to Reverb.
+-   **Pest:** PHP testing framework.
 
-### Other
-- **Laravel Breeze:** Authentication scaffolding.
+### **Frontend**
+-   **React 19 (JSX):** Frontend library.
+-   **Inertia.js:** SPA bridge between Laravel and React.
+-   **Vite:** Next-generation frontend tooling.
+-   **Tailwind CSS 4:** Utility-first CSS framework.
+-   **Shadcn UI:** Reusable UI component library.
+-   **Axios:** Used for all background API requests that don't require a page reload (e.g., auto-saves, check-ins).
+-   **Laravel Echo & Pusher.js:** Client-side libraries for listening to WebSocket events.
 
-## Setup Instructions
+## **Setup Instructions**
 
-1.  **Clone the repository:**
+1.  **Clone & Install:**
     ```bash
     git clone https://github.com/PURPLE-ORCA/DAHDTRACK.git
     cd DAHDTRACK
-    ```
-
-2.  **Install PHP Dependencies:**
-    ```bash
     composer install
-    ```
-
-3.  **Install JavaScript Dependencies:**
-    ```bash
     npm install
-    # or yarn install
     ```
+2.  **Environment Configuration:**
+    -   Copy `.env.example` to `.env`.
+    -   Run `php artisan key:generate`.
+    -   Configure your `DB_*` variables for PostgreSQL.
+    -   Ensure your `QUEUE_CONNECTION` is set to `database` or `redis`.
+    -   Ensure your `BROADCAST_CONNECTION` is set to `reverb`.
+    -   Configure your `REVERB_*` and `VITE_REVERB_*` variables according to your local environment (e.g., Laravel Herd).
 
-4.  **Environment Configuration:**
-    -   Copy the example environment file:
-        ```bash
-        cp .env.example .env
-        ```
-    -   Generate an application key:
-        ```bash
-        php artisan key:generate
-        ```
-    -   Configure your PostgreSQL or MySql database connection in the `.env` file.
-
-5.  **Database Migration and Seeding:**
+3.  **Database & Linking:**
     ```bash
-    php artisan migrate --seed
+    php artisan migrate:fresh --seed
+    php artisan storage:link
     ```
+4.  **Run the Servers (Requires 3-4 separate terminals):**
+    -   **Vite:** `npm run dev`
+    -   **Reverb Server:** `php artisan reverb:start`
+    -   **Queue Worker:** `php artisan queue:work`
+    -   **(Optional) Dev Server:** `php artisan serve`
 
-6.  **Run Frontend Assets:**
-    ```bash
-    npm run dev
-    # or yarn dev
-    ```
+5.  **Access the Application:**
+    Navigate to your configured local domain (e.g., `https://dhadx.test`).
 
-7.  **Start Laravel Development Server:**
-    ```bash
-    php artisan serve
-    ```
+## **Key Architectural Decisions & Patterns**
 
-8.  **Access the Application:**
-    Open your browser and navigate to `http://localhost:8000` (or the URL provided by `php artisan serve`).
+-   **Real-Time First Architecture:** The stack is built around a **Laravel > Redis > Reverb > Echo** pipeline. Using Redis as the pub/sub transport layer is critical, as it decouples the web server from the WebSocket server and bypasses local SSL/cURL issues.
+-   **State-Driven UI:** Features like the Live Seance dashboard heavily rely on React state (`useState`) being updated by WebSocket events, which then drives conditional rendering.
+-   **Policy-Based Authorization:** Permissions are handled by dedicated Laravel Policy classes (e.g., `SeancePolicy`) and applied via middleware, providing granular control over actions. This is favored over simple role checks.
+-   **Data Integrity via Seeders:** The `DatabaseSeeder` is the single source of truth for creating linked `User` and `Collaborator` profiles, preventing critical authorization bugs.
+-   **Purpose-Built API Calls:** A clear distinction is made between Inertia-driven page visits and `axios`-driven background API calls to prevent "plain JSON response" errors.
 
-## Key Architectural Decisions & Patterns
+## **Current Status**
 
--   **Laravel-Inertia-React Stack:** Combines the power of Laravel with the reactivity of React, bridged by Inertia.js for a seamless SPA experience.
--   **Service-Repository Pattern:** Intended for complex business logic to ensure separation of concerns.
--   **Inertia.js Partial Reloads:** Used for efficient data updates.
--   **Optimized Leaderboard Query:** Leverages PostgreSQL's `LATERAL JOIN` for complex aggregations.
--   **Role-Based Access Control (RBAC):** Implemented using Laravel Gates for granular permission management.
--   **Laravel Notification System:** Utilizes the database channel for persistent notifications.
--   **Component-Based UI:** React components are structured for reusability and maintainability.
+DHADX v1.0 is feature-complete and ready for beta testing. The core modules—Live Seances, Whiteboards, Tasks, and Course Management—are fully functional.
 
-## Current Status
-
-The core backend logic for the leaderboard and a comprehensive task management system are fully implemented. The notification system and multi-language support are also in place.
-
-### Known Issues
--   **Frontend Task Display Alignment:** The `MyTasks.jsx` component needs further alignment with `CollaboratorPortalController.php` to correctly display tasks for collaborators.
+### **Known Issues**
+-   None at the moment. All major bugs identified during the development of the Live Seance module have been resolved. The focus is now on gathering user feedback for v1.1.

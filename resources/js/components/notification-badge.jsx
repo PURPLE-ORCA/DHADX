@@ -9,6 +9,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { getNotificationDetails } from '@/lib/notification-helper';
 import { Button } from './ui/button';
 import { formatDistanceToNow } from 'date-fns';
 import axios from 'axios';
@@ -28,7 +29,7 @@ export default function NotificationBadge() {
             const countResponse = await axios.get(route('notifications.pendingCount'));
             setPendingCount(countResponse.data.count);
 
-            const latestResponse = await axios.get(route('notifications.latest'));
+            const latestResponse = await axios.get(route('notifications.unread'));
             setLatestNotifications(latestResponse.data.notifications);
         } catch (error) {
         }
@@ -71,17 +72,27 @@ export default function NotificationBadge() {
                 <DropdownMenuSeparator />
                 {latestNotifications.length > 0 ? (
                     <>
-                        {latestNotifications.map((notification) => (
-                            <DropdownMenuItem key={notification.id} className="flex flex-col items-start space-y-1">
-                                <Link href={notification.link || '#'} onClick={() => markAsRead(notification.id)} className="w-full">
-                                    <p className="text-sm leading-none font-medium">{notification.type.replace(/_/g, ' ')}</p>
-                                    <p className="text-muted-foreground mt-1 text-sm">{notification.message}</p>
-                                    <p className="mt-1 text-xs text-gray-500">
-                                        {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
-                                    </p>
-                                </Link>
-                            </DropdownMenuItem>
-                        ))}
+                        {latestNotifications.map((notification) => {
+                            const details = getNotificationDetails(notification);
+                            const Icon = details.icon;
+
+                            return (
+                                <DropdownMenuItem key={notification.id} className="flex flex-col items-start space-y-1">
+                                    <Link href={notification.link || '#'} onClick={() => markAsRead(notification.id)} className="w-full">
+                                        <div className="flex items-start gap-3">
+                                            <Icon className="h-4 w-4 text-muted-foreground mt-1" />
+                                            <div className="flex-1">
+                                                <p className="text-sm leading-none font-medium">{details.title}</p>
+                                                <p className="text-muted-foreground mt-1 text-sm">{details.message}</p>
+                                                <p className="mt-1 text-xs text-gray-500">
+                                                    {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </DropdownMenuItem>
+                            );
+                        })}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="justify-center">
                             <Button variant="link" onClick={() => markAsRead()}>

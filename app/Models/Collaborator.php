@@ -17,6 +17,16 @@ class Collaborator extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function seanceAttendance()
+    {
+        return $this->belongsToMany(Seance::class, 'seance_attendances')->withPivot('status', 'checked_in_at')->withTimestamps();
+    }
+
+    public function exerciseSubmissions()
+    {
+        return $this->hasMany(ExerciseSubmission::class);
+    }
+
     public function specialities()
     {
         return $this->belongsToMany(Speciality::class);

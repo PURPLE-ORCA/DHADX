@@ -32,10 +32,6 @@ export default function Index({ leaderboardEntries }) {
                                     <TableCell className="font-medium">{index + 1}</TableCell>
                                     <TableCell>{entry.name}</TableCell>
                                     <TableCell>
-                                        {/* This part for 'Highest Class Level' remains the same logic,
-                                            but if max_cour_level is NULL from the DB, it shows 'No camp yet'
-                                            Otherwise, it shows the level number.
-                                        */}
                                         {entry.max_cour_level !== null ? entry.max_cour_level : translations.leaderboard.no_camp_yet}
                                     </TableCell>
                                     {/* Use the new average_progress_in_max_cour field */}

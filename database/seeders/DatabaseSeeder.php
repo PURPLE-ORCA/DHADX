@@ -3,7 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Models\Role; // Import Role model
+use App\Models\Role;
+use App\Models\Collaborator; // <-- Make sure this is imported
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -21,6 +22,7 @@ class DatabaseSeeder extends Seeder
         $collaboratorRole = Role::where('name', 'collaborator')->first();
 
         $collaboratorData = [
+            // ... your data array is perfect, no changes needed ...
             ['name' => "Kacem Bensaadoun", 'email_prefix' => 'kacem.bensaadoun'],
             ['name' => "Mohammed El Moussaoui", 'email_prefix' => 'mohammed.elmoussaoui'],
             ['name' => "Rihane Chebab", 'email_prefix' => 'rihane.chebab'],
@@ -39,6 +41,8 @@ class DatabaseSeeder extends Seeder
 
         foreach ($collaboratorData as $data) {
             $email = $data['email_prefix'] . '@dhadx.com';
+            
+            // Step 1: Create the User record
             $user = User::firstOrCreate(
                 ['email' => $email],
                 [
@@ -47,7 +51,18 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
-            // Assign roles
+            // --- THE FIX IS HERE ---
+            // Step 2: Create the corresponding Collaborator record and LINK it
+            Collaborator::firstOrCreate(
+                ['email' => $email],
+                [
+                    'name' => $data['name'],
+                    'user_id' => $user->id, // <-- THE MISSING LINK!
+                ]
+            );
+            // --- END FIX ---
+
+            // Step 3: Assign roles (your existing logic is correct)
             if ($data['name'] === 'Ilyes Rafai' && $adminRole) {
                 $user->roles()->syncWithoutDetaching($adminRole->id);
             }
@@ -56,12 +71,10 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // Call other seeders
+        // Call other seeders, but NOT the old collaborator seeder
         $this->call(SpecialitySeeder::class);
-        $this->call(CollaboratorSeeder::class);
+        // $this->call(CollaboratorSeeder::class); // <-- DELETE OR COMMENT OUT THIS LINE
         $this->call(CourSeeder::class);
         $this->call(FormationSeeder::class);
-        // $this->call(TaskSeeder::class);
-
     }
 }

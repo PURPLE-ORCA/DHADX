@@ -12,6 +12,7 @@ use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\WhiteboardController;
+use App\Http\Controllers\SeanceController;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -23,6 +24,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/notifications/pending-count', [NotificationController::class, 'pendingCount'])->name('notifications.pendingCount');
     Route::get('/notifications/latest', [NotificationController::class, 'latest'])->name('notifications.latest');
     Route::post('/notifications/mark-read/{notification?}', [NotificationController::class, 'markRead'])->name('notifications.markRead');
+    Route::get('/notifications/unread', [NotificationController::class, 'unread'])->name('notifications.unread');
 
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
     
@@ -34,6 +36,56 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('cours', CourController::class);
         Route::resource('tasks', TaskController::class)->except(['index', 'show']);
     });
+
+    // SEANCE MANAGEMENT (for Mentors/Admins)
+    Route::middleware('can:is_admin')->group(function () {
+        Route::get('/seances', [SeanceController::class, 'index'])->name('seances.index'); // List all seances
+        Route::get('/seances/create', [SeanceController::class, 'create'])->name('seances.create'); // Show create form
+        Route::post('/seances', [SeanceController::class, 'store'])->name('seances.store'); // Save new seance
+        Route::get('/seances/{seance}/edit', [SeanceController::class, 'edit'])->name('seances.edit'); // Show edit form
+        Route::put('/seances/{seance}', [SeanceController::class, 'update'])->name('seances.update'); // Update seance
+        Route::delete('/seances/{seance}', [SeanceController::class, 'destroy'])->name('seances.destroy');
+
+    // Add these alongside your other seance action routes
+    Route::post('/seances/{seance}/start', [SeanceController::class, 'startSeance'])
+        ->middleware('can:update,seance') // Reuse the update policy or create a new one
+        ->name('seances.start');
+
+    Route::post('/seances/{seance}/finish', [SeanceController::class, 'finishSeance'])
+        ->middleware('can:update,seance')
+        ->name('seances.finish');
+        
+        Route::post('/seances/{seance}/cancel', [SeanceController::class, 'cancelSeance'])
+            ->middleware('can:update,seance')
+            ->name('seances.cancel');
+
+    });
+    // Collaborator action to raise/lower their own hand (ANY authenticated user can try)
+    Route::post('/seances/{seance}/hand-state', [SeanceController::class, 'toggleHandState'])
+        ->name('seances.hand.toggle');
+
+    // Mentor action to dismiss a hand from the queue
+    Route::post('/seances/{seance}/dismiss-hand/{collaborator}', [SeanceController::class, 'dismissHand'])
+        ->middleware('can:update,seance') // The policy protects this for mentors
+        ->name('seances.hand.dismiss');
+    
+    // Mentor-specific presence check initiation
+    Route::post('/seances/{seance}/presence/start', [SeanceController::class, 'startPresenceCheck'])
+        ->middleware('can:startPresenceCheck,seance')
+        ->name('seances.presence.start');
+
+    // Exercise Management within a Seance
+    Route::post('/seances/{seance}/exercises', [SeanceController::class, 'storeExercise'])
+        ->name('seances.exercises.store');
+
+    // LIVE SEANCE VIEW (for Mentors and Collaborators)
+    Route::get('/seances/{seance}', [SeanceController::class, 'show'])->name('seances.show');
+
+    // Presence Check Routes
+    Route::post('/seances/{seance}/check-in', [SeanceController::class, 'recordCheckIn'])->name('seances.presence.checkin');
+
+    // EXERCISE SUBMISSION (for Collaborators)
+    Route::post('/seance-exercises/{exercise}/submissions', [SeanceController::class, 'storeSubmission'])->name('exercises.submissions.store');
 
     Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
     Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');

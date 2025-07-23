@@ -32,20 +32,6 @@ class TaskAssignedNotification extends Notification
     }
 
     /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
-    {
-        return [
-            'message' => 'You have been assigned a new task: "' . $this->task->title . '".',
-            'link' => route('tasks.show', $this->task->id),
-            'type' => 'task_assigned',
-        ];
-    }
-
-    /**
      * Get the database representation of the notification.
      */
     public function toDatabase(object $notifiable): array

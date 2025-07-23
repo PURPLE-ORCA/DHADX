@@ -370,6 +370,10 @@
             "submitting_button": "Submitting...",
             "submit_revision_button": "Submit Revision",
             "cancel_task_button": "Cancel Task",
+            "cancel_task_dialog_title": "Confirm Cancellation",
+            "cancel_task_dialog_description": "Are you sure you want to cancel this task? This action cannot be undone.",
+            "confirm_cancel_button": "Confirm Cancel",
+            "cancelling_button": "Cancelling...",
             "no_permission_message": "You don't have permission to perform actions on this task.",
             "comments_heading": "Comments (:count)",
             "unknown_user": "Unknown User",
@@ -415,7 +419,8 @@
             "completed": "Completed",
             "needs_revision": "Needs Revision",
             "overdue": "Overdue",
-            "cancelled": "Cancelled"
+            "cancelled": "Cancelled",
+            "all": "All"
         },
         "priority": {
             "low": "Low Priority",

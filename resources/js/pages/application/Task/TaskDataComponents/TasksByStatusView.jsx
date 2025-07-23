@@ -11,6 +11,7 @@ export default function TasksByStatusView({ tasks }) {
     // Define your statuses - these will be the segments
     // Use useMemo to ensure translations are available when STATUS_OPTIONS is defined
     const STATUS_OPTIONS = useMemo(() => [
+        { id: 'all', label: translations.tasks.status.all || 'All' }, // Add 'All' option
         { id: 'pending', label: translations.tasks.status.pending },
         { id: 'in_progress', label: translations.tasks.status.in_progress },
         { id: 'submitted', label: translations.tasks.status.submitted },
@@ -20,10 +21,13 @@ export default function TasksByStatusView({ tasks }) {
         { id: 'cancelled', label: translations.tasks.status.cancelled },
     ], [translations]); // Dependency array includes translations
 
-    const [activeStatus, setActiveStatus] = useState(STATUS_OPTIONS[0].id); // Default to the first status ID
+    const [activeStatus, setActiveStatus] = useState(STATUS_OPTIONS[0].id); // Default to 'all'
 
     // Memoize filtered tasks to avoid re-filtering on every render unless tasks or activeStatus changes
     const filteredTasks = useMemo(() => {
+        if (activeStatus === 'all') {
+            return tasks;
+        }
         return tasks.filter((task) => task.status === activeStatus);
     }, [tasks, activeStatus]);
 
