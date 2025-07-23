@@ -199,17 +199,6 @@ html[dir="rtl"] .force-align-left {
     text-align: left;
 }
 
-/*
-  ==================================================================
-  THE REAL RTL FIX: FLIP THE ENTIRE APP LAYOUT
-  ==================================================================
-*/
-
-/*
-  Assuming your main app layout is a flex container
-  (e.g., <div class="flex"> <Sidebar /> <MainContent /> </div>)
-  This is the magic bullet. It reverses the visual order of the children.
-*/
 html[dir="rtl"] .group\/sidebar-wrapper {
   flex-direction: row-reverse;
 }

@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import { TranslationContext } from '@/context/TranslationProvider';
 import { format } from 'date-fns';
 import SeanceStatusBadge from './components/SeanceStatusBadge';
-import Delete from './Delete'; // Assuming a Delete component will be created for Seances
+import Delete from './Delete';
 
 function Data({ seances, onDeleted }) {
     const { translations } = useContext(TranslationContext);
@@ -25,15 +25,13 @@ function Data({ seances, onDeleted }) {
                 {seances.map((seance) => (
                     <TableRow key={seance.id}>
                         <TableCell className="font-medium">
-                            <Link href={route('seances.show', seance.id)} className="text-blue-600 hover:underline">
+                            <Link href={route('seances.show', seance.id)} className="text-foreground hover:underline">
                                 {seance.topic}
                             </Link>
                         </TableCell>
                         <TableCell className="font-medium">{seance.course?.name}</TableCell>
                         <TableCell className="font-medium">{seance.mentor?.name}</TableCell>
-                        <TableCell className="font-medium">
-                            {seance.scheduled_at ? format(new Date(seance.scheduled_at), 'PPP p') : 'N/A'}
-                        </TableCell>
+                        <TableCell className="font-medium">{seance.scheduled_at ? format(new Date(seance.scheduled_at), 'PPP p') : 'N/A'}</TableCell>
                         <TableCell className="font-medium">
                             <SeanceStatusBadge status={seance.status} />
                         </TableCell>

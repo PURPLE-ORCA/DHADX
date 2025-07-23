@@ -22,7 +22,6 @@ function Dashboard({ user, collabCount, formationsCount, specialitysCount, cours
     const isCollaborator = user.roles.some(role => role.name === 'collaborator');
 
     if (isCollaborator) {
-        // --- DITCH MASONRY FOR A CSS GRID ---
         return (
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Dashboard" />

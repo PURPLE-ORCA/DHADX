@@ -11,14 +11,12 @@ export default function TaskData({ tasks, auth, onDeleted }) {
     return (
         <>
             {tasks.length === 0 ? (
-                <div className="rounded-xl border-2 border-black bg-white py-20 text-center dark:border-white dark:bg-black">
+                <div className="bg-background  py-20 text-center">
                     <div className="mx-auto mb-8 flex h-32 w-32 items-center justify-center rounded-full border-2 border-black bg-white dark:border-white dark:bg-black">
                         <Clock className="h-16 w-16 text-black dark:text-white" />
                     </div>
                     <h3 className="mb-4 text-2xl font-bold text-black dark:text-white">{translations.tasks.data.no_tasks_found}</h3>
-                    <p className="mx-auto max-w-md font-medium text-neutral-600 dark:text-neutral-300">
-                        {translations.tasks.data.no_tasks_message}
-                    </p>
+                    <p className="mx-auto max-w-md font-medium text-neutral-600 dark:text-neutral-300">{translations.tasks.data.no_tasks_message}</p>
                 </div>
             ) : (
                 <TasksByStatusView tasks={tasks} />
