@@ -15,7 +15,7 @@ import { CalendarIcon, LoaderCircle } from 'lucide-react';
 import { useContext } from 'react';
 import { toast } from 'sonner';
 
-export default function Create({ collaborators }) {
+export default function Create({ users }) {
     const { translations } = useContext(TranslationContext);
     const { data, setData, post, processing, errors, reset } = useForm({
         title: '',
@@ -119,9 +119,9 @@ export default function Create({ collaborators }) {
                                             <SelectValue placeholder={translations.tasks.create.select_assignee_placeholder} />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {collaborators.map((collaborator) => (
-                                                <SelectItem key={collaborator.id} value={String(collaborator.id)}>
-                                                    {collaborator.name}
+                                            {users.map((user) => (
+                                                <SelectItem key={user.id} value={String(user.id)}>
+                                                    {user.name}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>

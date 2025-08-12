@@ -20,7 +20,7 @@ export default function ExerciseList({ seance }) {
                     <ul className="space-y-4">
                         {seance.exercises.map((exercise) => {
                             const hasSubmitted = exercise.submissions?.some(
-                                (submission) => submission.collaborator_id === currentUserId
+                                (submission) => submission.user_id === currentUserId
                             );
 
                             return (
@@ -34,7 +34,7 @@ export default function ExerciseList({ seance }) {
                                                 <p className="font-medium">{translations.seances?.show?.exercise_list?.submitted_message || 'You have submitted this exercise.'}</p>
                                                 {/* Display submission details here if needed */}
                                                 {exercise.submissions.map((submission) => (
-                                                    submission.collaborator_id === currentUserId && (
+                                                    submission.user_id === currentUserId && (
                                                         <div key={submission.id} className="mt-2 text-sm">
                                                             {submission.text_content && <p><strong>{translations.seances?.show?.exercise_list?.your_text_submission || 'Your Text Submission'}:</strong> {submission.text_content}</p>}
                                                             {submission.file_path && <p><strong>{translations.seances?.show?.exercise_list?.your_file_submission || 'Your File Submission'}:</strong> <a href={submission.file_path} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{translations.seances?.show?.exercise_list?.view_file || 'View File'}</a></p>}

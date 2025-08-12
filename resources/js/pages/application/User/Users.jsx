@@ -6,51 +6,51 @@ import { useContext, useState } from 'react';
 import { TranslationContext } from '@/context/TranslationProvider';
 import Data from './Data';
 
-export default function Collaborators({ collaborators, specialities, auth }) { // Added auth prop
+export default function Users({ users, specialities, auth }) { 
     const { translations } = useContext(TranslationContext);
 
     const breadcrumbs = [
         {
-            title: translations.collaborators.collaborators_list,
-            href: '/collaborators',
+            title: translations.users.users_list,
+            href: '/users',
         },
     ];
 
     const [search, setSearch] = useState('');
-    const [filteredCollaborators, setFilteredCollaborators] = useState(collaborators);
+    const [filteredUsers, setFilteredUsers] = useState(users);
 
     const handleSearch = (e) => {
         const value = e.target.value.toLowerCase();
         setSearch(value);
 
-        const filtered = collaborators.filter((collaborator) => collaborator.name.toLowerCase().includes(value));
+        const filtered = users.filter((user) => user.name.toLowerCase().includes(value));
 
-        setFilteredCollaborators(filtered);
+        setFilteredUsers(filtered);
     };
 
     const handleDelete = (id) => {
-        setFilteredCollaborators((prev) => prev.filter((c) => c.id !== id));
+        setFilteredUsers((prev) => prev.filter((c) => c.id !== id));
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={translations.collaborators.title} />
+            <Head title={translations.users.title} />
 
             <div className="h-full rounded-xl p-4">
                 <div className="mb-4 flex items-center justify-between">
                     <div className="relative">
                         <Search className="absolute top-[50%] h-4 w-4 translate-x-2 translate-y-[-50%] text-neutral-500" />
-                        <Input className="pl-8" type="text" placeholder={translations.collaborators.search_placeholder} value={search} onChange={handleSearch} />
+                        <Input className="pl-8" type="text" placeholder={translations.users.search_placeholder} value={search} onChange={handleSearch} />
                     </div>
                     <Link
-                        href={route('collaborators.create')}
+                        href={route('users.create')}
                         className="bg-primary text-primary-foreground hover:bg-primary/90 flex h-8 items-center rounded-md px-3 text-sm font-semibold shadow-xs has-[>svg]:px-2.5"
                     >
-                        {translations.collaborators.add_new}
+                        {translations.users.add_new}
                     </Link>
                 </div>
 
-                <Data collaborators={filteredCollaborators} onDeleted={handleDelete} auth={auth} /> {/* Passed auth prop */}
+                <Data users={filteredUsers} onDeleted={handleDelete} auth={auth} /> {/* Passed auth prop */}
             </div>
         </AppLayout>
     );

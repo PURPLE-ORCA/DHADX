@@ -6,7 +6,7 @@ function groupCamps(camps) {
     const groups = {};
 
     camps.forEach((camp) => {
-        const collabName = camp.collaborator.name;
+        const userName = camp.user.name;
         const courName = camp.cour.name;
 
         if (!groups[collabName]) {
@@ -45,9 +45,9 @@ function Data({ camps, onDeleted }) {
 
     return (
         <div className="space-y-8">
-            {Object.entries(grouped).map(([collaboratorName, courses]) => (
-                <div key={collaboratorName}>
-                    <h2 className="mb-2 text-xl font-bold">{translations.camps.data.collaborator_name_heading.replace(':collaborator_name', collaboratorName)}</h2>
+            {Object.entries(grouped).map(([userName, courses]) => (
+                <div key={userName}>
+                    <h2 className="mb-2 text-xl font-bold">{translations.camps.data.user_name_heading.replace(':user_name', userName)}</h2>
                     {Object.entries(courses).map(([courseName, courseData]) => (
                         <div key={courseName} className="mb-4 last:mb-0">
                             <h3 className="text-md mb-1 font-semibold text-neutral-700 dark:text-neutral-200">{translations.camps.data.course_name_heading.replace(':course_name', courseName)}</h3>

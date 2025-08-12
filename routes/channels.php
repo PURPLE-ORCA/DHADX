@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Broadcast;
 use App\Models\Seance;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use App\Models\Collaborator;
 
 // --- ADD THIS MISSING BLOCK ---
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
@@ -32,22 +31,21 @@ Broadcast::channel('seance.{seanceId}', function ($user, $seanceId) {
         return true;
     }
 
-    $collaborator = Collaborator::where('user_id', $user->id)->first();
-    if ($collaborator) {
-        Log::info('Collaborator profile found. Collaborator ID: ' . $collaborator->id);
+    if ($user->hasRole('collaborator')) {
+        Log::info('User has collaborator role. User ID: ' . $user->id);
         $isAttendee = DB::table('seance_attendances')
                         ->where('seance_id', $seanceId)
-                        ->where('collaborator_id', $collaborator->id)
+                        ->where('user_id', $user->id) // Changed from collaborator_id
                         ->exists();
 
         if ($isAttendee) {
-            Log::info('Collaborator is an attendee. AUTHORIZED.');
+            Log::info('User is an attendee. AUTHORIZED.');
             return true;
         } else {
-            Log::warning('Collaborator is NOT an attendee.');
+            Log::warning('User is NOT an attendee.');
         }
     } else {
-        Log::warning('No collaborator profile found for user.');
+        Log::warning('User does not have collaborator role.');
     }
 
     Log::error('Authorization failed for User ID: ' . $user->id);

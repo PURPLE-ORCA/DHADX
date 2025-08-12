@@ -6,7 +6,7 @@ use App\Http\Controllers\CollaboratorController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FormationController;
 use App\Http\Controllers\SpecialityController;
-use App\Http\Controllers\CollaboratorPortalController;
+use App\Http\Controllers\UserPortalController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\NotificationController;
@@ -30,11 +30,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     Route::middleware('can:is_admin')->group(function () {
         Route::resource('camps', CampController::class);
-        Route::resource('collaborators', CollaboratorController::class);
         Route::resource('specialities', SpecialityController::class);
         Route::resource('formations', FormationController::class);
         Route::resource('cours', CourController::class);
         Route::resource('tasks', TaskController::class)->except(['index', 'show']);
+        Route::get('/users', [UserPortalController::class, 'index'])->name('users.index');
     });
 
     // SEANCE MANAGEMENT (for Mentors/Admins)
@@ -98,7 +98,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/tasks/{task}/comments', [TaskController::class, 'storeComment'])->name('tasks.storeComment');
 
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
-    Route::get('/my-tasks', [CollaboratorPortalController::class, 'myTasks'])->name('collaborator.tasks');
+    Route::get('/my-tasks', [UserPortalController::class, 'myTasks'])->name('user.tasks'); // Changed controller and route name
 
     // Whiteboard Routes
     Route::get('/whiteboards', [WhiteboardController::class, 'index'])->name('whiteboards.index');

@@ -39,6 +39,6 @@ class Seance extends Model
 
     // Defines the many-to-many relationship for attendance
     public function attendees() {
-        return $this->belongsToMany(Collaborator::class, 'seance_attendances')->withPivot('status', 'checked_in_at')->withTimestamps();
+        return $this->belongsToMany(User::class, 'seance_attendances')->withPivot('status', 'checked_in_at')->withTimestamps();
     }
 }

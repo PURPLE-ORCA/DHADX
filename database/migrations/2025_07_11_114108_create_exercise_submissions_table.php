@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('exercise_submissions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('seance_exercise_id')->constrained('seance_exercises')->onDelete('cascade');
-            $table->foreignId('collaborator_id')->constrained('collaborators')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->enum('submission_type', ['text', 'file', 'url', 'code'])->default('text');
             $table->longText('content'); // Can be text, a file path, a URL, or code snippet
             $table->timestamp('submitted_at')->useCurrent();

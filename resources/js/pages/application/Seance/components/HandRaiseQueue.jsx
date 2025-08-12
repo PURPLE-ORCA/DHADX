@@ -5,8 +5,8 @@ import axios from 'axios';
 export default function HandRaiseQueue({ queue, seanceId }) {
     if (queue.length === 0) return null; // Don't render anything if the queue is empty
 
-    const handleDismiss = (collaboratorId) => {
-        axios.post(route('seances.hand.dismiss', { seance: seanceId, collaborator: collaboratorId }));
+    const handleDismiss = (userId) => {
+        axios.post(route('seances.hand.dismiss', { seance: seanceId, user: userId }));
     };
 
     return (
@@ -14,10 +14,10 @@ export default function HandRaiseQueue({ queue, seanceId }) {
             <CardHeader><CardTitle>Hand Raise Queue</CardTitle></CardHeader>
             <CardContent>
                 <ul className="space-y-2">
-                    {queue.map(collaborator => (
-                        <li key={collaborator.id} className="flex items-center justify-between">
-                            <span>{collaborator.user.name}</span>
-                            <Button variant="ghost" size="sm" onClick={() => handleDismiss(collaborator.id)}>Dismiss</Button>
+                    {queue.map(user => (
+                        <li key={user.id} className="flex items-center justify-between">
+                            <span>{user.name}</span>
+                            <Button variant="ghost" size="sm" onClick={() => handleDismiss(user.id)}>Dismiss</Button>
                         </li>
                     ))}
                 </ul>

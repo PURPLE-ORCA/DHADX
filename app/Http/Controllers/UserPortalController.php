@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-class CollaboratorPortalController extends Controller
+class UserPortalController extends Controller
 {
     public function myTasks(Request $request)
     {

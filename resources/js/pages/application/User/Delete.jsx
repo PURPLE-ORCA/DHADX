@@ -6,7 +6,7 @@ import { Trash } from 'lucide-react';
 import { useContext, useState } from 'react';
 import { TranslationContext } from '@/context/TranslationProvider';
 
-export default function Delete({ collaborator, onDeleted }) {
+export default function Delete({ user, onDeleted }) {
     const { translations } = useContext(TranslationContext);
     const [open, setOpen] = useState(false);
     const { delete: destroy, processing, reset, clearErrors, recentlySuccessful } = useForm({});
@@ -14,12 +14,12 @@ export default function Delete({ collaborator, onDeleted }) {
     const deleteCollaborator = (e) => {
         e.preventDefault();
 
-        destroy(route('collaborators.destroy', collaborator.id), {
+        destroy(route('users.destroy', user.id), {
             preserveScroll: true,
             onSuccess: () => {
                 setOpen(false);
                 reset();
-                if (onDeleted) onDeleted(collaborator.id);
+                if (onDeleted) onDeleted(user.id);
             },
         });
     };
@@ -42,7 +42,7 @@ export default function Delete({ collaborator, onDeleted }) {
                 leaveTo="opacity-0"
             >
                 <div className="fixed top-12 right-3 rounded bg-green-500 p-2 whitespace-nowrap">
-                    <p className="text-sm font-semibold text-white">{translations.collaborator_delete.deleted_successfully}</p>
+                    <p className="text-sm font-semibold text-white">{translations.user_delete.deleted_successfully}</p>
                 </div>
             </Transition>
 
@@ -54,17 +54,17 @@ export default function Delete({ collaborator, onDeleted }) {
                     </Button>
                 </DialogTrigger>
                 <DialogContent>
-                    <DialogTitle>{translations.collaborator_delete.dialog_title.replace(':collaborator_name', collaborator.name)}</DialogTitle>
-                    <DialogDescription>{translations.collaborator_delete.dialog_description}</DialogDescription>
+                    <DialogTitle>{translations.user_delete.dialog_title.replace(':user_name', user.name)}</DialogTitle>
+                    <DialogDescription>{translations.user_delete.dialog_description}</DialogDescription>
                     <form onSubmit={deleteCollaborator}>
                         <DialogFooter className="mt-4 gap-2">
                             <DialogClose asChild>
                                 <Button variant="secondary" onClick={closeModal}>
-                                    {translations.collaborator_delete.cancel_button}
+                                    {translations.user_delete.cancel_button}
                                 </Button>
                             </DialogClose>
                             <Button type="submit" variant="destructive" disabled={processing}>
-                                {translations.collaborator_delete.delete_button_confirm}
+                                {translations.user_delete.delete_button_confirm}
                             </Button>
                         </DialogFooter>
                     </form>

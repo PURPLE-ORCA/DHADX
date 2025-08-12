@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Collaborator;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -14,19 +14,19 @@ class LeaderboardController extends Controller
         // Subquery for max_cour_level
         $maxLevelSubquery = \App\Models\Cour::selectRaw('MAX(cours.level)')
             ->join('camps', 'camps.cour_id', '=', 'cours.id')
-            ->whereColumn('camps.collaborator_id', 'collaborators.id');
+            ->whereColumn('camps.user_id', 'users.id');
 
         // Subquery for average_progress_in_max_cour
         $avgProgressSubquery = \App\Models\Camp::selectRaw('CASE WHEN COUNT(camps.id) > 0 THEN ROUND(SUM(camps.progress) / COUNT(camps.id)) ELSE 0 END')
             ->join('cours', 'camps.cour_id', '=', 'cours.id')
-            ->whereColumn('camps.collaborator_id', 'collaborators.id')
+            ->whereColumn('camps.user_id', 'users.id')
             ->where('cours.level', $maxLevelSubquery);
 
-        $leaderboardEntries = Collaborator::select('collaborators.*')
+        $leaderboardEntries = User::select('users.*')
             ->addSelect(['max_cour_level' => $maxLevelSubquery])
             ->addSelect(['average_progress_in_max_cour' => $avgProgressSubquery])
             ->orderByRaw('max_cour_level DESC NULLS LAST, average_progress_in_max_cour DESC NULLS LAST')
-            ->orderBy('collaborators.name', 'asc')
+            ->orderBy('users.name', 'asc')
             ->take(10)
             ->get();
 

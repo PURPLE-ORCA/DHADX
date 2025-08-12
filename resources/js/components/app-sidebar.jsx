@@ -2,7 +2,20 @@ import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { Link, usePage } from '@inertiajs/react';
-import { BriefcaseBusiness, Layers, LayoutGrid, ListChecks, Shapes, Tent, Trophy, UsersRound, ClipboardList, Brush, CalendarDays } from 'lucide-react'; // Added CalendarDays for Seances
+import {
+    BriefcaseBusiness,
+    Layers,
+    LayoutGrid,
+    ListChecks,
+    Shapes,
+    Tent,
+    Trophy,
+    UsersRound,
+    ClipboardList,
+    Brush,
+    CalendarDays,
+    Users
+} from 'lucide-react';
 import AppLogo from './app-logo';
 import { useContext } from 'react';
 import { TranslationContext } from '@/context/TranslationProvider';
@@ -19,6 +32,7 @@ const iconLeaderboard = Trophy;
 const iconMyTasks = ListChecks;
 const iconWhiteboard = Brush;
 const iconSeances = CalendarDays; // Icon for Seances
+const iconUsers = Users; 
 
 export function AppSidebar() {
     const { auth } = usePage().props;
@@ -46,8 +60,8 @@ export function AppSidebar() {
     if (auth.user && auth.abilities?.isCollaborator) {
         navItems.push({
             title: translations.sidebar.my_tasks,
-            url: route('collaborator.tasks'), // You'll create this route & page
-            routeName: 'collaborator.tasks',
+            url: route('user.tasks'), // You'll create this route & page
+            routeName: 'user.tasks',
             icon: iconMyTasks,
         });
         navItems.push({
@@ -68,10 +82,10 @@ export function AppSidebar() {
                 icon: iconAdminTasks, // Using a more generic "tasks" icon
             },
             {
-                title: translations.sidebar.collaborators,
-                url: route('collaborators.index'),
-                routeName: 'collaborators.index',
-                icon: iconCollaborators,
+                title: translations.sidebar.users,
+                url: route('users.index'),
+                routeName: 'users.index',
+                icon: iconUsers,
             },
             {
                 title: translations.sidebar.specialities,
@@ -102,7 +116,7 @@ export function AppSidebar() {
                 url: route('camps.index'),
                 routeName: 'camps.index',
                 icon: iconCampsManagement,
-            }
+            },
         );
     }
 

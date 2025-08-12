@@ -30,7 +30,7 @@ export default function ExerciseManager({ seance, exercises }) {
                                             <ul className="space-y-1 pl-4 text-sm">
                                                 {exercise.submissions.map((submission) => (
                                                     <li key={submission.id} className="flex items-center justify-between">
-                                                        <span>{submission.collaborator?.user?.name}</span>
+                                                        <span>{submission.user?.name}</span>
                                                         <SubmissionViewerDrawer
                                                             submission={submission}
                                                             exercise_title={exercise.title}

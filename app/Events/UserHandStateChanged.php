@@ -2,20 +2,20 @@
 
 namespace App\Events;
 
-use App\Models\Collaborator;
+use App\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CollaboratorHandStateChanged implements ShouldBroadcast
+class UserHandStateChanged implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public function __construct(
         public int $seanceId,
-        public Collaborator $collaborator,
+        public User $user,
         public bool $isRaised // True if they raised, false if they lowered
     ) {}
 

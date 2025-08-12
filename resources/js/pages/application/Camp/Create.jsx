@@ -9,10 +9,10 @@ import { toast } from "sonner";
 import { useContext } from 'react';
 import { TranslationContext } from '@/context/TranslationProvider';
 
-export default function Create({ collaborators, cours }) {
+export default function Create({ users, cours }) {
     const { translations } = useContext(TranslationContext);
     const { data, setData, post, processing, reset, errors } = useForm({
-        collaborator_id: '',
+        user_id: '',
         cour_id: '',
     });
 
@@ -52,25 +52,25 @@ export default function Create({ collaborators, cours }) {
                 <form className="space-y-6" onSubmit={submitForm}>
                     {/* Collaborator Select */}
                     <div className="grid gap-2">
-                        <Label htmlFor="collaborator_id">
-                            {translations.camps.collaborator_label}
+                        <Label htmlFor="user_id">
+                            {translations.camps.user_label}
                         </Label>
 <Select
-    value={String(data.collaborator_id)}
-    onValueChange={(value) => setData('collaborator_id', value)}
+    value={String(data.user_id)}
+    onValueChange={(value) => setData('user_id', value)}
 >
     <SelectTrigger className="w-full">
-        <SelectValue placeholder={translations.camps.select_collaborator_placeholder} />
+        <SelectValue placeholder={translations.camps.select_user_placeholder} />
     </SelectTrigger>
     <SelectContent>
-        {collaborators.map((c) => (
-            <SelectItem key={c.id} value={String(c.id)}>
+        {users.map((u) => (
+            <SelectItem key={u.id} value={String(u.id)}>
                 {c.name}
             </SelectItem>
         ))}
     </SelectContent>
 </Select>
-                        <InputError message={errors.collaborator_id} />
+                        <InputError message={errors.user_id} />
                     </div>
 
                     {/* Cour Select */}

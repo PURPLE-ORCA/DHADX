@@ -6,24 +6,24 @@ import { useContext } from 'react';
 import { TranslationContext } from '@/context/TranslationProvider';
 import Delete from './Delete';
 
-function Data({ collaborators, onDeleted, auth }) { // Added auth prop
+function Data({ users, onDeleted, auth }) { // Added auth prop
     const { translations } = useContext(TranslationContext);
     return (
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>{translations.collaborators.table_head_name}</TableHead>
-                    <TableHead>{translations.collaborators.table_head_specialities}</TableHead>
+                    <TableHead>{translations.users.table_head_name}</TableHead>
+                    <TableHead>{translations.users.table_head_specialities}</TableHead>
                     <TableHead></TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {collaborators.map((collaborator) => (
-                    <TableRow key={collaborator.id}>
-                        <TableCell className="font-medium">{collaborator.name}</TableCell>
+                {users.map((user) => (
+                    <TableRow key={user.id}>
+                        <TableCell className="font-medium">{user.name}</TableCell>
                         <TableCell className="font-medium">
                             <div className="flex flex-wrap gap-2">
-                                {collaborator.specialities.map((e, i) => (
+                                {user.specialities.map((e, i) => (
                                     <span
                                         key={i}
                                         className="rounded-full bg-neutral-200 px-2 text-xs font-semibold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
@@ -35,13 +35,13 @@ function Data({ collaborators, onDeleted, auth }) { // Added auth prop
                         </TableCell>
                         <TableCell className="font-medium">
                             <div className="flex items-center justify-end gap-6">
-                                    <Link className="flex items-center gap-1" href={route('tasks.create', { assignee_id: collaborator.id })}>
-                                        <Plus className="w-4" /> {translations.collaborators.assign_task_button}
+                                    <Link className="flex items-center gap-1" href={route('tasks.create', { assignee_id: user.id })}>
+                                        <Plus className="w-4" /> {translations.users.assign_task_button}
                                     </Link>
-                                <Link className="flex items-center gap-1" href={route('collaborators.edit', collaborator.id)}>
-                                    <Pencil className="w-4" /> {translations.collaborators.edit_button}
+                                <Link className="flex items-center gap-1" href={route('users.edit', user.id)}>
+                                    <Pencil className="w-4" /> {translations.users.edit_button}
                                 </Link>
-                                <Delete collaborator={collaborator} onDeleted={onDeleted} />
+                                <Delete user={user} onDeleted={onDeleted} />
                             </div>
                         </TableCell>
                     </TableRow>

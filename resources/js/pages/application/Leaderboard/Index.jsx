@@ -21,7 +21,7 @@ export default function Index({ leaderboardEntries }) {
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="w-[80px]">{translations.leaderboard.rank}</TableHead>
-                                <TableHead>{translations.leaderboard.collaborator}</TableHead>
+                                <TableHead>{translations.leaderboard.user}</TableHead>
                                 <TableHead>{translations.leaderboard.highest_class_level}</TableHead>
                                 <TableHead className="text-right">{translations.leaderboard.progress_in_class}</TableHead>
                             </TableRow>
