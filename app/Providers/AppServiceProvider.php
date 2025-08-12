@@ -29,7 +29,5 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasRole('collaborator');
         });
 
-        // Gate::define('create_collaborator_entity', fn(User $user) => $user->hasRole('admin'));
-        // Gate::define('edit_camp_progress', fn(User $user) => $user->hasRole('admin'));
     }
 }
