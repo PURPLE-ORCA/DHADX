@@ -14,11 +14,12 @@
         "leaderboard": "Classement",
         "my_tasks": "Mes tâches",
         "tasks": "Tâches",
-        "collaborators": "Collaborateurs",
+        "users": "Utilisateurs",
         "specialities": "Spécialités",
         "cours": "Cours",
         "formations": "Formations",
-        "camps": "Camps"
+        "camps": "Camps",
+        "whiteboards": "Tableaux blancs"
     },
     "admin_dashboard": {
         "collaborators_title": "Collaborateurs",
@@ -82,8 +83,10 @@
         "course_label": "Cours",
         "select_course_placeholder": "Sélectionner un cours",
         "add_button": "Ajouter",
+        "user_label": "Nom de l'étudiant",
+        "select_user_placeholder": "Sélectionner un étudiant",
         "data": {
-            "collaborator_name_heading": "Collaborateur : :collaborator_name",
+            "user_name_heading": "Camps pour :user_name",
             "course_name_heading": "Cours : :course_name"
         }
     },
@@ -102,37 +105,64 @@
         "cancel_button": "Annuler",
         "delete_button_confirm": "Supprimer"
     },
-    "collaborators": {
+    "users": {
         "collaborators_list": "Liste des collaborateurs",
         "title": "Collaborateurs",
         "search_placeholder": "Rechercher un collaborateur...",
         "add_new": "Ajouter un nouveau",
-        "create_success_toast": "Collaborateur enregistré avec succès !",
-        "create_error_toast": "Échec de l'enregistrement du collaborateur. Veuillez vérifier le formulaire.",
-        "add_new_collaborator": "Ajouter un nouveau collaborateur",
+        "create_success_toast": "Utilisateur créé avec succès !",
+        "create_error_toast": "Échec de la création de l'utilisateur. Veuillez vérifier le formulaire.",
+        "add_new_user": "Ajouter un nouvel utilisateur",
         "name_label": "Nom",
-        "name_placeholder": "Nom",
+        "name_placeholder": "Entrez le nom complet de l'utilisateur",
         "email_label": "Email",
-        "email_placeholder": "collaborateur@example.com",
+        "email_placeholder": "utilisateur@example.com",
+        "birth_date_label": "Date de naissance",
+        "cin_label": "CIN",
+        "cin_placeholder": "Entrez le CIN de l'utilisateur",
+        "gender_label": "Genre",
+        "select_gender_placeholder": "Sélectionnez un genre",
+        "gender_male": "Homme",
+        "gender_female": "Femme",
+        "gender_other": "Autre",
+        "image_label": "Image de profil",
         "specialities_label": "Spécialités",
-        "add_button": "Ajouter",
+        "phone_label": "Téléphone",
+        "phone_placeholder": "Entrez le numéro de téléphone de l'utilisateur",
+        "add_button": "Ajouter l'utilisateur",
         "table_head_name": "Nom",
         "table_head_specialities": "Spécialités",
         "assign_task_button": "Assigner une tâche",
         "edit_button": "Modifier",
+        "users_list": "Liste des utilisateurs",
+        "edit_user": "Modifier l'utilisateur",
+        "update_success_toast": "Utilisateur mis à jour avec succès.",
+        "update_error_toast": "Échec de la mise à jour de l'utilisateur.",
+        "save_button": "Enregistrer les modifications",
         "edit": {
-            "edit_collaborator": "Modifier le collaborateur",
-            "page_title": "Modifier le collaborateur",
-            "updated_successfully": "Collaborateur mis à jour avec succès !",
-            "failed_to_update": "Échec de la mise à jour du collaborateur. Veuillez vérifier le formulaire.",
-            "edit_collaborator_heading": "Modifier le collaborateur",
+            "edit_user": "Modifier l'utilisateur",
+            "page_title": "Modifier l'utilisateur",
+            "updated_successfully": "Utilisateur mis à jour avec succès !",
+            "failed_to_update": "Échec de la mise à jour de l'utilisateur. Veuillez vérifier le formulaire.",
+            "edit_user_heading": "Modifier l'utilisateur",
             "name_label": "Nom",
-            "name_placeholder": "Nom",
+            "name_placeholder": "Entrez le nom complet de l'utilisateur",
             "email_label": "Email",
+            "email_placeholder": "utilisateur@example.com",
+            "birth_date_label": "Date de naissance",
+            "cin_label": "CIN",
+            "cin_placeholder": "Entrez le CIN de l'utilisateur",
+            "gender_label": "Genre",
+            "select_gender_placeholder": "Sélectionnez un genre",
+            "gender_male": "Homme",
+            "gender_female": "Femme",
+            "gender_other": "Autre",
+            "image_label": "Image de profil",
             "specialities_label": "Spécialités",
             "cancel_button": "Annuler",
             "update_button": "Mettre à jour"
-        }
+        },
+        "deleted_successfully": "Utilisateur supprimé avec succès"
     },
     "collaborator_delete": {
         "deleted_successfully": "Supprimé avec succès !",
@@ -424,5 +454,11 @@
             "medium": "Priorité moyenne",
             "high": "Haute priorité"
         }
+    },
+    "user_delete": {
+        "title": "Supprimer l'utilisateur",
+        "text": "Êtes-vous sûr de vouloir supprimer {name} ? Cette action est irréversible.",
+        "cancel_button": "Annuler",
+        "delete_button": "Supprimer"
     }
 }

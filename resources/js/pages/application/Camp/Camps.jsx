@@ -32,7 +32,7 @@ export default function Camps({ camps: initialCamps }) {
                     camp.formation?.name.toLowerCase().includes(value) ||
                     camp.cour?.name.toLowerCase().includes(value) ||
                     camp.cour?.label.toLowerCase().includes(value) ||
-                    camp.collaborator?.name.toLowerCase().includes(value),
+                    camp.user?.name.toLowerCase().includes(value),
             );
             setFilteredCamps(filtered);
         }
@@ -51,7 +51,7 @@ export default function Camps({ camps: initialCamps }) {
                     camp.formation?.name.toLowerCase().includes(search) ||
                     camp.cour?.name.toLowerCase().includes(search) ||
                     camp.cour?.label.toLowerCase().includes(search) ||
-                    camp.collaborator?.name.toLowerCase().includes(search),
+                    camp.user?.name.toLowerCase().includes(search),
             );
             setFilteredCamps(reFiltered);
         }

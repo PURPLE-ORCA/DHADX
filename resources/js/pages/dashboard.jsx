@@ -8,8 +8,9 @@ import MyCampProgressWidget from '@/components/dashboard/MyCampProgressWidget'; 
 import LiveSeanceWidget from '@/components/dashboard/LiveSeanceWidget';
 import { useContext } from 'react';
 import { TranslationContext } from '@/context/TranslationProvider';
+import Masonry from 'react-masonry-css';
 
-function Dashboard({ user, collabCount, formationsCount, specialitysCount, coursCount, taskSummaries, latestNotifications, urgentTasks, collaboratorActiveCamps, activeSeance }) {
+function Dashboard({ user, usersCount, formationsCount, specialitysCount, coursCount, taskSummaries, latestNotifications, urgentTasks, userActiveCamps, activeSeance }) {
     const { translations } = useContext(TranslationContext);
 
     const breadcrumbs = [
@@ -19,9 +20,9 @@ function Dashboard({ user, collabCount, formationsCount, specialitysCount, cours
         },
     ];
     const isAdmin = user.roles.some(role => role.name === 'admin');
-    const isCollaborator = user.roles.some(role => role.name === 'collaborator');
+    const isStudent = user.roles.some(role => role.name === 'student');
 
-    if (isCollaborator) {
+    if (isStudent) {
         return (
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Dashboard" />
@@ -34,7 +35,7 @@ function Dashboard({ user, collabCount, formationsCount, specialitysCount, cours
 
                     {/* Sidebar Column */}
                     <div className="lg:col-span-1 flex flex-col gap-6">
-                        <MyCampProgressWidget camps={collaboratorActiveCamps} />
+                        <MyCampProgressWidget camps={userActiveCamps} />
                         <LatestNotifications notifications={latestNotifications} />
                     </div>
                 </div>
@@ -56,7 +57,7 @@ function Dashboard({ user, collabCount, formationsCount, specialitysCount, cours
         widgets.push(
             <AdminTaskSummary
                 key="admin-summary"
-                collabCount={collabCount}
+                usersCount={usersCount}
                 specialitysCount={specialitysCount}
                 coursCount={coursCount}
                 formationsCount={formationsCount}
@@ -67,7 +68,7 @@ function Dashboard({ user, collabCount, formationsCount, specialitysCount, cours
 
     widgets.push(<LatestNotifications key="notifications" notifications={latestNotifications} />);
 
-    if (isCollaborator) {
+    if (isStudent) {
         widgets.push(
             <UpcomingDeadlines
             key="collab-deadlines"
@@ -75,7 +76,7 @@ function Dashboard({ user, collabCount, formationsCount, specialitysCount, cours
             />,
             <MyCampProgressWidget
             key="collab-progress"
-            camps={collaboratorActiveCamps}
+            camps={userActiveCamps}
             />,
         );
     }

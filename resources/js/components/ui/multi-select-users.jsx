@@ -13,7 +13,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Badge } from '@/components/ui/badge';
 
-export function MultiSelectCollaborators({ collaborators, selected, onSelectChange }) {
+export function MultiSelectUsers({ users, selected, onSelectChange }) {
     const [open, setOpen] = useState(false);
     const [selectedCollaborators, setSelectedCollaborators] = useState(selected || []);
 
@@ -21,22 +21,22 @@ export function MultiSelectCollaborators({ collaborators, selected, onSelectChan
         setSelectedCollaborators(selected || []);
     }, [selected]);
 
-    const handleSelect = (collaboratorId) => {
-        const newSelection = selectedCollaborators.includes(collaboratorId)
-            ? selectedCollaborators.filter((id) => id !== collaboratorId)
-            : [...selectedCollaborators, collaboratorId];
-        setSelectedCollaborators(newSelection);
+    const handleSelect = (userId) => {
+        const newSelection = selectedUsers.includes(userId)
+            ? selectedUsers.filter((id) => id !== userId)
+            : [...selectedUsers, userId];
+        setSelectedUsers(newSelection);
         onSelectChange(newSelection);
     };
 
-    const handleRemove = (collaboratorId) => {
-        const newSelection = selectedCollaborators.filter((id) => id !== collaboratorId);
-        setSelectedCollaborators(newSelection);
+    const handleRemove = (userId) => {
+        const newSelection = selectedUsers.filter((id) => id !== userId);
+        setSelectedUsers(newSelection);
         onSelectChange(newSelection);
     };
 
-    const displayValue = selectedCollaborators
-        .map((id) => collaborators.find((c) => c.id === parseInt(id))?.name)
+    const displayValue = selectedUsers
+        .map((id) => users.find((u) => u.id === parseInt(id))?.name)
         .filter(Boolean)
         .join(', ');
 
@@ -51,11 +51,11 @@ export function MultiSelectCollaborators({ collaborators, selected, onSelectChan
                 >
                     {selectedCollaborators.length > 0 ? (
                         <div className="flex flex-wrap gap-1">
-                            {selectedCollaborators.map((id) => {
-                                const collaborator = collaborators.find((c) => c.id === parseInt(id));
-                                return collaborator ? (
+                            {selectedUsers.map((id) => {
+                                const user = users.find((u) => u.id === parseInt(id));
+                                return user ? (
                                     <Badge key={id} variant="secondary" className="flex items-center gap-1">
-                                        {collaborator.name}
+                                        {user.name}
                                         <button
                                             type="button"
                                             onClick={(e) => {
@@ -71,31 +71,31 @@ export function MultiSelectCollaborators({ collaborators, selected, onSelectChan
                             })}
                         </div>
                     ) : (
-                        'Select collaborators...'
+                        'Select users...'
                     )}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
                 <Command>
-                    <CommandInput placeholder="Search collaborators..." />
-                    <CommandEmpty>No collaborator found.</CommandEmpty>
+                    <CommandInput placeholder="Search users..." />
+                    <CommandEmpty>No user found.</CommandEmpty>
                     <CommandGroup>
-                        {collaborators.map((collaborator) => (
+                        {users.map((user) => (
                             <CommandItem
-                                key={collaborator.id}
-                                value={collaborator.name}
-                                onSelect={() => handleSelect(collaborator.id.toString())}
+                                key={user.id}
+                                value={user.name}
+                                onSelect={() => handleSelect(user.id.toString())}
                             >
                                 <CheckIcon
                                     className={cn(
                                         'mr-2 h-4 w-4',
-                                        selectedCollaborators.includes(collaborator.id.toString())
+                                        selectedUsers.includes(user.id.toString())
                                             ? 'opacity-100'
                                             : 'opacity-0'
                                     )}
                                 />
-                                {collaborator.name}
+                                {user.name}
                             </CommandItem>
                         ))}
                     </CommandGroup>

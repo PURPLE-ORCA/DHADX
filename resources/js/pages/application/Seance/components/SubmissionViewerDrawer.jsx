@@ -44,7 +44,7 @@ export default function SubmissionViewerDrawer({ submission, exercise_title, tri
                 <div className="mx-auto w-full max-w-4xl flex flex-col h-[85vh]"> 
                     
                     <DrawerHeader className="flex-shrink-0">
-                        <DrawerTitle>Submission from: {submission.collaborator.user.name}</DrawerTitle>
+                        <DrawerTitle>Submission from: {submission.user.name}</DrawerTitle>
                         <DrawerDescription>
                             Exercise: {exercise_title}
                         </DrawerDescription>

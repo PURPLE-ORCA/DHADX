@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Camp;
-use App\Models\Collaborator;
 use App\Models\Cour;
 use App\Models\User; // Import User model
 use Illuminate\Http\Request;
@@ -17,7 +16,7 @@ class CampController extends Controller
      */
     public function index()
     {
-        $camps = Camp::with(['collaborator', 'cour', 'formation'])->get();
+        $camps = Camp::with(['user', 'cour', 'formation'])->get();
 
         return Inertia::render('application/Camp/Camps', [
             'camps' => $camps
@@ -29,9 +28,14 @@ class CampController extends Controller
      */
     public function create()
     {
-        return Inertia::render('application/Camp/Create', [
-            'collaborators' => Collaborator::all(),
-            'cours' => Cour::with('formations')->get()
+        $users = \App\Models\User::whereHas('roles', function ($query) {
+            $query->where('name', 'collaborator');
+        })->get();
+        $cours = \App\Models\Cour::all();
+
+        return \Inertia\Inertia::render('application/Camp/Create', [
+            'users' => $users,
+            'cours' => $cours,
         ]);
     }
 
@@ -41,7 +45,7 @@ class CampController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'collaborator_id' => 'required|exists:collaborators,id',
+            'user_id' => 'required|exists:users,id',
             'cour_id' => 'required|exists:cours,id',
         ]);
 
@@ -49,17 +53,17 @@ class CampController extends Controller
 
         foreach ($cour->formations as $formation) {
             $camp = Camp::updateOrCreate([ // Assign the created/updated camp to $camp
-                'collaborator_id' => $request->collaborator_id,
+                'user_id' => $request->user_id, // Changed from collaborator_id
                 'cour_id' => $cour->id,
                 'formation_id' => $formation->id,
             ], [
                 'progress' => 0,
             ]);
 
-            // Send notification to the enrolled collaborator
-            $collaborator = Collaborator::find($request->collaborator_id);
-            if ($collaborator && $collaborator->user) {
-                $collaborator->user->notify(new CollaboratorEnrolledInCampNotification($camp));
+            // Send notification to the enrolled user
+            $user = User::find($request->user_id); // Changed from Collaborator::find
+            if ($user) { // User model is directly used, no need for $user->user
+                $user->notify(new CollaboratorEnrolledInCampNotification($camp));
             }
         }
 
@@ -80,7 +84,7 @@ class CampController extends Controller
     public function edit(Camp $camp)
     {
         return Inertia::render('application/Camp/Edit', [
-            'camp' => $camp->load(['collaborator', 'cour', 'formation'])
+            'camp' => $camp->load(['user', 'cour', 'formation'])
         ]);
     }
 

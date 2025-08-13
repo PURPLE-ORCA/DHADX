@@ -32,5 +32,8 @@ class SpecialitySeeder extends Seeder
         Speciality::create([
             "name" => "Video editor"
         ]);
+        Speciality::create([
+            "name" => "Content creator"
+        ]);
     }
 }

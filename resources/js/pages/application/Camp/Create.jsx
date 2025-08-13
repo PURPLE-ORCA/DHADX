@@ -1,18 +1,18 @@
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import AppLayout from '@/layouts/app-layout';
-import { Head, router, useForm } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
-import { toast } from "sonner";
-import { useContext } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TranslationContext } from '@/context/TranslationProvider';
+import AppLayout from '@/layouts/app-layout';
+import { Head, useForm } from '@inertiajs/react';
+import { LoaderCircle } from 'lucide-react';
+import { useContext } from 'react';
+import { toast } from 'sonner';
 
-export default function Create({ collaborators, cours }) {
+export default function Create({ users, cours }) {
     const { translations } = useContext(TranslationContext);
     const { data, setData, post, processing, reset, errors } = useForm({
-        collaborator_id: '',
+        user_id: '',
         cour_id: '',
     });
 
@@ -26,8 +26,8 @@ export default function Create({ collaborators, cours }) {
             },
             onError: (errors) => {
                 toast.error(translations.camps.create_error_toast);
-                console.error("Save errors:", errors);
-            }
+                console.error('Save errors:', errors);
+            },
         });
     };
 
@@ -52,47 +52,37 @@ export default function Create({ collaborators, cours }) {
                 <form className="space-y-6" onSubmit={submitForm}>
                     {/* Collaborator Select */}
                     <div className="grid gap-2">
-                        <Label htmlFor="collaborator_id">
-                            {translations.camps.collaborator_label}
-                        </Label>
-<Select
-    value={String(data.collaborator_id)}
-    onValueChange={(value) => setData('collaborator_id', value)}
->
-    <SelectTrigger className="w-full">
-        <SelectValue placeholder={translations.camps.select_collaborator_placeholder} />
-    </SelectTrigger>
-    <SelectContent>
-        {collaborators.map((c) => (
-            <SelectItem key={c.id} value={String(c.id)}>
-                {c.name}
-            </SelectItem>
-        ))}
-    </SelectContent>
-</Select>
-                        <InputError message={errors.collaborator_id} />
+                        <Label htmlFor="user_id">{translations.camps.user_label}</Label>
+                        <Select value={String(data.user_id)} onValueChange={(value) => setData('user_id', value)}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder={translations.camps.select_user_placeholder} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {users.map((u) => (
+                                    <SelectItem key={u.id} value={String(u.id)}>
+                                        {u.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        <InputError message={errors.user_id} />
                     </div>
 
                     {/* Cour Select */}
                     <div className="grid gap-2">
-                        <Label htmlFor="cour_id">
-                            {translations.camps.course_label}
-                        </Label>
-<Select
-    value={String(data.cour_id)}
-    onValueChange={(value) => setData('cour_id', value)}
->
-    <SelectTrigger className="w-full">
-        <SelectValue placeholder={translations.camps.select_course_placeholder} />
-    </SelectTrigger>
-    <SelectContent>
-        {cours.map((c) => (
-            <SelectItem key={c.id} value={String(c.id)}>
-                {c.name}
-            </SelectItem>
-        ))}
-    </SelectContent>
-</Select>
+                        <Label htmlFor="cour_id">{translations.camps.course_label}</Label>
+                        <Select value={String(data.cour_id)} onValueChange={(value) => setData('cour_id', value)}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder={translations.camps.select_course_placeholder} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {cours.map((c) => (
+                                    <SelectItem key={c.id} value={String(c.id)}>
+                                        {c.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                         <InputError message={errors.cour_id} />
                     </div>
 

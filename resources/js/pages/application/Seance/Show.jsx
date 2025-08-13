@@ -19,7 +19,7 @@ export default function Show({ seance, isMentor, current_user_id }) {
     const [isCheckedIn, setIsCheckedIn] = useState(false);
     const [attendees, setAttendees] = useState(seance.attendees);
     const [exercises, setExercises] = useState(seance.exercises);
-    const [isHandRaised, setIsHandRaised] = useState(false); // New state for collaborator's hand
+    const [isHandRaised, setIsHandRaised] = useState(false); // New state for user's hand
     const [handRaiseQueue, setHandRaiseQueue] = useState([]); // New state for mentor's queue
 
     // --- CONSOLIDATED AND CORRECTED USEEFFECT ---
@@ -57,7 +57,7 @@ export default function Show({ seance, isMentor, current_user_id }) {
                 setTimeout(() => setShowPresenceButton(false), 60000);
             });
 
-            // Listener for HandDismissedByMentor event (whispered to collaborator)
+            // Listener for HandDismissedByMentor event (whispered to user)
             userChannel = window.Echo.private(`App.Models.User.${current_user_id}`);
             userChannel.listen('.App\\Events\\HandDismissedByMentor', (event) => {
                 console.log('Mentor dismissed my hand.');
@@ -67,24 +67,24 @@ export default function Show({ seance, isMentor, current_user_id }) {
 
         if (isMentor) {
             // Mentor-specific listeners on the seance channel
-            seanceChannel.listen('.App\\Events\\CollaboratorCheckedIn', (event) => {
-                console.log('A collaborator checked in!', event);
+            seanceChannel.listen('.App\\Events\\UserCheckedIn', (event) => {
+                console.log('A user checked in!', event);
                 setAttendees((currentAttendees) =>
                     currentAttendees.map((attendee) =>
-                        attendee.id === event.collaborator.id ? { ...attendee, pivot: { ...attendee.pivot, status: 'present' } } : attendee,
+                        attendee.id === event.user.id ? { ...attendee, pivot: { ...attendee.pivot, status: 'present' } } : attendee,
                     ),
                 );
             });
 
-            // Listener for CollaboratorHandStateChanged event (for mentor's queue)
-            seanceChannel.listen('.App\\Events\\CollaboratorHandStateChanged', (event) => {
+            // Listener for UserHandStateChanged event (for mentor's queue)
+            seanceChannel.listen('.App\\Events\\UserHandStateChanged', (event) => {
                 setHandRaiseQueue(currentQueue => {
-                    // Remove the collaborator first to handle both raise/lower cases
-                    const filteredQueue = currentQueue.filter(c => c.id !== event.collaborator.id);
+                    // Remove the user first to handle both raise/lower cases
+                    const filteredQueue = currentQueue.filter(u => u.id !== event.user.id);
                     
                     // If their hand is raised, add them to the end of the new queue
                     if (event.isRaised) {
-                        return [...filteredQueue, event.collaborator];
+                        return [...filteredQueue, event.user];
                     }
                     
                     // Otherwise, just return the filtered queue (hand is lowered)
@@ -172,7 +172,7 @@ export default function Show({ seance, isMentor, current_user_id }) {
             });
     };
 
-    // Create the handler function for collaborator's hand raise/lower
+    // Create the handler function for user's hand raise/lower
     const handleToggleHand = () => {
         const newHandState = !isHandRaised;
         setIsHandRaised(newHandState);
@@ -197,7 +197,7 @@ export default function Show({ seance, isMentor, current_user_id }) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={seance.topic} />
 
-            <div className="p-4 flex flex-col h-full"> {/* Make the main container a flex column */}
+            <div className="p-4 flex flex-col h-full">
                 
                 {/* Pass all necessary data and handlers to the header */}
                 <SeanceHeader 

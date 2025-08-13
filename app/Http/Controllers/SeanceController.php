@@ -12,17 +12,15 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use App\Events\PresenceCheckStarted; 
 use App\Models\Camp;
-use App\Events\CollaboratorCheckedIn; // <-- Add this import at the top
+use App\Events\UserCheckedIn; 
 use App\Events\ExerciseSubmitted;
-use App\Events\SeanceStatusUpdated; // We will create this event next
-use App\Events\AttendanceStateReset; // New event for resetting attendance
-use App\Events\CollaboratorHandStateChanged;
+use App\Events\SeanceStatusUpdated; 
+use App\Events\AttendanceStateReset; 
+use App\Events\UserHandStateChanged; 
 use App\Events\HandDismissedByMentor;
-use App\Models\Collaborator;
 
 class SeanceController extends Controller
 {
-    // --- Admin/Mentor Views ---
 
     public function index() {
         $seances = Seance::with('course', 'mentor')->latest()->paginate(10);
@@ -30,7 +28,7 @@ class SeanceController extends Controller
     }
 
     public function create() {
-        // We need lists of courses and mentors to populate dropdowns in the form
+        // lists of courses and mentors to populate dropdowns in the form
         $courses = Cour::select('id', 'name')->get();
         $mentors = User::whereHas('roles', fn($q) => $q->where('name', 'admin'))->select('id', 'name')->get(); // Assuming mentors are admins
         return Inertia::render('application/Seance/Create', [
@@ -50,9 +48,9 @@ class SeanceController extends Controller
         ]);
         $seance = Seance::create($validated);
 
-        // **CRITICAL LOGIC:** Automatically enroll all collaborators from the course's camps
-        $collaboratorIds = Camp::where('cour_id', $seance->course_id)->pluck('collaborator_id')->unique();
-        $seance->attendees()->sync($collaboratorIds); // This creates the initial attendance records
+        // **CRITICAL LOGIC:** Automatically enroll all users with 'collaborator' role from the course's camps
+        $userIds = Camp::where('cour_id', $seance->course_id)->pluck('user_id')->unique();
+        $seance->attendees()->sync($userIds); // This creates the initial attendance records
 
         return redirect()->route('seances.index')->with('message', 'Seance created successfully.');
     }
@@ -79,8 +77,8 @@ class SeanceController extends Controller
         $seance->update($validated);
 
         // Re-sync attendees if course changed or for any reason
-        $collaboratorIds = Camp::where('cour_id', $seance->course_id)->pluck('collaborator_id')->unique();
-        $seance->attendees()->sync($collaboratorIds);
+        $userIds = Camp::where('cour_id', $seance->course_id)->pluck('user_id')->unique();
+        $seance->attendees()->sync($userIds);
 
         return redirect()->route('seances.index')->with('message', 'Seance updated successfully.');
     }
@@ -122,24 +120,19 @@ class SeanceController extends Controller
 
     public function startPresenceCheck(Seance $seance)
     {
-        // Authorization is handled by the policy, so we're good here.
-
-        // --- THE NEW LOGIC: RESETTING THE BOARD ---
         // First, find all attendance records for this seance and reset their status.
-        // We'll do this with a direct DB update for efficiency.
+        // I'm doing this with a direct DB update for efficiency.
         DB::table('seance_attendances')
             ->where('seance_id', $seance->id)
             ->update(['status' => 'absent', 'checked_in_at' => null]);
-        // ------------------------------------------
 
         // Now, broadcast the event as before to trigger the check-in button.
         broadcast(new PresenceCheckStarted($seance->id));
         
-        // We should also broadcast a "state reset" event to the mentor's UI.
+        // also broadcast a "state reset" event to the mentor's UI.
         // Re-fetch the attendees with all their data
-        $freshAttendeesCollection = $seance->attendees()->with('user:id,name')->get();
+        $freshAttendeesCollection = $seance->attendees()->get();
 
-        // --- THE FINAL, FINAL, FINAL FIX ---
         // Convert the Eloquent Collection into a plain PHP array.
         $freshAttendeesArray = $freshAttendeesCollection->map(function ($attendee) {
             return [
@@ -150,14 +143,12 @@ class SeanceController extends Controller
                 ],
                 'pivot' => [
                     'seance_id' => $attendee->pivot->seance_id,
-                    'collaborator_id' => $attendee->pivot->collaborator_id,
+                    'user_id' => $attendee->pivot->user_id, // Changed from collaborator_id
                     'status' => $attendee->pivot->status, // This will be 'absent'
                 ],
-                // You can add profile_photo_url here if you need it
-                'profile_photo_url' => $attendee->profile_photo_url, 
+                'profile_photo_url' => $attendee->profile_photo_url,
             ];
         })->toArray();
-        // ------------------------------------
 
         // Broadcast the plain array, not the Eloquent Collection
         broadcast(new AttendanceStateReset($seance->id, $freshAttendeesArray));
@@ -167,13 +158,13 @@ class SeanceController extends Controller
 
     public function recordCheckIn(Seance $seance)
     {
-        $collaborator = Auth::user()->collaboratorProfile;
-        if (!$collaborator) {
+        $user = Auth::user();
+        if (!$user->hasRole('collaborator')) { // Check if the user has the 'collaborator' role
             return response()->json(['error' => 'User is not a collaborator.'], 403);
         }
 
         // Find the attendance record and update it
-        $attendance = $seance->attendees()->where('collaborator_id', $collaborator->id)->first();
+        $attendance = $seance->attendees()->where('user_id', $user->id)->first(); // Changed from collaborator_id
         
         if ($attendance) {
             // This uses the pivot accessor to update the pivot table data
@@ -181,11 +172,8 @@ class SeanceController extends Controller
             $attendance->pivot->checked_in_at = now();
             $attendance->pivot->save();
 
-            // --- THE NEW LOGIC ---
             // Load the user relationship so the name is available on the frontend
-            $collaborator->load('user:id,name'); 
-            broadcast(new CollaboratorCheckedIn($seance->id, $collaborator));
-            // --------------------
+            broadcast(new UserCheckedIn($seance->id, $user)); // Changed event and passed user
 
             return response()->json(['message' => 'Checked in successfully.']);
         }
@@ -203,8 +191,8 @@ class SeanceController extends Controller
         $seance->load([
             'course:id,name',
             'mentor:id,name',
-            'exercises.submissions.collaborator.user:id,name',
-            'attendees.user:id,name' // Load the user for each collaborator in the attendance list
+            'exercises.submissions.user:id,name',
+            'attendees:id,name' // Load the user for each collaborator in the attendance list
         ]);
         
         $mySubmission = null;
@@ -241,13 +229,13 @@ class SeanceController extends Controller
             return back()->withErrors(['submission' => 'Either text content or a file must be provided.']);
         }
 
-        $collaborator = Auth::user()->collaboratorProfile;
-        if (!$collaborator) {
+        $user = Auth::user();
+        if (!$user->hasRole('collaborator')) { // Check if the user has the 'collaborator' role
             abort(403, 'User is not a collaborator.');
         }
 
         $submissionData = [
-            'collaborator_id' => $collaborator->id,
+            'user_id' => $user->id, 
         ];
 
         if (isset($validated['file'])) {
@@ -261,15 +249,14 @@ class SeanceController extends Controller
 
         $submission = $exercise->submissions()->create($submissionData);
 
-        // --- THE REVISED, SECURE LOGIC ---
-        $submission->load('collaborator.user:id,name');
-        
+        // Load the user relationship
+        $submission->load('user:id,name');
+
         // Find the mentor's ID from the exercise's parent seance
         $mentorId = $exercise->seance->mentor_id;
 
         // Dispatch the event with the submission AND the mentor's ID
         broadcast(new ExerciseSubmitted($submission, $mentorId));
-        // ------------------------------------
 
         return back()->with('message', 'Submission successful!');
     }
@@ -277,23 +264,21 @@ class SeanceController extends Controller
     public function toggleHandState(Request $request, Seance $seance) {
         $request->validate(['isRaised' => 'required|boolean']);
         
-        $collaborator = Auth::user()->collaboratorProfile->load('user:id,name');
+        $user = Auth::user();
         
-        broadcast(new CollaboratorHandStateChanged($seance->id, $collaborator, $request->isRaised));
+        broadcast(new UserHandStateChanged($seance->id, $user, $request->isRaised)); // Changed event and passed user
         
         return response()->json(['status' => 'success']);
     }
     
-    public function dismissHand(Seance $seance, Collaborator $collaborator) {
-        // Find the user associated with this collaborator profile
-        $userToNotify = $collaborator->user;
-        
-        if ($userToNotify) {
-            broadcast(new HandDismissedByMentor($userToNotify->id));
+    public function dismissHand(Seance $seance, User $user) { // Changed type-hint and variable name
+        // The user to notify is the user passed in
+        if ($user) {
+            broadcast(new HandDismissedByMentor($user->id));
         }
 
         // We also need to tell everyone else the hand was lowered
-        broadcast(new CollaboratorHandStateChanged($seance->id, $collaborator->load('user:id,name'), false));
+        broadcast(new UserHandStateChanged($seance->id, $user, false)); // Changed event and passed user
         
         return response()->json(['status' => 'success']);
     }

@@ -6,7 +6,7 @@ use App\Http\Controllers\CollaboratorController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FormationController;
 use App\Http\Controllers\SpecialityController;
-use App\Http\Controllers\CollaboratorPortalController;
+use App\Http\Controllers\UserPortalController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\NotificationController;
@@ -19,6 +19,7 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
+//  TODO refactor the routes to use 'resource' as much as possible 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Notification Routes
     Route::get('/notifications/pending-count', [NotificationController::class, 'pendingCount'])->name('notifications.pendingCount');
@@ -30,11 +31,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     Route::middleware('can:is_admin')->group(function () {
         Route::resource('camps', CampController::class);
-        Route::resource('collaborators', CollaboratorController::class);
         Route::resource('specialities', SpecialityController::class);
         Route::resource('formations', FormationController::class);
         Route::resource('cours', CourController::class);
         Route::resource('tasks', TaskController::class)->except(['index', 'show']);
+        Route::resource('users', UserPortalController::class);
     });
 
     // SEANCE MANAGEMENT (for Mentors/Admins)
@@ -46,9 +47,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/seances/{seance}', [SeanceController::class, 'update'])->name('seances.update'); // Update seance
         Route::delete('/seances/{seance}', [SeanceController::class, 'destroy'])->name('seances.destroy');
 
-    // Add these alongside your other seance action routes
     Route::post('/seances/{seance}/start', [SeanceController::class, 'startSeance'])
-        ->middleware('can:update,seance') // Reuse the update policy or create a new one
+        ->middleware('can:update,seance') 
         ->name('seances.start');
 
     Route::post('/seances/{seance}/finish', [SeanceController::class, 'finishSeance'])
@@ -65,8 +65,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('seances.hand.toggle');
 
     // Mentor action to dismiss a hand from the queue
-    Route::post('/seances/{seance}/dismiss-hand/{collaborator}', [SeanceController::class, 'dismissHand'])
-        ->middleware('can:update,seance') // The policy protects this for mentors
+    Route::post('/seances/{seance}/hand/dismiss/{user}', [SeanceController::class, 'dismissHand'])
+        ->middleware('can:update,seance')
         ->name('seances.hand.dismiss');
     
     // Mentor-specific presence check initiation
@@ -98,7 +98,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/tasks/{task}/comments', [TaskController::class, 'storeComment'])->name('tasks.storeComment');
 
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
-    Route::get('/my-tasks', [CollaboratorPortalController::class, 'myTasks'])->name('collaborator.tasks');
+    Route::get('/my-tasks', [UserPortalController::class, 'myTasks'])->name('user.tasks'); // Changed controller and route name
 
     // Whiteboard Routes
     Route::get('/whiteboards', [WhiteboardController::class, 'index'])->name('whiteboards.index');

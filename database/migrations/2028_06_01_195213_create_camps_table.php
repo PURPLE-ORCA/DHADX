@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('camps', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('collaborator_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('cour_id')->constrained()->onDelete('cascade');
             $table->foreignId('formation_id')->constrained()->onDelete('cascade');
             $table->unsignedInteger('progress')->default(0);

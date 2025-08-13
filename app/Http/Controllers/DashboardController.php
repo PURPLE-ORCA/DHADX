@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Camp;
-use App\Models\Collaborator;
 use App\Models\Cour;
 use App\Models\Formation;
 use App\Models\Speciality;
+use App\Models\User; // Added User model import
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Task;
@@ -17,7 +17,7 @@ class DashboardController extends Controller
 {
     public function dashboard()
     {
-        $collabCount = Collaborator::count();
+        $collabCount = User::whereHas('roles', fn($q) => $q->where('name', 'collaborator'))->count();
         $formationsCount = Formation::count();
         $coursCount = Cour::count();
         $specialitysCount = Speciality::count();
@@ -72,24 +72,20 @@ class DashboardController extends Controller
                 $urgentTasks = $overdueTasks->merge($imminentTasks)->unique('id');
 
                 $upcomingSeance = null;
-                $collaboratorProfile = $user->collaboratorProfile;
-
-                if ($collaboratorProfile) {
                 // First, try to find a seance that is currently live.
-                $activeSeance = Seance::whereHas('attendees', fn($q) => $q->where('collaborator_id', $collaboratorProfile->id))
+                $activeSeance = Seance::whereHas('attendees', fn($q) => $q->where('user_id', $user->id))
                     ->where('status', 'live')
                     ->with('course:id,name', 'mentor:id,name')
                     ->first();
 
                 // If no seance is live, find the very next scheduled one.
                 if (!$activeSeance) {
-                    $activeSeance = Seance::whereHas('attendees', fn($q) => $q->where('collaborator_id', $collaboratorProfile->id))
+                    $activeSeance = Seance::whereHas('attendees', fn($q) => $q->where('user_id', $user->id))
                         ->where('status', 'scheduled')
                         ->where('scheduled_at', '>=', now())
                         ->orderBy('scheduled_at', 'asc')
                         ->with('course:id,name', 'mentor:id,name')
                         ->first();
-                }
                 }
             }
 
@@ -97,7 +93,7 @@ class DashboardController extends Controller
 
             if ($isCollaborator) {
                 // Fetch active camps for the collaborator
-                $collaboratorActiveCamps = Camp::where('collaborator_id', $user->id)
+                $collaboratorActiveCamps = Camp::where('user_id', $user->id)
                     ->with(['cour:id,name,label', 'formation:id,name']) // Select specific columns for efficiency, including 'label'
                     ->orderBy('cour_id')
                     ->orderByDesc('progress')
@@ -106,7 +102,7 @@ class DashboardController extends Controller
 
             return Inertia::render('dashboard', [
                 'user' => $user, // Pass the user object with roles
-                'collabCount' => $collabCount,
+                'usersCount' => $collabCount,
                 'specialitysCount' => $specialitysCount,
                 'formationsCount' => $formationsCount,
                 'coursCount' => $coursCount,

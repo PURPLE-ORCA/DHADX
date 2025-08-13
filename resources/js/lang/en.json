@@ -14,11 +14,12 @@
         "leaderboard": "Leaderboard",
         "my_tasks": "My Tasks",
         "tasks": "Tasks",
-        "collaborators": "Collaborators",
+        "users": "Users",
         "specialities": "Specialities",
         "cours": "Courses",
         "formations": "Formations",
-        "camps": "Camps"
+        "camps": "Camps",
+        "whiteboards": "Whiteboards"
     },
     "admin_dashboard": {
         "collaborators_title": "Collaborators",
@@ -80,8 +81,10 @@
         "course_label": "Course",
         "select_course_placeholder": "Select course",
         "add_button": "Add",
+        "user_label": "Student name",
+        "select_user_placeholder": "Select student",
         "data": {
-            "collaborator_name_heading": "Collaborator: :collaborator_name",
+            "user_name_heading": "Camps for :user_name",
             "course_name_heading": "Course: :course_name"
         }
     },
@@ -100,37 +103,64 @@
         "cancel_button": "Cancel",
         "delete_button_confirm": "Delete"
     },
-    "collaborators": {
+    "users": {
         "collaborators_list": "Collaborators list",
         "title": "Collaborators",
         "search_placeholder": "Search collaborator...",
         "add_new": "Add new",
-        "create_success_toast": "Collaborator saved successfully!",
-        "create_error_toast": "Failed to save collaborator. Please check the form.",
-        "add_new_collaborator": "Add New Collaborator",
+        "create_success_toast": "User created successfully!",
+        "create_error_toast": "Failed to create user. Please check the form.",
+        "add_new_user": "Add New User",
         "name_label": "Name",
-        "name_placeholder": "Name",
+        "name_placeholder": "Enter user's full name",
         "email_label": "Email",
-        "email_placeholder": "collaborator@example.com",
+        "email_placeholder": "user@example.com",
+        "birth_date_label": "Birth Date",
+        "cin_label": "CIN",
+        "cin_placeholder": "Enter user's CIN",
+        "gender_label": "Gender",
+        "select_gender_placeholder": "Select a gender",
+        "gender_male": "Male",
+        "gender_female": "Female",
+        "gender_other": "Other",
+        "image_label": "Profile Image",
         "specialities_label": "Specialities",
-        "add_button": "Add",
+        "phone_label": "Phone",
+        "phone_placeholder": "Enter user's phone number",
+        "add_button": "Add User",
         "table_head_name": "Name",
         "table_head_specialities": "Specialities",
         "assign_task_button": "Assign Task",
         "edit_button": "Edit",
+        "users_list": "Users List",
+        "edit_user": "Edit User",
+        "update_success_toast": "User updated successfully.",
+        "update_error_toast": "Failed to update user.",
+        "save_button": "Save Changes",
         "edit": {
-            "edit_collaborator": "Edit collaborator",
-            "page_title": "Edit Collaborator",
-            "updated_successfully": "Collaborator updated successfully!",
-            "failed_to_update": "Failed to update collaborator. Please check the form.",
-            "edit_collaborator_heading": "Edit Collaborator",
+            "edit_user": "Edit User",
+            "page_title": "Edit User",
+            "updated_successfully": "User updated successfully!",
+            "failed_to_update": "Failed to update user. Please check the form.",
+            "edit_user_heading": "Edit User",
             "name_label": "Name",
-            "name_placeholder": "Name",
+            "name_placeholder": "Enter user's full name",
             "email_label": "Email",
+            "email_placeholder": "user@example.com",
+            "birth_date_label": "Birth Date",
+            "cin_label": "CIN",
+            "cin_placeholder": "Enter user's CIN",
+            "gender_label": "Gender",
+            "select_gender_placeholder": "Select a gender",
+            "gender_male": "Male",
+            "gender_female": "Female",
+            "gender_other": "Other",
+            "image_label": "Profile Image",
             "specialities_label": "Specialities",
             "cancel_button": "Cancel",
             "update_button": "Update"
-        }
+        },
+        "deleted_successfully": "User deleted successfully"
     },
     "collaborator_delete": {
         "deleted_successfully": "Deleted successfully!",
@@ -427,5 +457,11 @@
             "medium": "Medium Priority",
             "high": "High Priority"
         }
+    },
+    "user_delete": {
+        "title": "Delete User",
+        "text": "Are you sure you want to delete {name}? This action cannot be undone.",
+        "cancel_button": "Cancel",
+        "delete_button": "Delete"
     }
 }
