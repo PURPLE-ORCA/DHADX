@@ -13,11 +13,16 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\WhiteboardController;
 use App\Http\Controllers\SeanceController;
+use App\Http\Controllers\CertificateController;
 use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
+
+// Public certificate verification (unauthenticated)
+Route::get('/verify-certificate', [CertificateController::class, 'showVerificationForm'])->name('certificates.verify.form');
+Route::post('/verify-certificate', [CertificateController::class, 'verify'])->name('certificates.verify.submit');
 
 //  TODO refactor the routes to use 'resource' as much as possible 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -36,6 +41,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('cours', CourController::class);
         Route::resource('tasks', TaskController::class)->except(['index', 'show']);
         Route::resource('users', UserPortalController::class);
+    });
+
+    // Admin-facing certificate management (authenticated and authorized)
+    Route::middleware('can:is_admin')->group(function () {
+        Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates.index');
+        Route::get('/certificates/create', [CertificateController::class, 'create'])->name('certificates.create');
+        Route::post('/certificates', [CertificateController::class, 'store'])->name('certificates.store');
     });
 
     // SEANCE MANAGEMENT (for Mentors/Admins)

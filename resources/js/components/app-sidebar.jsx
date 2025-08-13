@@ -14,7 +14,8 @@ import {
     ClipboardList,
     Brush,
     CalendarDays,
-    Users
+    Users,
+    Award 
 } from 'lucide-react';
 import AppLogo from './app-logo';
 import { useContext } from 'react';
@@ -32,7 +33,8 @@ const iconLeaderboard = Trophy;
 const iconMyTasks = ListChecks;
 const iconWhiteboard = Brush;
 const iconSeances = CalendarDays;
-const iconUsers = Users; 
+const iconUsers = Users;
+const iconCertificates = Award; // Define the new icon
 
 export function AppSidebar() {
     const { auth } = usePage().props;
@@ -118,6 +120,12 @@ export function AppSidebar() {
                 url: route('camps.index'),
                 routeName: 'camps.index',
                 icon: iconCampsManagement,
+            },
+            {
+                title: translations.sidebar.certificates || 'Certificates',
+                url: route('certificates.index'),
+                routeName: 'certificates.index',
+                icon: iconCertificates,
             },
         );
     }
