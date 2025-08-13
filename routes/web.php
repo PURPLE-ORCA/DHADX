@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\CampController;
 use App\Http\Controllers\CourController;
-use App\Http\Controllers\CollaboratorController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FormationController;
 use App\Http\Controllers\SpecialityController;
@@ -13,11 +12,16 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\WhiteboardController;
 use App\Http\Controllers\SeanceController;
+use App\Http\Controllers\CertificateController;
 use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
+
+// Public certificate verification (unauthenticated)
+Route::get('/verify-certificate', [CertificateController::class, 'showVerificationForm'])->name('certificates.verify.form');
+Route::post('/verify-certificate', [CertificateController::class, 'verify'])->name('certificates.verify.submit');
 
 //  TODO refactor the routes to use 'resource' as much as possible 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -38,6 +42,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('users', UserPortalController::class);
     });
 
+    // Admin-facing certificate management (authenticated and authorized)
+    Route::middleware('can:is_admin')->group(function () {
+        Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates.index');
+        Route::get('/certificates/create', [CertificateController::class, 'create'])->name('certificates.create');
+        Route::post('/certificates', [CertificateController::class, 'store'])->name('certificates.store');
+        Route::put('/certificates/{certificate}', [CertificateController::class, 'update'])->name('certificates.update');
+        Route::delete('/certificates/{certificate}', [CertificateController::class, 'destroy'])->name('certificates.destroy');
+    });
+
     // SEANCE MANAGEMENT (for Mentors/Admins)
     Route::middleware('can:is_admin')->group(function () {
         Route::get('/seances', [SeanceController::class, 'index'])->name('seances.index'); // List all seances
@@ -46,20 +59,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/seances/{seance}/edit', [SeanceController::class, 'edit'])->name('seances.edit'); // Show edit form
         Route::put('/seances/{seance}', [SeanceController::class, 'update'])->name('seances.update'); // Update seance
         Route::delete('/seances/{seance}', [SeanceController::class, 'destroy'])->name('seances.destroy');
-
-    Route::post('/seances/{seance}/start', [SeanceController::class, 'startSeance'])
-        ->middleware('can:update,seance') 
-        ->name('seances.start');
-
-    Route::post('/seances/{seance}/finish', [SeanceController::class, 'finishSeance'])
-        ->middleware('can:update,seance')
-        ->name('seances.finish');
-        
-        Route::post('/seances/{seance}/cancel', [SeanceController::class, 'cancelSeance'])
-            ->middleware('can:update,seance')
-            ->name('seances.cancel');
-
+        Route::post('/seances/{seance}/start', [SeanceController::class, 'startSeance'])->middleware('can:update,seance') ->name('seances.start');
+        Route::post('/seances/{seance}/finish', [SeanceController::class, 'finishSeance'])->middleware('can:update,seance')->name('seances.finish');
+        Route::post('/seances/{seance}/cancel', [SeanceController::class, 'cancelSeance'])->middleware('can:update,seance')->name('seances.cancel');
     });
+
     // Collaborator action to raise/lower their own hand (ANY authenticated user can try)
     Route::post('/seances/{seance}/hand-state', [SeanceController::class, 'toggleHandState'])
         ->name('seances.hand.toggle');
@@ -78,27 +82,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/seances/{seance}/exercises', [SeanceController::class, 'storeExercise'])
         ->name('seances.exercises.store');
 
-    // LIVE SEANCE VIEW (for Mentors and Collaborators)
+    // LIVE SEANCE VIEW (for Mentors and Students)
     Route::get('/seances/{seance}', [SeanceController::class, 'show'])->name('seances.show');
 
     // Presence Check Routes
     Route::post('/seances/{seance}/check-in', [SeanceController::class, 'recordCheckIn'])->name('seances.presence.checkin');
 
-    // EXERCISE SUBMISSION (for Collaborators)
+    // EXERCISE SUBMISSION (for students)
     Route::post('/seance-exercises/{exercise}/submissions', [SeanceController::class, 'storeSubmission'])->name('exercises.submissions.store');
 
-    Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
-    Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
+    // * all tasks routes will be commented temporarily until I decide on the new tasks system
+    // Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+    // Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
 
-    Route::post('/tasks/{task}/start-progress', [TaskController::class, 'startProgress'])->name('tasks.startProgress');
-    Route::post('/tasks/{task}/submit-for-review', [TaskController::class, 'submitForReview'])->name('tasks.submitForReview');
-    Route::post('/tasks/{task}/approve-completion', [TaskController::class, 'approveCompletion'])->name('tasks.approveCompletion');
-    Route::post('/tasks/{task}/request-revision', [TaskController::class, 'requestRevision'])->name('tasks.requestRevision');
-    Route::post('/tasks/{task}/cancel', [TaskController::class, 'cancelTask'])->name('tasks.cancelTask');
-    Route::post('/tasks/{task}/comments', [TaskController::class, 'storeComment'])->name('tasks.storeComment');
+    // Route::post('/tasks/{task}/start-progress', [TaskController::class, 'startProgress'])->name('tasks.startProgress');
+    // Route::post('/tasks/{task}/submit-for-review', [TaskController::class, 'submitForReview'])->name('tasks.submitForReview');
+    // Route::post('/tasks/{task}/approve-completion', [TaskController::class, 'approveCompletion'])->name('tasks.approveCompletion');
+    // Route::post('/tasks/{task}/request-revision', [TaskController::class, 'requestRevision'])->name('tasks.requestRevision');
+    // Route::post('/tasks/{task}/cancel', [TaskController::class, 'cancelTask'])->name('tasks.cancelTask');
+    // Route::post('/tasks/{task}/comments', [TaskController::class, 'storeComment'])->name('tasks.storeComment');
+    // Route::get('/my-tasks', [UserPortalController::class, 'myTasks'])->name('user.tasks'); // Changed controller and route name
 
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
-    Route::get('/my-tasks', [UserPortalController::class, 'myTasks'])->name('user.tasks'); // Changed controller and route name
 
     // Whiteboard Routes
     Route::get('/whiteboards', [WhiteboardController::class, 'index'])->name('whiteboards.index');
