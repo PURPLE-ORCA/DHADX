@@ -460,5 +460,16 @@
         "text": "Êtes-vous sûr de vouloir supprimer {name} ? Cette action est irréversible.",
         "cancel_button": "Annuler",
         "delete_button": "Supprimer"
+    },
+    "certificates": {
+        "delete": {
+            "delete_button": "Supprimer",
+            "dialog_title": "Supprimer le certificat",
+            "dialog_description": "Êtes-vous sûr de vouloir supprimer ce certificat ? Cette action est irréversible.",
+            "cancel_button": "Annuler",
+            "delete_button_confirm": "Supprimer",
+            "deleted_successfully": "Certificat supprimé avec succès.",
+            "error_deleting": "Une erreur s'est produite lors de la suppression du certificat."
+        }
     }
 }

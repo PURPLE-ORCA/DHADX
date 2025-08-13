@@ -27,6 +27,7 @@ export default function ViewCertificateModal({ certificate, onClose }) {
                     </div>
                     <div className="space-y-2">
                         <p><strong>Student Name:</strong> {certificate.user.name}</p>
+                        <p><strong>Course:</strong> {certificate.course?.title}</p> {/* Add Course Name */}
                         <p><strong>Certificate Code:</strong> {certificate.code}</p>
                         <p><strong>Creation Date:</strong> {format(new Date(certificate.created_at), 'PPP')}</p>
                     </div>

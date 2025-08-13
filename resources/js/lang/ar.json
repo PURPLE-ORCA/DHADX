@@ -461,5 +461,16 @@
         "text": "هل أنت متأكد أنك تريد حذف {name}؟ لا يمكن التراجع عن هذا الإجراء.",
         "cancel_button": "إلغاء",
         "delete_button": "حذف"
+    },
+    "certificates": {
+        "delete": {
+            "delete_button": "حذف",
+            "dialog_title": "حذف الشهادة",
+            "dialog_description": "هل أنت متأكد أنك تريد حذف هذه الشهادة؟ لا يمكن التراجع عن هذا الإجراء.",
+            "cancel_button": "إلغاء",
+            "delete_button_confirm": "حذف",
+            "deleted_successfully": "تم حذف الشهادة بنجاح.",
+            "error_deleting": "حدث خطأ أثناء حذف الشهادة."
+        }
     }
 }

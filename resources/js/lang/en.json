@@ -463,5 +463,16 @@
         "text": "Are you sure you want to delete {name}? This action cannot be undone.",
         "cancel_button": "Cancel",
         "delete_button": "Delete"
+    },
+    "certificates": {
+        "delete": {
+            "delete_button": "Delete",
+            "dialog_title": "Delete Certificate",
+            "dialog_description": "Are you sure you want to delete this certificate? This action cannot be undone.",
+            "cancel_button": "Cancel",
+            "delete_button_confirm": "Delete",
+            "deleted_successfully": "Certificate deleted successfully.",
+            "error_deleting": "An error occurred while deleting the certificate."
+        }
     }
 }

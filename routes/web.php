@@ -48,6 +48,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates.index');
         Route::get('/certificates/create', [CertificateController::class, 'create'])->name('certificates.create');
         Route::post('/certificates', [CertificateController::class, 'store'])->name('certificates.store');
+        Route::put('/certificates/{certificate}', [CertificateController::class, 'update'])->name('certificates.update');
+        Route::delete('/certificates/{certificate}', [CertificateController::class, 'destroy'])->name('certificates.destroy');
     });
 
     // SEANCE MANAGEMENT (for Mentors/Admins)

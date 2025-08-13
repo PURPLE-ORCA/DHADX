@@ -8,7 +8,7 @@ import { TranslationContext } from '@/context/TranslationProvider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
-export default function Certificate({ certificates = [], users }) {
+export default function Certificate({ certificates = [], users, courses = [] }) {
     const { translations } = useContext(TranslationContext);
     const [search, setSearch] = useState('');
     const [filteredCertificates, setFilteredCertificates] = useState(certificates);
@@ -32,6 +32,12 @@ export default function Certificate({ certificates = [], users }) {
         setFilteredCertificates((prev) => prev.filter((c) => c.id !== id));
     };
 
+    const handleUpdate = () => {
+        // This is a simple way to refresh the data.
+        // For a more sophisticated approach, you might update the specific certificate in the state.
+        window.location.reload();
+    };
+
     return (
         <AppLayout breadcrumbs={[{ title: translations.certificates?.list_title || 'Certificates list', href: '/certificates' }]}>
             <Head title={translations.certificates?.page_title || 'Certificates'} />
@@ -50,7 +56,7 @@ export default function Certificate({ certificates = [], users }) {
                     </Link> */}
                 </div>
 
-                <Data certificates={filteredCertificates} users={users} onDeleted={handleDelete} onViewCertificate={setViewingCertificate} />
+                <Data certificates={filteredCertificates} users={users} courses={courses} onDeleted={handleDelete} onUpdated={handleUpdate} onViewCertificate={setViewingCertificate} />
 
                 <Dialog open={!!viewingCertificate} onOpenChange={() => setViewingCertificate(null)}>
                     <DialogContent className="sm:max-w-[425px]">
