@@ -58,14 +58,14 @@ export function AppSidebar() {
     }
 
     if (auth.user && auth.abilities?.isCollaborator) {
+        // navItems.push({
+        //     title: translations.sidebar.my_tasks,
+        //     url: route('user.tasks'), // You'll create this route & page
+        //     routeName: 'user.tasks',
+        //     icon: iconMyTasks,
+        // });
         navItems.push({
-            title: translations.sidebar.my_tasks,
-            url: route('user.tasks'), // You'll create this route & page
-            routeName: 'user.tasks',
-            icon: iconMyTasks,
-        });
-        navItems.push({
-            title: 'Whiteboards', // Or use translations: translations.sidebar.whiteboards
+            title: translations.sidebar.whiteboards,
             url: route('whiteboards.index'),
             routeName: 'whiteboards.index',
             icon: iconWhiteboard,
@@ -75,12 +75,12 @@ export function AppSidebar() {
     // --- Items SPECIFICALLY for Admins ---
     if (auth.user && auth.abilities?.isAdmin) {
         navItems.push(
-            {
-                title: translations.sidebar.tasks, // Admin view of all tasks/camps
-                url: route('tasks.index'), // Assuming this is the "all tasks" view
-                routeName: 'tasks.index', // This was previously just "Tasks"
-                icon: iconAdminTasks, // Using a more generic "tasks" icon
-            },
+            // {
+            //     title: translations.sidebar.tasks, // Admin view of all tasks/camps
+            //     url: route('tasks.index'), // Assuming this is the "all tasks" view
+            //     routeName: 'tasks.index', // This was previously just "Tasks"
+            //     icon: iconAdminTasks, // Using a more generic "tasks" icon
+            // },
             {
                 title: translations.sidebar.users,
                 url: route('users.index'),

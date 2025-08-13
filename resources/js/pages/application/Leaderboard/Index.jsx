@@ -7,12 +7,12 @@ import { TranslationContext } from '@/context/TranslationProvider';
 export default function Index({ leaderboardEntries }) {
     const { translations } = useContext(TranslationContext);
     const breadcrumbs = [
-        // { label: 'Dashboard', href: route('dashboard') },
-        // { label: 'Leaderboard', href: route('leaderboard.index') },
+        { title: 'Dashboard', href: route('dashboard') },
+        { title: 'Leaderboard', href: route('leaderboard.index') },
     ];
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={translations.leaderboard.title} />
             <div className="p-4 md:p-6 lg:p-8">
                 <h1 className="mb-6 text-2xl font-bold">{translations.leaderboard.title}</h1>

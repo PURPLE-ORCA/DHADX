@@ -28,9 +28,14 @@ class CampController extends Controller
      */
     public function create()
     {
-        return Inertia::render('application/Camp/Create', [
-            'collaborators' => User::whereHas('roles', fn($q) => $q->where('name', 'collaborator'))->get(),
-            'cours' => Cour::with('formations')->get()
+        $users = \App\Models\User::whereHas('roles', function ($query) {
+            $query->where('name', 'collaborator');
+        })->get();
+        $cours = \App\Models\Cour::all();
+
+        return \Inertia\Inertia::render('application/Camp/Create', [
+            'users' => $users,
+            'cours' => $cours,
         ]);
     }
 

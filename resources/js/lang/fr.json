@@ -18,7 +18,8 @@
         "specialities": "Spécialités",
         "cours": "Cours",
         "formations": "Formations",
-        "camps": "Camps"
+        "camps": "Camps",
+        "whiteboards": "Tableaux blancs"
     },
     "admin_dashboard": {
         "collaborators_title": "Collaborateurs",
@@ -82,8 +83,10 @@
         "course_label": "Cours",
         "select_course_placeholder": "Sélectionner un cours",
         "add_button": "Ajouter",
+        "user_label": "Nom de l'étudiant",
+        "select_user_placeholder": "Sélectionner un étudiant",
         "data": {
-            "collaborator_name_heading": "Collaborateur : :collaborator_name",
+            "user_name_heading": "Camps pour :user_name",
             "course_name_heading": "Cours : :course_name"
         }
     },

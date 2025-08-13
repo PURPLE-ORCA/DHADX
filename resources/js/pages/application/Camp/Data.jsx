@@ -9,19 +9,19 @@ function groupCamps(camps) {
         const userName = camp.user.name;
         const courName = camp.cour.name;
 
-        if (!groups[collabName]) {
-            groups[collabName] = {};
+        if (!groups[userName]) {
+            groups[userName] = {};
         }
 
-        if (!groups[collabName][courName]) {
-            groups[collabName][courName] = {
+        if (!groups[userName][courName]) {
+            groups[userName][courName] = {
                 label: camp.cour.label,
                 color: camp.cour.color,
                 items: [],
             };
         }
 
-        groups[collabName][courName].items.push(camp);
+        groups[userName][courName].items.push(camp);
     });
 
     return groups;

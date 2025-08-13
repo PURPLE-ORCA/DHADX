@@ -18,7 +18,8 @@
         "specialities": "التخصصات",
         "cours": "الدورات",
         "formations": "التكوينات",
-        "camps": "المعسكرات"
+        "camps": "المعسكرات",
+        "whiteboards": "السبورات"
     },
     "admin_dashboard": {
         "collaborators_title": "الشركاء",
@@ -82,9 +83,11 @@
         "course_label": "الدورة",
         "select_course_placeholder": "اختر الدورة",
         "add_button": "إضافة",
+        "user_label": "اسم الطالب",
+        "select_user_placeholder": "اختر الطالب",
         "data": {
-            "collaborator_name_heading": "الشريك: :collaborator_name",
-            "course_name_heading": "الدورة: :course_name"
+            "user_name_heading": "المخيمات لـ :user_name",
+            "course_name_heading": "الدورة : :course_name"
         }
     },
     "camp_card": {
