@@ -127,6 +127,8 @@
         "gender_other": "Autre",
         "image_label": "Image de profil",
         "specialities_label": "Spécialités",
+        "phone_label": "Téléphone",
+        "phone_placeholder": "Entrez le numéro de téléphone de l'utilisateur",
         "add_button": "Ajouter l'utilisateur",
         "table_head_name": "Nom",
         "table_head_specialities": "Spécialités",

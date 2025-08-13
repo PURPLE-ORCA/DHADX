@@ -59,8 +59,7 @@ class HandleInertiaRequests extends Middleware
         // Define the abilities you want to check and share
         $abilities = [
             'isAdmin' => Gate::forUser($user)->allows('is_admin'),
-            'isCollaborator' => Gate::forUser($user)->allows('is_collaborator'),
-            'isUser' => Gate::forUser($user)->allows('is_user'),
+            'isStudent' => Gate::forUser($user)->allows('is_student'),
             'canViewTask' => Gate::forUser($user)->allows('view_task'),
             'canCreateTask' => Gate::forUser($user)->allows('create_task'),
             'canEditTask' => Gate::forUser($user)->allows('edit_task'),

@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
 
         // Fetch roles once after they've been seeded
         $adminRole = Role::where('name', 'admin')->first();
-        $collaboratorRole = Role::where('name', 'collaborator')->first();
         $studentRole = Role::where('name', 'student')->first();
         $mentorRole = Role::where('name', 'mentor')->first();
         $managerRole = Role::where('name', 'manager')->first();
@@ -47,6 +46,7 @@ class DatabaseSeeder extends Seeder
             ['name' => "Mohammed El Moussaoui", 'email_prefix' => 'mohammed.elmoussaoui', 'gender' => 'male', 'specialities' => ['fullstack']],
             ['name' => "Imad Rafai", 'email_prefix' => 'imad.rafai', 'gender' => 'male', 'specialities' => ['mentor', 'backend', 'montage']],
             ['name' => "Ilyes Rafai", 'email_prefix' => 'ilyes.rafai', 'gender' => 'male', 'specialities' => ['mentor', 'fullstack', 'montage', 'designer']],
+            ['name' => "Lasfar Oussama", 'email_prefix' => 'lasfar.oussama', 'gender' => 'male', 'specialities' => ['frontend']],
         ];
 
         foreach ($usersData as $data) {
@@ -61,14 +61,26 @@ class DatabaseSeeder extends Seeder
                     'cin' => 'AB123456', // Dummy CIN
                     'gender' => $data['gender'],
                     'image' => null, // No image for now
+                    'phone' => '+212 123 456 789', // Dummy phone number
                 ]
             );
 
-            if ($data['name'] === 'Ilyes Rafai' && $adminRole) {
-                $user->roles()->syncWithoutDetaching($adminRole->id);
-            }
-            if ($collaboratorRole) {
-                $user->roles()->syncWithoutDetaching($collaboratorRole->id);
+            // Assign roles based on user's name
+            switch ($data['name']) {
+                case 'Ilyes Rafai':
+                case 'Imad Rafai':
+                    $user->roles()->syncWithoutDetaching([$adminRole->id, $mentorRole->id]);
+                    break;
+                case 'Mohammed El Moussaoui':
+                    $user->roles()->syncWithoutDetaching($adminRole->id);
+                    break;
+                case 'Yassmine Boukhana':
+                case 'Oumaima Rahouti':
+                    $user->roles()->syncWithoutDetaching([$managerRole->id, $studentRole->id]);
+                    break;
+                default:
+                    $user->roles()->syncWithoutDetaching($studentRole->id);
+                    break;
             }
 
             // Attach specialities

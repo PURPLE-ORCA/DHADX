@@ -25,11 +25,8 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasRole('admin');
         });
 
-        Gate::define('is_collaborator', function (User $user) {
-            return $user->hasRole('collaborator');
-        });
-        Gate::define('is_user', function (User $user) {
-            return $user->hasRole('user');
+        Gate::define('is_student', function (User $user) {
+            return $user->hasRole('student');
         });
     }
 }

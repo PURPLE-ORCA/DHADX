@@ -17,6 +17,7 @@ export default function CreateUser({ specialities }) {
         name: '',
         email: '', // Add email
         speciality_ids: [],
+        phone: '',
     });
 
     const submitForm = (e) => {
@@ -154,6 +155,22 @@ export default function CreateUser({ specialities }) {
                             onChange={(e) => setData('image', e.target.files[0])}
                         />
                         <InputError message={errors.image} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="phone">
+                            {translations.users.phone_label}
+                        </Label>
+                        <Input
+                            id="phone"
+                            type="text"
+                            name="phone"
+                            value={data.phone}
+                            onChange={(e) => setData('phone', e.target.value)}
+                            placeholder={translations.users.phone_placeholder}
+                            autoComplete="off"
+                        />
+                        <InputError message={errors.phone} />
                     </div>
 
                     <div className="grid gap-2">

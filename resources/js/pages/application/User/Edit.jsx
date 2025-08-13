@@ -20,6 +20,7 @@ export default function Edit({ user, specialities }) {
         cin: user.cin || '',
         gender: user.gender || '',
         image: null,
+        phone: user.phone || '',
         speciality_ids: user.specialities.map((s) => s.id),
     });
 
@@ -31,6 +32,7 @@ export default function Edit({ user, specialities }) {
             cin: user.cin || '',
             gender: user.gender || '',
             image: null,
+            phone: user.phone || '',
             speciality_ids: user.specialities.map((s) => s.id),
         });
     }, [user, setData]);
@@ -170,6 +172,22 @@ export default function Edit({ user, specialities }) {
                             onChange={(e) => setData('image', e.target.files[0])}
                         />
                         <InputError message={errors.image} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="phone">
+                            {translations.users.edit.phone_label}
+                        </Label>
+                        <Input
+                            id="phone"
+                            type="text"
+                            name="phone"
+                            value={data.phone}
+                            onChange={(e) => setData('phone', e.target.value)}
+                            placeholder={translations.users.edit.phone_placeholder}
+                            autoComplete="off"
+                        />
+                        <InputError message={errors.phone} />
                     </div>
 
                     <div className="grid gap-2">

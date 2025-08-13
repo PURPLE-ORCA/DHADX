@@ -94,6 +94,7 @@ class User extends Authenticatable
         'cin',
         'gender',
         'image',
+        'phone',
     ];
 
     /**

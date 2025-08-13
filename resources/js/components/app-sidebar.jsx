@@ -48,7 +48,7 @@ export function AppSidebar() {
     });
 
     // --- Items for Admins AND Users ---
-    if (auth.user && (auth.abilities?.isAdmin || auth.abilities?.isCollaborator)) {
+    if (auth.user && (auth.abilities?.isAdmin || auth.abilities?.isStudent)) {
         navItems.push({
             title: translations.sidebar.leaderboard,
             url: route('leaderboard.index'),
@@ -57,7 +57,7 @@ export function AppSidebar() {
         });
     }
 
-    if (auth.user && auth.abilities?.isCollaborator) {
+    if (auth.user && auth.abilities?.isStudent) {
         // navItems.push({
         //     title: translations.sidebar.my_tasks,
         //     url: route('user.tasks'), // You'll create this route & page
@@ -82,7 +82,7 @@ export function AppSidebar() {
             //     routeName: 'tasks.index', // This was previously just "Tasks"
             //     icon: iconAdminTasks, // Using a more generic "tasks" icon
             // },
-            // * I COMMENTED THE TASKS LINK TEMPORARY UNTIL I MAKE MY MIND ON THE NEW TASKS LOGIC
+            // * I COMMENTED THE TASKS LINK TEMPORARY UNTIL I MAKE DECISIONS ON THE NEW TASKS LOGIC
             {
                 title: translations.sidebar.users,
                 url: route('users.index'),

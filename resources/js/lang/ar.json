@@ -127,6 +127,8 @@
         "gender_other": "آخر",
         "image_label": "صورة الملف الشخصي",
         "specialities_label": "التخصصات",
+        "phone_label": "الهاتف",
+        "phone_placeholder": "أدخل رقم هاتف المستخدم",
         "add_button": "إضافة مستخدم",
         "table_head_name": "الاسم",
         "table_head_specialities": "التخصصات",

@@ -125,6 +125,8 @@
         "gender_other": "Other",
         "image_label": "Profile Image",
         "specialities_label": "Specialities",
+        "phone_label": "Phone",
+        "phone_placeholder": "Enter user's phone number",
         "add_button": "Add User",
         "table_head_name": "Name",
         "table_head_specialities": "Specialities",

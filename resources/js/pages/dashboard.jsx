@@ -20,9 +20,9 @@ function Dashboard({ user, usersCount, formationsCount, specialitysCount, coursC
         },
     ];
     const isAdmin = user.roles.some(role => role.name === 'admin');
-    const isUser = user.roles.some(role => role.name === 'user');
+    const isStudent = user.roles.some(role => role.name === 'student');
 
-    if (isUser) {
+    if (isStudent) {
         return (
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Dashboard" />
@@ -68,7 +68,7 @@ function Dashboard({ user, usersCount, formationsCount, specialitysCount, coursC
 
     widgets.push(<LatestNotifications key="notifications" notifications={latestNotifications} />);
 
-    if (isUser) {
+    if (isStudent) {
         widgets.push(
             <UpcomingDeadlines
             key="collab-deadlines"

@@ -44,6 +44,7 @@ class UserPortalController extends Controller
             'cin' => 'nullable|string|max:255',
             'gender' => 'nullable|string|in:male,female,other',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'phone' => 'nullable|string|max:255',
             'speciality_ids' => 'nullable|array',
             'speciality_ids.*' => 'exists:specialities,id',
         ]);
@@ -74,11 +75,11 @@ class UserPortalController extends Controller
 
     public function index()
     {
-        $users = \App\Models\User::whereHas('roles', function ($query) {
-            $query->where('name', 'collaborator');
+        $users = User::whereHas('roles', function ($query) {
+            $query->where('name', '!=', 'admin');
         })->with('specialities')->get();
 
-        return \Inertia\Inertia::render('application/User/Users', [
+        return Inertia::render('application/User/Users', [
             'users' => $users,
         ]);
     }
@@ -87,7 +88,7 @@ public function edit(User $user)
         $user->load('specialities');
         $specialities = \App\Models\Speciality::all();
 
-        return \Inertia\Inertia::render('application/User/Edit', [
+        return Inertia::render('application/User/Edit', [
             'user' => $user,
             'specialities' => $specialities,
         ]);
@@ -102,6 +103,7 @@ public function edit(User $user)
             'cin' => 'nullable|string|max:255',
             'gender' => 'nullable|string|in:male,female,other',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'phone' => 'nullable|string|max:255',
             'speciality_ids' => 'nullable|array',
             'speciality_ids.*' => 'exists:specialities,id',
         ]);
