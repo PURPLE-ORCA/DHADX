@@ -1,5 +1,5 @@
 
-# **DHADX - v1.1 Beta**
+# **DHADX - v0.4 Beta**
 
 ## **Overview**
 
@@ -94,4 +94,4 @@ The core of the DHADX platform. A dedicated environment for interactive learning
 DHADX v1.1 is feature-complete and ready for beta testing. The core modules—Live Seances, Whiteboards, and Course Management—are fully functional.
 
 ### **Known Issues**
--   None at the moment. All major bugs identified during the development of the Live Seance module have been resolved. The focus is now on gathering user feedback for v1.5.
+-   None at the moment. All major bugs identified during the development of the Live Seance module have been resolved. The focus is now on gathering user feedback for v0.5.

@@ -40,7 +40,7 @@ class CertificateController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'course_id' => 'required|exists:cours,id', // Add validation for course_id
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $imagePath = null;
@@ -63,7 +63,7 @@ class CertificateController extends Controller
 
     public function showVerificationForm()
     {
-        return Inertia::render('Application/Certificate/Verify');
+        return Inertia::render('application/Certificate/Verify');
     }
 
     public function verify(Request $request)
@@ -74,7 +74,7 @@ class CertificateController extends Controller
 
         $certificate = Certificate::with('user')->where('code', $request->code)->first();
 
-        return Inertia::render('Application/Certificate/Verify', [
+        return Inertia::render('application/Certificate/Verify', [
             'certificate' => $certificate,
         ]);
     }
@@ -94,7 +94,7 @@ class CertificateController extends Controller
 
         return $code;
     }
-public function update(Request $request, Certificate $certificate)
+    public function update(Request $request, Certificate $certificate)
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
