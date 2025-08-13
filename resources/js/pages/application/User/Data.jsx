@@ -35,10 +35,9 @@ function Data({ users, onDeleted, auth }) { // Added auth prop
                         </TableCell>
                         <TableCell className="font-medium">
                             <div className="flex items-center justify-end gap-6">
-                                    <Link className="flex items-center gap-1" href={route('tasks.create', { assignee_id: user.id })}>
-                                        <Plus className="w-4" /> {translations.users.assign_task_button}
-                                    </Link>
-                                <Link className="flex items-center gap-1" href={route('users.edit', user.id)}>
+                                <Link className="flex items-center gap-1"
+                                href={route('users.edit', user.id)}
+                                >
                                     <Pencil className="w-4" /> {translations.users.edit_button}
                                 </Link>
                                 <Delete user={user} onDeleted={onDeleted} />

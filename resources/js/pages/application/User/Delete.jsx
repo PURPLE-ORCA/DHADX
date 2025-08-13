@@ -41,21 +41,29 @@ export default function Delete({ user, onDeleted }) {
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
             >
-                <div className="fixed top-12 right-3 rounded bg-green-500 p-2 whitespace-nowrap">
+                {/* <div className="fixed top-12 right-3 rounded bg-green-500 p-2 whitespace-nowrap">
                     <p className="text-sm font-semibold text-white">{translations.user_delete.deleted_successfully}</p>
-                </div>
+                </div> */}
             </Transition>
 
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                     <Button variant="link" className="!p-0">
                         <Trash />
-                        {translations.collaborator_delete.delete_button}
+                        {translations.user_delete.delete_button}
                     </Button>
                 </DialogTrigger>
                 <DialogContent>
-                    <DialogTitle>{translations.user_delete.dialog_title.replace(':user_name', user.name)}</DialogTitle>
-                    <DialogDescription>{translations.user_delete.dialog_description}</DialogDescription>
+                    <DialogTitle>
+                        {translations.user_delete?.dialog_title
+                            ? translations.user_delete.dialog_title.replace(':user_name', user.name)
+                            : `Delete ${user.name}`}
+                    </DialogTitle>
+                    <DialogDescription>
+                        {translations.user_delete?.dialog_description
+                            ? translations.user_delete.dialog_description
+                            : `Are you sure you want to delete ${user.name}? This action cannot be undone.`}
+                    </DialogDescription>
                     <form onSubmit={deleteCollaborator}>
                         <DialogFooter className="mt-4 gap-2">
                             <DialogClose asChild>
@@ -64,7 +72,7 @@ export default function Delete({ user, onDeleted }) {
                                 </Button>
                             </DialogClose>
                             <Button type="submit" variant="destructive" disabled={processing}>
-                                {translations.user_delete.delete_button_confirm}
+                                {translations.user_delete.delete_button}
                             </Button>
                         </DialogFooter>
                     </form>

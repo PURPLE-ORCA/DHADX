@@ -2,6 +2,7 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm } from '@inertiajs/react';
@@ -141,18 +142,20 @@ export default function Edit({ user, specialities }) {
                         <Label htmlFor="gender">
                             {translations.users.edit.gender_label}
                         </Label>
-                        <select
-                            id="gender"
+                        <Select
                             name="gender"
                             value={data.gender}
-                            onChange={(e) => setData('gender', e.target.value)}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            onValueChange={(value) => setData('gender', value)}
                         >
-                            <option value="">{translations.users.edit.select_gender_placeholder}</option>
-                            <option value="male">{translations.users.edit.gender_male}</option>
-                            <option value="female">{translations.users.edit.gender_female}</option>
-                            <option value="other">{translations.users.edit.gender_other}</option>
-                        </select>
+                            <SelectTrigger>
+                                <SelectValue placeholder={translations.users.edit.select_gender_placeholder} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="male">{translations.users.edit.gender_male}</SelectItem>
+                                <SelectItem value="female">{translations.users.edit.gender_female}</SelectItem>
+                                <SelectItem value="other">{translations.users.edit.gender_other}</SelectItem>
+                            </SelectContent>
+                        </Select>
                         <InputError message={errors.gender} />
                     </div>
 

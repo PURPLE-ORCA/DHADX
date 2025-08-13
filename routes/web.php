@@ -34,7 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('formations', FormationController::class);
         Route::resource('cours', CourController::class);
         Route::resource('tasks', TaskController::class)->except(['index', 'show']);
-        Route::get('/users', [UserPortalController::class, 'index'])->name('users.index');
+        Route::resource('users', \App\Http\Controllers\UserPortalController::class);
     });
 
     // SEANCE MANAGEMENT (for Mentors/Admins)
