@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExerciseSubmission extends Model
 {
-    use HasFactory;
+    use HasFactory; 
     protected $guarded = [];
 
     protected $casts = [
@@ -18,7 +18,7 @@ class ExerciseSubmission extends Model
         return $this->belongsTo(SeanceExercise::class, 'seance_exercise_id');
     }
 
-    public function collaborator() {
-        return $this->belongsTo(Collaborator::class);
+    public function user() {
+        return $this->belongsTo(User::class);
     }
 }

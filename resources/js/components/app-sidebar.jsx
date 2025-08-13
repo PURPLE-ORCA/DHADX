@@ -26,12 +26,12 @@ const iconCollaborators = UsersRound;
 const iconSpecialities = BriefcaseBusiness;
 const iconCours = Shapes;
 const iconFormations = Layers;
-const iconAdminTasks = ClipboardList; // Changed from iconCamps for clarity if "Tasks" is different from "Camps"
-const iconCampsManagement = Tent; // Keep Tent if 'Camps' is a separate admin menu item
+const iconAdminTasks = ClipboardList;
+const iconCampsManagement = Tent; 
 const iconLeaderboard = Trophy;
 const iconMyTasks = ListChecks;
 const iconWhiteboard = Brush;
-const iconSeances = CalendarDays; // Icon for Seances
+const iconSeances = CalendarDays;
 const iconUsers = Users; 
 
 export function AppSidebar() {
@@ -47,7 +47,7 @@ export function AppSidebar() {
         icon: iconDashboard,
     });
 
-    // --- Items for Admins AND Collaborators ---
+    // --- Items for Admins AND Users ---
     if (auth.user && (auth.abilities?.isAdmin || auth.abilities?.isCollaborator)) {
         navItems.push({
             title: translations.sidebar.leaderboard,
@@ -64,6 +64,7 @@ export function AppSidebar() {
         //     routeName: 'user.tasks',
         //     icon: iconMyTasks,
         // });
+        // * I COMMENTED THE MY TASKS LINK TEMPORARY UNTIL I MAKE MY MIND ON THE NEW TASKS LOGIC
         navItems.push({
             title: translations.sidebar.whiteboards,
             url: route('whiteboards.index'),
@@ -81,6 +82,7 @@ export function AppSidebar() {
             //     routeName: 'tasks.index', // This was previously just "Tasks"
             //     icon: iconAdminTasks, // Using a more generic "tasks" icon
             // },
+            // * I COMMENTED THE TASKS LINK TEMPORARY UNTIL I MAKE MY MIND ON THE NEW TASKS LOGIC
             {
                 title: translations.sidebar.users,
                 url: route('users.index'),
@@ -106,7 +108,7 @@ export function AppSidebar() {
                 icon: iconFormations,
             },
             {
-                title: translations.sidebar.seances || 'Seances', // Add Seances link
+                title: translations.sidebar.seances || 'Seances', 
                 url: route('seances.index'),
                 routeName: 'seances.index',
                 icon: iconSeances,

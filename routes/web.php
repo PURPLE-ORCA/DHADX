@@ -19,6 +19,7 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
+//  TODO refactor the routes to use 'resource' as much as possible 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Notification Routes
     Route::get('/notifications/pending-count', [NotificationController::class, 'pendingCount'])->name('notifications.pendingCount');
@@ -34,7 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('formations', FormationController::class);
         Route::resource('cours', CourController::class);
         Route::resource('tasks', TaskController::class)->except(['index', 'show']);
-        Route::resource('users', \App\Http\Controllers\UserPortalController::class);
+        Route::resource('users', UserPortalController::class);
     });
 
     // SEANCE MANAGEMENT (for Mentors/Admins)
@@ -46,9 +47,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/seances/{seance}', [SeanceController::class, 'update'])->name('seances.update'); // Update seance
         Route::delete('/seances/{seance}', [SeanceController::class, 'destroy'])->name('seances.destroy');
 
-    // Add these alongside your other seance action routes
     Route::post('/seances/{seance}/start', [SeanceController::class, 'startSeance'])
-        ->middleware('can:update,seance') // Reuse the update policy or create a new one
+        ->middleware('can:update,seance') 
         ->name('seances.start');
 
     Route::post('/seances/{seance}/finish', [SeanceController::class, 'finishSeance'])
@@ -65,8 +65,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('seances.hand.toggle');
 
     // Mentor action to dismiss a hand from the queue
-    Route::post('/seances/{seance}/dismiss-hand/{collaborator}', [SeanceController::class, 'dismissHand'])
-        ->middleware('can:update,seance') // The policy protects this for mentors
+    Route::post('/seances/{seance}/hand/dismiss/{user}', [SeanceController::class, 'dismissHand'])
+        ->middleware('can:update,seance')
         ->name('seances.hand.dismiss');
     
     // Mentor-specific presence check initiation

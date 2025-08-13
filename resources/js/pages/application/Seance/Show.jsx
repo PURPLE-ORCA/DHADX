@@ -76,11 +76,11 @@ export default function Show({ seance, isMentor, current_user_id }) {
                 );
             });
 
-            // Listener for CollaboratorHandStateChanged event (for mentor's queue)
-            seanceChannel.listen('.App\\Events\\CollaboratorHandStateChanged', (event) => {
+            // Listener for UserHandStateChanged event (for mentor's queue)
+            seanceChannel.listen('.App\\Events\\UserHandStateChanged', (event) => {
                 setHandRaiseQueue(currentQueue => {
                     // Remove the user first to handle both raise/lower cases
-                    const filteredQueue = currentQueue.filter(c => c.id !== event.user.id);
+                    const filteredQueue = currentQueue.filter(u => u.id !== event.user.id);
                     
                     // If their hand is raised, add them to the end of the new queue
                     if (event.isRaised) {
@@ -197,7 +197,7 @@ export default function Show({ seance, isMentor, current_user_id }) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={seance.topic} />
 
-            <div className="p-4 flex flex-col h-full"> {/* Make the main container a flex column */}
+            <div className="p-4 flex flex-col h-full">
                 
                 {/* Pass all necessary data and handlers to the header */}
                 <SeanceHeader 

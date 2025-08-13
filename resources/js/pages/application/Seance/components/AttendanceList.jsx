@@ -16,20 +16,20 @@ export default function AttendanceList({ attendees, handRaiseQueue }) {
                 {attendees && attendees.length > 0 ? (
                     <ul className="space-y-2">
                         {attendees.map((attendee) => {
-                            const hasHandRaised = handRaiseQueue.some(c => c.id === attendee.id); // Check if hand is raised
+                            const hasHandRaised = handRaiseQueue.some(u => u.id === attendee.id); // Check if hand is raised
                             return (
                                 <li key={attendee.id} className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <Avatar>
-                                            <AvatarImage src={attendee.profile_photo_url} alt={attendee.user?.name || 'N/A'} />
-                                            <AvatarFallback>{attendee.user?.name?.charAt(0) || '?'}</AvatarFallback>
+                                            <AvatarImage src={attendee.profile_photo_url} alt={attendee.name || 'N/A'} />
+                                            <AvatarFallback>{attendee.name?.charAt(0) || '?'}</AvatarFallback>
                                         </Avatar>
-                                        <span>{attendee.user?.name || 'N/A'}</span>
+                                        <span>{attendee.name || 'N/A'}</span>
                                     </div>
                                     
-                                    <div className="flex items-center gap-2"> {/* New div to group hand icon and status */}
-                                        {hasHandRaised && <Hand className="h-4 w-4 text-yellow-500" />} {/* Hand icon */}
-                                        {attendee.pivot?.status === 'present' ? (
+                                    <div className="flex items-center gap-2">
+                                        {hasHandRaised && <Hand className="h-4 w-4 text-yellow-500" />}
+                                        {attendee.pivot && attendee.pivot.status === 'present' ? (
                                             <span className="flex items-center text-xs text-green-400">
                                                 <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
                                                 Present

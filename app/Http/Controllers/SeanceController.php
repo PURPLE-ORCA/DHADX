@@ -21,7 +21,6 @@ use App\Events\HandDismissedByMentor;
 
 class SeanceController extends Controller
 {
-    // --- Admin/Mentor Views ---
 
     public function index() {
         $seances = Seance::with('course', 'mentor')->latest()->paginate(10);
@@ -29,7 +28,7 @@ class SeanceController extends Controller
     }
 
     public function create() {
-        // We need lists of courses and mentors to populate dropdowns in the form
+        // lists of courses and mentors to populate dropdowns in the form
         $courses = Cour::select('id', 'name')->get();
         $mentors = User::whereHas('roles', fn($q) => $q->where('name', 'admin'))->select('id', 'name')->get(); // Assuming mentors are admins
         return Inertia::render('application/Seance/Create', [
@@ -121,22 +120,18 @@ class SeanceController extends Controller
 
     public function startPresenceCheck(Seance $seance)
     {
-        // Authorization is handled by the policy, so we're good here.
-
-        // --- THE NEW LOGIC: RESETTING THE BOARD ---
         // First, find all attendance records for this seance and reset their status.
-        // We'll do this with a direct DB update for efficiency.
+        // I'm doing this with a direct DB update for efficiency.
         DB::table('seance_attendances')
             ->where('seance_id', $seance->id)
             ->update(['status' => 'absent', 'checked_in_at' => null]);
-        // ------------------------------------------
 
         // Now, broadcast the event as before to trigger the check-in button.
         broadcast(new PresenceCheckStarted($seance->id));
         
-        // We should also broadcast a "state reset" event to the mentor's UI.
+        // also broadcast a "state reset" event to the mentor's UI.
         // Re-fetch the attendees with all their data
-        $freshAttendeesCollection = $seance->attendees()->with('user:id,name')->get();
+        $freshAttendeesCollection = $seance->attendees()->get();
 
         // Convert the Eloquent Collection into a plain PHP array.
         $freshAttendeesArray = $freshAttendeesCollection->map(function ($attendee) {
@@ -178,7 +173,6 @@ class SeanceController extends Controller
             $attendance->pivot->save();
 
             // Load the user relationship so the name is available on the frontend
-            $user->load('user:id,name'); // User model already has name, no need for user:id,name
             broadcast(new UserCheckedIn($seance->id, $user)); // Changed event and passed user
 
             return response()->json(['message' => 'Checked in successfully.']);
@@ -197,8 +191,8 @@ class SeanceController extends Controller
         $seance->load([
             'course:id,name',
             'mentor:id,name',
-            'exercises.submissions.collaborator.user:id,name',
-            'attendees.user:id,name' // Load the user for each collaborator in the attendance list
+            'exercises.submissions.user:id,name',
+            'attendees:id,name' // Load the user for each collaborator in the attendance list
         ]);
         
         $mySubmission = null;
@@ -241,7 +235,7 @@ class SeanceController extends Controller
         }
 
         $submissionData = [
-            'user_id' => $user->id, // Changed from collaborator_id
+            'user_id' => $user->id, 
         ];
 
         if (isset($validated['file'])) {
@@ -256,7 +250,7 @@ class SeanceController extends Controller
         $submission = $exercise->submissions()->create($submissionData);
 
         // Load the user relationship
-        $submission->load('user:id,name'); // Changed from collaborator.user
+        $submission->load('user:id,name');
 
         // Find the mentor's ID from the exercise's parent seance
         $mentorId = $exercise->seance->mentor_id;
@@ -270,7 +264,7 @@ class SeanceController extends Controller
     public function toggleHandState(Request $request, Seance $seance) {
         $request->validate(['isRaised' => 'required|boolean']);
         
-        $user = Auth::user()->load('user:id,name'); // User model already has name, no need for user:id,name
+        $user = Auth::user();
         
         broadcast(new UserHandStateChanged($seance->id, $user, $request->isRaised)); // Changed event and passed user
         
@@ -284,7 +278,7 @@ class SeanceController extends Controller
         }
 
         // We also need to tell everyone else the hand was lowered
-        broadcast(new UserHandStateChanged($seance->id, $user->load('user:id,name'), false)); // Changed event and passed user
+        broadcast(new UserHandStateChanged($seance->id, $user, false)); // Changed event and passed user
         
         return response()->json(['status' => 'success']);
     }
